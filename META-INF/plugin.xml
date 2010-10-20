@@ -11,10 +11,17 @@
 
   <project-components>
     <!-- Add your project components here -->
+      <component>
+          <implementation-class>intellij.GenerateTestCasesProjectComponent</implementation-class>
+      </component>
   </project-components>
 
   <actions>
     <!-- Add your actions here -->
+      <action id="intellij.GenerateTestMethods" class="intellij.GenerateTestMethods" text="Generate Test Methods"
+              description="It generates BDD test methods for class" >
+          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+      </action>
   </actions>
 
   <extensions defaultExtensionNs="com.intellij">

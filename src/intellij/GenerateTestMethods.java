@@ -24,6 +24,8 @@ public class GenerateTestMethods extends AnAction {
         super("Generate Test Methods", "Generate test methods for current file", IconLoader.getIcon("/images/junitopenmrs.gif"));
     }
 
+
+
     public void actionPerformed(AnActionEvent e) {
 
 
@@ -43,12 +45,13 @@ public class GenerateTestMethods extends AnAction {
             PsiMethod[] methods = psiClass.getMethods();
 
 
-
+            // TODO choose fields to initialize by constructor (action corresponding to generate constructors action) it uses a nice treeview
             // TODO crear structureViewModel e instanciar, bassarme en com.intellij.ide.actions.ViewStructureAction
             // return new FileStructureDialog(structureViewModel, editor, project, navigatable, alternativeDisposable, true);
-            
+//            new com.intellij.ide.util.MemberChooser();
 
             // TODO modificar el structureViewModel y crear un modelo de arbol con los metodos y anotaciones should debajo
+            // TODo considerar el uso del MemberChooser
 
 
 
@@ -57,7 +60,8 @@ public class GenerateTestMethods extends AnAction {
         }
 
 
-        // TODO crear primera interfaz del modelo (TestMethod) Utilizar patron adapter
+        // TODO crear primera interfaz del modelo (TestMethod) Utilizar patron adapter, considerar agregar metodo getBackingElement
+
 
     }
 

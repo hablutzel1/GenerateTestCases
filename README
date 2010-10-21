@@ -1,0 +1,20 @@
+El nombre totalmente calificado de la unidad de compilacion correspondiente a TestClass debe ser unico en el classpath y
+por lo tatno se debe adoptar una estrategia de nombrado de archivos que impida qla colision de nombres, por lo cual se deben considerar
+las clases locales, internas (estaticas o de instancia) y las clases publicas.
+
+Una estrategia podria ser (archivo escaneado)
+
+
+public class TipoDispositivoFileMetadataProviderTest extends KardexBaseContextSensitiveTest {
+
+
+
+
+    public  static class FooTest   extends  KardexBaseContextSensitiveTest {
+
+        @Test
+        public void getConfigurationFile_shouldDevolverUnArchivoFile() throws Exception {
+            fail();
+        }
+
+    }

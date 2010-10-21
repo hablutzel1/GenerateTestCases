@@ -1,13 +1,15 @@
 package intellij;
 
-import com.intellij.openapi.actionSystem.AnAction;
-import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.PlatformDataKeys;
-import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiMethod;
+import com.intellij.psi.util.PsiTreeUtil;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * User: JHABLUTZEL
@@ -28,21 +30,75 @@ public class GenerateTestMethods extends AnAction {
         //  obtener proyecto actual
         Project project = GenerateTestCasesProjectComponent.getProject();
 
-        // TODO conseguir clase abierta en el editor
+        //  conseguir clase abierta en el editor
 
         DataContext dataContext = e.getDataContext();
         Editor editor = getEditor(dataContext);
 
-        Document document = editor.getDocument();
-        // TODO crear listado de metodos para la clase actualmente abierta en el editor
+        PsiClass psiClass = getSubjectClass(editor, dataContext);
 
-        // TODO si no hay ninguna clase en el editor se deberia desactivar la accion
+        if (psiClass != null) {
+
+            // TODO crear listado de metodos para la clase actualmente abierta en el editor
+            PsiMethod[] methods = psiClass.getMethods();
+
+
+
+            // TODO crear structureViewModel e instanciar, bassarme en com.intellij.ide.actions.ViewStructureAction
+            // return new FileStructureDialog(structureViewModel, editor, project, navigatable, alternativeDisposable, true);
+            
+
+            // TODO modificar el structureViewModel y crear un modelo de arbol con los metodos y anotaciones should debajo
+
+
+
+        } else {
+                  //  si no hay ninguna clase en el editor se deberia desactivar la accion
+        }
+
 
         // TODO crear primera interfaz del modelo (TestMethod) Utilizar patron adapter
 
     }
 
+
+    public void update(Editor editor, Presentation presentation, DataContext dataContext) {
+        //  si no hay ninguna clase en el editor se deberia desactivar la accion
+        presentation.setEnabled(getSubjectClass(editor, dataContext) != null);
+    }
+
+    @Override
+    public void update(AnActionEvent e) {
+        Presentation presentation = e.getPresentation();
+        DataContext dataContext = e.getDataContext();
+        Editor editor = getEditor(dataContext);
+        if (editor == null) {
+            presentation.setEnabled(false);
+        } else {
+            update(editor, presentation, dataContext);
+        }
+    }
+
     protected Editor getEditor(final DataContext dataContext) {
         return PlatformDataKeys.EDITOR.getData(dataContext);
+    }
+
+    @Nullable
+    private static PsiClass getSubjectClass(Editor editor, DataContext dataContext) {
+        PsiFile file = LangDataKeys.PSI_FILE.getData(dataContext);
+        if (file == null) return null;
+
+        int offset = editor.getCaretModel().getOffset();
+        PsiElement context = file.findElementAt(offset);
+
+        if (context == null) return null;
+
+        PsiClass clazz = PsiTreeUtil.getParentOfType(context, PsiClass.class, false);
+        if (clazz == null) {
+            return null;
+        }
+
+        // must not be an interface
+        return clazz.isInterface() ? null : clazz;
     }
 }

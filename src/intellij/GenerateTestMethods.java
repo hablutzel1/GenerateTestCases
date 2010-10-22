@@ -1,17 +1,20 @@
 package intellij;
 
+import com.intellij.codeInsight.generation.ClassMember;
+import com.intellij.ide.util.MemberChooser;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
+import com.intellij.psi.javadoc.PsiDocComment;
+import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.util.PsiTreeUtil;
-import intellij.ui.ShouldAnnotationsDialog;
+import intellij.ui.codeinsight.generation.PsiDocAnnotationMember;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: JHABLUTZEL
@@ -25,7 +28,6 @@ public class GenerateTestMethods extends AnAction {
 //        super(text, description, icon);
         super("Generate Test Methods", "Generate test methods for current file", IconLoader.getIcon("/images/junitopenmrs.gif"));
     }
-
 
 
     public void actionPerformed(AnActionEvent e) {
@@ -43,25 +45,122 @@ public class GenerateTestMethods extends AnAction {
 
         if (psiClass != null) {
 
-            // TODO crear listado de metodos para la clase actualmente abierta en el editor
+            //  crear listado de metodos para la clase actualmente abierta en el editor
             PsiMethod[] methods = psiClass.getMethods();
 
+            //  choose fields to initialize by constructor (action corresponding to generate constructors action) it uses a nice treeview
 
-            // TODO choose fields to initialize by constructor (action corresponding to generate constructors action) it uses a nice treeview
-            // TODO crear structureViewModel e instanciar, bassarme en com.intellij.ide.actions.ViewStructureAction
-            // return new FileStructureDialog(structureViewModel, editor, project, navigatable, alternativeDisposable, true);
-//            new com.intellij.ide.util.MemberChooser();
-            DialogWrapper dialog = new ShouldAnnotationsDialog(project);
-            dialog.show();
+            // TODO   crear un modelo de arbol con los metodos y anotaciones should debajo
+            // TODO extender ClassMember para que soporte anotaciones should
 
 
-            // TODO modificar el structureViewModel y crear un modelo de arbol con los metodos y anotaciones should debajo
-            // TODo considerar el uso del MemberChooser
+            ArrayList<ClassMember> array = new ArrayList<ClassMember>();
+            //  iterar sobre los metodos
+            for (PsiMethod method : methods) {
 
 
+                //  iterar sobre los comentarios del javadoc
+                PsiDocComment comment = method.getDocComment();
+                if (comment == null) { // if no doc comment
+                    continue;
+                }
+                PsiDocTag[] tags = comment.getTags();
+                for (PsiDocTag tag : tags) {
+
+                    // TODO comprobar si este tag no existe en la clase de pruebas
+
+                    //  conseguir text del tag y ponerlo en una sola linea
+
+                    //  comprobar que el tag sea del tipo should
+                    if (tag.getName().equals("should")) {
+                        //  usar cada metodo como padre del doc annotation
+                        final StringBuilder description = new StringBuilder();
+
+                        PsiElement[] dataElements = tag.getDataElements();
+                        boolean isFirst = true;
+                        for (PsiElement dataElement : dataElements) {
+                            description.append(dataElement.getText());
+                            // TODO get the description taking into account the whitespaces
+                            if (isFirst) {
+                                description.append(" ");
+                            }
+                            isFirst = false;
+                        }
+
+                        PsiDocAnnotationMember member = new PsiDocAnnotationMember(tag, description.toString(), method);
+                        array.add(member);
+                    }
+                }
+
+
+            }
+
+            ClassMember[] classMembers = array.toArray(new ClassMember[array.size()]);
+            MemberChooser<ClassMember> chooser = new MemberChooser<ClassMember>(classMembers, false, true, project);
+            chooser.setTitle("Choose should annotations");
+            chooser.setCopyJavadocVisible(false);
+            chooser.show();
+            List<ClassMember> selectedElements = chooser.getSelectedElements();
+
+            // TODO generar clase de pruebas con metodos correspondientes a estos tags
+
+            //  obtener paquete de la clase actual
+            PsiElement classScope = psiClass.getScope();
+            if (classScope instanceof PsiJavaFile) {
+                
+                PsiJavaFile javaFileForClass = (PsiJavaFile) classScope;
+                PsiDirectory psiDirectory = javaFileForClass.getParent();
+
+                // obtener nombre de clase actual
+                String nombreClaseDeOrigen = psiClass.getName();
+
+                //  crear clase con sufijo Test
+                String nombreClaseDePruebas = nombreClaseDeOrigen + "Test";
+
+                // TODO dar al usuario la opcion de escoger la carpeta raiz del classpath
+
+                // TODO verificar si la clase de prueba ya existe antes de crearla
+                //  efectivamente crear la clase
+                PsiClass claseDePruebas = JavaDirectoryService.getInstance().createClass(psiDirectory, nombreClaseDePruebas, "Class");
+
+
+   
+                //  generar metodo para cada uno de estos
+                for (ClassMember classMember : selectedElements) {
+                    //  ascender classMember a la implementacion
+                    PsiDocAnnotationMember anotacionShould = (PsiDocAnnotationMember) classMember;
+
+                    //  generar el nombre para el metodo
+                    String shouldDescription = anotacionShould.getText();
+                    PsiElement element = anotacionShould.getElement();
+                    String nombreMetodoDeOrigen = ((PsiMethod) element.getParent().getParent()).getName();
+                    String nombreMetodoDePrueba = generateTestMethodName(nombreMetodoDeOrigen, shouldDescription);
+                    // TODO verificar si el metodo que se desea crear no existe
+
+                    //  crear metodo con retorno void y este nombre generado en claseDePruebas
+                    //claseDePruebas.add
+                    PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+
+                    // TODO revisar TestNG y permitir que el usuario escoja el framework de pruebas unitarias
+
+                    // TODO revisar la existencia del framework, de no existir mostrar alerta
+
+                    // TODO crear javadoc adecuado para cada uno de los metodos de prueba
+
+                    // TODO importar clases de junit necesarias
+
+                    // TODO agregar anotacion de junit
+                    PsiMethod metodoDePrueba = elementFactory.createMethod(nombreMetodoDePrueba, PsiType.VOID);
+
+                    // TODO correr esto dentro de un write-action   ( Write access is allowed inside write-action only )
+                    claseDePruebas.add(metodoDePrueba);
+                }
+
+
+            }
 
         } else {
-                  //  si no hay ninguna clase en el editor se deberia desactivar la accion
+            //  si no hay ninguna clase en el editor se deberia desactivar la accion
         }
 
 
@@ -69,6 +168,38 @@ public class GenerateTestMethods extends AnAction {
 
 
     }
+
+
+    	private String generateTestMethodName(String originMethodName, String shouldDescription) {
+
+            // TODO mover a una clase estatica y validar argumentos
+
+		StringBuilder builder = new StringBuilder(originMethodName
+				+ "_should");
+		String[] tokens = shouldDescription.split("\\s+");
+		for (String token : tokens) {
+
+			char[] allChars = token.toCharArray();
+			StringBuilder validChars = new StringBuilder();
+			for (char validChar : allChars) {
+				if (Character.isJavaIdentifierPart(validChar)) {
+					validChars.append(validChar);
+				}
+			}
+
+			builder.append(toCamelCase(validChars.toString()));
+		}
+		return builder.toString();
+	}
+
+    private static String toCamelCase(String input) {
+        assert input != null;
+        if (input.length() == 0) {
+            return ""; // is it ok?
+        }
+        return input.substring(0, 1).toUpperCase() + input.substring(1);
+    }
+
 
 
     public void update(Editor editor, Presentation presentation, DataContext dataContext) {

@@ -15,17 +15,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" readonly="true" id="838b5fb3-4615-4d11-8975-83a7b6dc177d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/adapter/JavaClass.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/adapter/JavaFile.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/GenerateTestCases.iml" afterPath="$PROJECT_DIR$/GenerateTestCases.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" afterPath="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/ui/codeinsight/generation/PsiDocAnnotationMember.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/escanear0005.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/docs/escanear0006.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/adapter/JavaMethod.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/adapter/TestClass.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/intellij/adapter/TestMethod.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README" afterPath="$PROJECT_DIR$/README" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" afterPath="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" />
     </list>
     <ignored path="$USER_HOME_GRIFFON$/" />
     <ignored path="$USER_HOME_GRAILS$/" />
@@ -44,6 +36,21 @@
     <disable_hints />
   </component>
   <component name="DebuggerManager">
+    <line_breakpoints>
+      <breakpoint url="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-api/src/com/intellij/psi/PsiElementVisitor.java" line="43" class="com.intellij.psi.PsiElementVisitor" package="com.intellij.psi">
+        <option name="ENABLED" value="true" />
+        <option name="LOG_ENABLED" value="false" />
+        <option name="LOG_EXPRESSION_ENABLED" value="false" />
+        <option name="SUSPEND_POLICY" value="SuspendAll" />
+        <option name="COUNT_FILTER_ENABLED" value="false" />
+        <option name="COUNT_FILTER" value="0" />
+        <option name="CONDITION_ENABLED" value="false" />
+        <option name="CLASS_FILTERS_ENABLED" value="false" />
+        <option name="INSTANCE_FILTERS_ENABLED" value="false" />
+        <option name="CONDITION" value="" />
+        <option name="LOG_MESSAGE" value="" />
+      </breakpoint>
+    </line_breakpoints>
     <breakpoint_any>
       <breakpoint>
         <option name="NOTIFY_CAUGHT" value="true" />
@@ -84,7 +91,53 @@
   </component>
   <component name="FileColors" enabled="true" enabledForTabs="true" />
   <component name="FileEditorManager">
-    <leaf />
+    <leaf>
+      <file leaf-file-name="GenerateTestMethods.java" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/intellij/GenerateTestMethods.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="145" column="0" selection-start="6121" selection-end="6121" vertical-scroll-proportion="-2.2014217">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PsiDocAnnotationMember.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/intellij/ui/codeinsight/generation/PsiDocAnnotationMember.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="76" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="GenerateTestCasesProjectComponent.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/intellij/GenerateTestCasesProjectComponent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="11" column="13" selection-start="246" selection-end="246" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PsiClass.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/PsiClass.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="297" column="8" selection-start="9574" selection-end="9574" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PsiIdentifier.java" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/PsiIdentifier.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="20" column="17" selection-start="686" selection-end="686" vertical-scroll-proportion="0.0">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -106,8 +159,10 @@
         <option value="$PROJECT_DIR$/src/intellij/adapter/TestClass.java" />
         <option value="$PROJECT_DIR$/src/intellij/adapter/TestMethod.java" />
         <option value="$PROJECT_DIR$/src/intellij/adapter/JavaClass.java" />
-        <option value="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" />
         <option value="$PROJECT_DIR$/src/intellij/ui/ShouldAnnotationsDialog.java" />
+        <option value="$PROJECT_DIR$/src/intellij/CreateTestClassVisitor.java" />
+        <option value="$PROJECT_DIR$/src/intellij/ui/codeinsight/generation/PsiDocAnnotationMember.java" />
+        <option value="$PROJECT_DIR$/src/intellij/GenerateTestMethods.java" />
       </list>
     </option>
   </component>
@@ -151,32 +206,12 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Favorites" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="GenerateTestCases" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="External Libraries" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ExternalLibrariesNode" />
             </PATH_ELEMENT>
           </PATH>
           <PATH>
@@ -200,6 +235,28 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="generation" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GenerateTestCases" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="GenerateTestCases" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="adapter" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -221,44 +278,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+        </subPane>
+      </pane>
+      <pane id="PackagesPane">
+        <subPane>
           <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="resources" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="images" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="GenerateTestCases" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="META-INF" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PackageViewModuleNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="project.structure.last.edited" value="SDKs" />
+    <property name="project.structure.last.edited" value="Project" />
     <property name="GoToFile.includeJavaFiles" value="false" />
     <property name="OverrideImplement.combined" value="true" />
     <property name="project.structure.proportion" value="0.15" />
@@ -272,13 +313,16 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="MemberChooser.showClasses" value="true" />
     <property name="GoToClass.includeLibraries" value="false" />
-    <property name="dynamic.classpath" value="false" />
-    <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="dynamic.classpath" value="false" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\jaime\openmrs\GenerateTestCases\resources" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="intellij.ui" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\jaime\openmrs\GenerateTestCases\docs" />
@@ -286,15 +330,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Plugin.GenerateTestCases">
-    <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP">
-      <method>
-        <option name="AntTarget" enabled="false" />
-        <option name="BuildArtifacts" enabled="false" />
-        <option name="FtpUpload" enabled="false" />
-        <option name="Maven.BeforeRunTask" enabled="false" />
-        <option name="ValidateXdebugSetup" enabled="true" />
-      </method>
-    </configuration>
     <configuration default="true" type="#org.jetbrains.idea.devkit.run.PluginConfigurationType" factoryName="Plugin">
       <module name="GenerateTestCases" />
       <option name="VM_PARAMETERS" value=" -Xms128m -Xmx512m -XX:MaxPermSize=250m -ea" />
@@ -304,6 +339,15 @@
         <option name="BuildArtifacts" enabled="false" />
         <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="PhpRunConfigurationType" factoryName="PHP">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="FtpUpload" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+        <option name="ValidateXdebugSetup" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
@@ -323,6 +367,14 @@
       <method>
         <option name="AntTarget" enabled="false" />
         <option name="BuildArtifacts" enabled="false" />
+        <option name="Maven.BeforeRunTask" enabled="false" />
+      </method>
+    </configuration>
+    <configuration default="true" type="FlexUnitRunConfigurationType" factoryName="FlexUnit">
+      <method>
+        <option name="AntTarget" enabled="false" />
+        <option name="BuildArtifacts" enabled="false" />
+        <option name="Make" enabled="true" />
         <option name="Maven.BeforeRunTask" enabled="false" />
       </method>
     </configuration>
@@ -500,7 +552,7 @@
     <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
     <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
     <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
-    <configuration useDefault="true">D:\Users\Jaime Hablutzel\AppData\Roaming\Subversion</configuration>
+    <configuration useDefault="true">C:\Documents and Settings\JHABLUTZEL\Datos de programa\Subversion</configuration>
     <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
     <supportedVersion>125</supportedVersion>
   </component>
@@ -513,14 +565,17 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1280" height="760" extended-state="0" />
+    <frame x="-4" y="-4" width="1448" height="878" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3272727" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="IntelliTrac" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32647464" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="JavaRebel Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34049585" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="DBHelper" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34019205" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="IDEtalk" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3278237" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -528,19 +583,16 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21610518" sideWeight="0.661157" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20961952" sideWeight="0.6639232" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.15936828" sideWeight="0.6639232" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29766804" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="IntelliTrac" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="DBHelper" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="DBOutput" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32921812" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="DBOutput" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
@@ -616,77 +668,107 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/intellij/GenerateTestCasesProjectComponent.java">
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/PsiMember.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="30" column="0" selection-start="566" selection-end="566" vertical-scroll-proportion="0.039719626" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/GenerateTestCases.iml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" />
-      </provider>
-    </entry>
-    <entry file="jar://$APPLICATION_HOME_DIR$/lib/openapi.jar!/com/intellij/psi/PsiClass.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="5" column="24" selection-start="165" selection-end="165" vertical-scroll-proportion="0.16545013" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="45" selection-start="382" selection-end="382" vertical-scroll-proportion="0.14945056" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/adapter/JavaFile.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="29" selection-start="198" selection-end="198" vertical-scroll-proportion="0.4857143" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/adapter/JavaMethod.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="9" column="4" selection-start="131" selection-end="131" vertical-scroll-proportion="0.33626375" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/adapter/TestMethod.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="10" column="40" selection-start="180" selection-end="180" vertical-scroll-proportion="0.37362638" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/adapter/TestClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="40" selection-start="136" selection-end="136" vertical-scroll-proportion="0.26153848" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/adapter/JavaClass.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="14" column="31" selection-start="231" selection-end="231" vertical-scroll-proportion="0.52307695" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/intellij/ui/ShouldAnnotationsDialog.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="33" column="0" selection-start="900" selection-end="900" vertical-scroll-proportion="0.7671233">
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state line="22" column="17" selection-start="772" selection-end="772" vertical-scroll-proportion="0.0">
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://D:/intellij/ideaIC-95.429/platform/platform-api/src/com/intellij/openapi/ui/DialogWrapper.java">
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/java-impl/src/com/intellij/codeInsight/generation/PsiElementClassMember.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="22" selection-start="1978" selection-end="1978" vertical-scroll-proportion="-44.52">
+        <state line="26" column="60" selection-start="937" selection-end="937" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/java-impl/src/com/intellij/codeInsight/generation/PsiMethodMember.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="69" selection-start="872" selection-end="905" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-api/src/com/intellij/codeInsight/generation/MemberChooserObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="24" column="17" selection-start="760" selection-end="760" vertical-scroll-proportion="0.30425057">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-api/src/com/intellij/codeInsight/generation/ClassMember.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="17" selection-start="689" selection-end="689" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-impl/src/com/intellij/ide/util/MemberChooser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="281" column="39" selection-start="10303" selection-end="10303" vertical-scroll-proportion="-0.38139534">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-api/src/com/intellij/codeInsight/generation/PsiElementMemberChooserObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="38" column="18" selection-start="1294" selection-end="1294" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/java-impl/src/com/intellij/psi/impl/source/javadoc/PsiDocTagImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="119" column="46" selection-start="4014" selection-end="4014" vertical-scroll-proportion="3.360465">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/platform/lang-api/src/com/intellij/psi/PsiElementVisitor.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="55" column="0" selection-start="1523" selection-end="1523" vertical-scroll-proportion="0.35346755">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/javadoc/PsiDocTag.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="17" selection-start="815" selection-end="815" vertical-scroll-proportion="0.22818792">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/PsiIdentifier.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="20" column="17" selection-start="686" selection-end="686" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../intellij/ideaIC-95.429/java/openapi/src/com/intellij/psi/PsiClass.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="297" column="8" selection-start="9574" selection-end="9574" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/intellij/ui/codeinsight/generation/PsiDocAnnotationMember.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="76" selection-start="465" selection-end="465" vertical-scroll-proportion="0.0">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/intellij/GenerateTestCasesProjectComponent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="11" column="13" selection-start="246" selection-end="246" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/intellij/GenerateTestMethods.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="54" column="26" selection-start="1957" selection-end="1957" vertical-scroll-proportion="0.73142856">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/META-INF/plugin.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="119" selection-end="119" vertical-scroll-proportion="0.13972603">
+        <state line="145" column="0" selection-start="6121" selection-end="6121" vertical-scroll-proportion="-2.2014217">
           <folding />
         </state>
       </provider>

@@ -3,12 +3,14 @@ package intellij;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiMethod;
 import com.intellij.psi.util.PsiTreeUtil;
+import intellij.ui.ShouldAnnotationsDialog;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -49,6 +51,9 @@ public class GenerateTestMethods extends AnAction {
             // TODO crear structureViewModel e instanciar, bassarme en com.intellij.ide.actions.ViewStructureAction
             // return new FileStructureDialog(structureViewModel, editor, project, navigatable, alternativeDisposable, true);
 //            new com.intellij.ide.util.MemberChooser();
+            DialogWrapper dialog = new ShouldAnnotationsDialog(project);
+            dialog.show();
+
 
             // TODO modificar el structureViewModel y crear un modelo de arbol con los metodos y anotaciones should debajo
             // TODo considerar el uso del MemberChooser

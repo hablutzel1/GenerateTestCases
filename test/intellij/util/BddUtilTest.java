@@ -1,22 +1,41 @@
 package intellij.util;
 
 
-import com.intellij.openapi.application.PluginPathManager;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.testFramework.IdeaTestCase;
-import com.intellij.testFramework.LightIdeaTestCase;
-import org.junit.Assert;
+import intellij.test.ExpectExceptionsExecutor;
+import intellij.test.ExpectExceptionsTemplate;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import java.io.File;
 
 // important :)
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
+
+/**
+ * TODO find out how to extends Junit 3 test class and run it with Junit 4 annotatiosn
+ * temporarily methods names has been changed to include the test word at the beginnig
+ *
+ */
 public class BddUtilTest extends IdeaTestCase {
 
+
+
+//
+//    @Before
+//    @Override
+//    public void setUp() throws Exception {
+//        super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
+//    }
+//
+//    @After
+//    @Override
+//    public void tearDown() throws Exception {
+//        super.tearDown();    //To change body of overridden methods use File | Settings | File Templates.
+//    }
+
+
+    //
+//    public static junit.framework.Test suite() {
+//        return new JUnit4TestAdapter(BddUtilTest.class);
+//    }
 //
 //    @Override
 //    protected void setUp() throws Exception {
@@ -34,7 +53,7 @@ public class BddUtilTest extends IdeaTestCase {
      * @see BddUtil#generateTestMethodName(String,String)
      */
     @Test
-    public void generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod()
+    public void testGenerateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod()
             throws Exception {
 
         String methodName = "generateTestMethodName";
@@ -42,15 +61,35 @@ public class BddUtilTest extends IdeaTestCase {
         String testMethodName = BddUtil.generateTestMethodName(methodName, description);
         assertEquals("generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod", testMethodName);
 
-	}
+    }
 
-	/**
-	 * @see BddUtil#generateTestMethodName(String,String)
-	 * @verifies fail if wrong args
-	 */
-	@Test
-	public void generateTestMethodName_shouldFailIfWrongArgs() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
+    /**
+     * @verifies fail if wrong args
+     * @see BddUtil#generateTestMethodName(String,String)
+     */
+    @Test
+    public void testGenerateTestMethodName_shouldFailIfWrongArgs() throws Exception {
+
+        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
+            public Class getExpectedException() {
+                return IllegalArgumentException.class;
+            }
+
+            public void doInttemplate() {
+                BddUtil.generateTestMethodName("", "");
+            }
+        });
+
+        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
+            public Class getExpectedException() {
+                return IllegalArgumentException.class;
+            }
+
+            public void doInttemplate() {
+                BddUtil.generateTestMethodName(null, null);
+            }
+        });
+
+
 	}
 }

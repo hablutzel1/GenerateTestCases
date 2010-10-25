@@ -1,11 +1,16 @@
 package intellij.util;
 
+import org.apache.commons.lang.StringUtils;
+
 /**
  * User: Jaime Hablutzel
  */
 public class BddUtil {
 
     /**
+     *
+     * TODO the plugin should have support for generating junit 3 test methods (this is: with test as prefix for the name
+     * and without annotations).
      * @param originMethodName
      * @param shouldDescription
      * @return
@@ -13,6 +18,12 @@ public class BddUtil {
      * @should fail if wrong args
      */
     public static String generateTestMethodName(String originMethodName, String shouldDescription) {
+
+        if (StringUtils.isBlank(originMethodName) || StringUtils.isBlank(shouldDescription)) {
+                                                                                              throw new IllegalArgumentException();
+        }
+
+
         StringBuilder builder = new StringBuilder(originMethodName
                 + "_should");
         String[] tokens = shouldDescription.split("\\s+");

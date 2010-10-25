@@ -1,6 +1,6 @@
 <idea-plugin version="2">
-  <name>Plugin name here</name>
-  <description>short description of the plugin</description>
+  <name>GenerateTestCases</name>
+  <description>GenerateTestCases plugin </description>
   <version>1.0</version>
   <vendor>YourCompany</vendor>
   <idea-version since-build="8000"/>
@@ -18,7 +18,7 @@
 
   <actions>
     <!-- Add your actions here -->
-      <action id="intellij.GenerateTestMethods" class="intellij.GenerateTestMethods" text="Generate Test Methods"
+      <action id="intellij.actions.GenerateTestMethods" class="intellij.actions.GenerateTestMethods" text="Generate Test Methods"
               description="It generates BDD test methods for class" >
           <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
       </action>

@@ -23,7 +23,6 @@ public class BddUtil {
                                                                                               throw new IllegalArgumentException();
         }
 
-
         StringBuilder builder = new StringBuilder(originMethodName
                 + "_should");
         String[] tokens = shouldDescription.split("\\s+");

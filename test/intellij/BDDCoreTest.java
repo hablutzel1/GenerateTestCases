@@ -1,26 +1,22 @@
 package intellij;
 
 
+import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PluginPathManager;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.OrderRootType;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.roots.libraries.Library;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.testFramework.IdeaTestCase;
-import com.intellij.testFramework.LightIdeaTestCase;
 import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-import java.io.File;
+import java.util.List;
+
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNull.*;
+import static org.junit.Assert.*;
 
 //@RunWith(JUnit4.class)
 
@@ -58,7 +54,7 @@ public class BDDCoreTest extends PsiTestCase {
 
     /**
      * @verifies create a new test class with test methods unitialized
-     * @see BDDCore#createTestClass(Project,PsiClass)
+     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project,com.intellij.psi.PsiClass,com.intellij.psi.PsiDirectory)
      */
 //	@Test
     public void testCreateTestClass_shouldCreateANewTestClassWithTestMethodsUnitialized()
@@ -68,10 +64,42 @@ public class BDDCoreTest extends PsiTestCase {
         //  get project
         Project project = getProject();
 
-        // TODO create PsiClass with two methods, and some @should annotations
-        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-        PsiClass psiClass = elementFactory.createClassFromText("public class B {} ", null);
-        VirtualFile baseDir = project.getBaseDir();
+        //  create PsiClass with two methods, and some @should annotations
+//        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+
+
+        String text = "public interface Foo {\n" +
+                "\n" +
+                "\t/**\n" +
+                "\t * Get user by internal user identifier.\n" +
+                "\t * \n" +
+                "\t * @param userId internal identifier\n" +
+                "\t * @return requested user\n" +
+                "\t * @throws APIException\n" +
+                "\t * @should fetch user with given userId\n" +
+                "\t */\n" +
+                "\tpublic String getUser(Integer userId);\n" +
+                "\n" +
+                "\n" +
+                "\t/**\n" +
+                "\t * Get user by the given uuid.\n" +
+                "\t * \n" +
+                "\t * @param uuid\n" +
+                "\t * @return\n" +
+                "\t * @throws APIException\n" +
+                "\t * @should fetch user with given uuid\n" +
+                "\t * @should find object given valid uuid\n" +
+                "\t * @should return null if no object found with given uuid\n" +
+                "\t */\n" +
+                "\tpublic String getUserByUuid(String uuid);\n" +
+                "\n" +
+                "}";
+
+        FileType type = StdFileTypes.JAVA;
+        PsiJavaFile javaFile = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(type, "Foo.java", text, 0, text.length());
+        final PsiClass[] classes = javaFile.getClasses();
+
+        final PsiClass createdClass = classes[0];
 
         //  create or get source root
         ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
@@ -81,17 +109,42 @@ public class BDDCoreTest extends PsiTestCase {
         PsiManager psiManager = PsiManager.getInstance(project);
         PsiDirectory psiDirectory = psiManager.findDirectory(root);
 
-        // TODO create a package: com.example
+        //  create a package: com.example
+        final PsiDirectory myPackage = DirectoryUtil.createSubdirectories("com.example", psiDirectory, ".");
 
-        // TODO create class there
-        TestClass testClass = BDDCore.createTestClass(null, null);
+        //  put class in package and ensure it is tehere
+        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+            public void run() {
+                JavaDirectoryService.getInstance().checkCreateInterface(myPackage, "Foo");
+                PsiFile containingFile = createdClass.getContainingFile();
+                containingFile.setName("Foo.java");
+                myPackage.add(containingFile);
+            }
+        });
 
-        // TODO verificar que el retorno sea valido
+
+        //  create class there
+        TestClass testClass = BDDCore.createTestClass(project, createdClass, myPackage);
+
+        //  verificar que el retorno sea valido
+        assertThat(testClass, notNullValue());
+
+        // TODO verificar que se haya creado el archivo de pruebas en el mismo paquete (dentro del testroot)
+//        fail();
+
+//        PsiFile testFile = myPackage.findFile("FooTest.java");
+//        assertThat(testFile, is(not(null)));
 
 
-        // TODO verificar la cantidad y el estado de los TestMethod's esperados
+        //  verificar la cantidad y el estado de los TestMethod's esperados
+        assertThat(testClass.getAllMethods().size(), is(4));
 
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
+        List<TestMethod> methods = testClass.getAllMethods();
+        for (TestMethod method : methods) {
+            assertThat(method.reallyExists(), is(false));
+        }
+
     }
+
+
 }

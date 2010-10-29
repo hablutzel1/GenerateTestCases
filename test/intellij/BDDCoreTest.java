@@ -11,6 +11,8 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
+import junit.framework.Assert;
+import org.junit.Test;
 
 import java.util.List;
 
@@ -127,10 +129,7 @@ public class BDDCoreTest extends PsiTestCase {
         TestClass testClass = BDDCore.createTestClass(project, createdClass, myPackage);
 
         //  verificar que el retorno sea valido
-        assertThat(testClass, notNullValue());
-
-        // TODO verificar que se haya creado el archivo de pruebas en el mismo paquete (dentro del testroot)
-//        fail();
+        assertThat(" test class returned " , testClass, notNullValue());
 
 //        PsiFile testFile = myPackage.findFile("FooTest.java");
 //        assertThat(testFile, is(not(null)));
@@ -145,6 +144,21 @@ public class BDDCoreTest extends PsiTestCase {
         }
 
     }
+
+
+	/**
+	 * @see BDDCore#createTestClass(Project,PsiClass,PsiDirectory)
+	 * @verifies return a test class that already exists for a sut class with some test methods initialized
+	 */
+	@Test
+	public void testCreateTestClass_shouldReturnATestClassThatAlreadyExistsForASutClassWithSomeTestMethodsInitialized()
+			throws Exception {
+
+        // TODO create test class
+
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
 
 
 }

@@ -1,20 +1,58 @@
-El nombre totalmente calificado de la unidad de compilacion correspondiente a TestClass debe ser unico en el classpath y
-por lo tatno se debe adoptar una estrategia de nombrado de archivos que impida qla colision de nombres, por lo cual se deben considerar
-las clases locales, internas (estaticas o de instancia) y las clases publicas.
+Generates Test Cases is  a port of Eclipse's generate test cases plugin described here:
+http://wiki.openmrs.org/display/archive/Generate+Test+Case+Eclipse+Plugin
 
-Una estrategia podria ser (archivo escaneado)
+This project aims to make it easier to make TDD with a really cool and easy approach that consist in
+ annotating interface method with desired behaviours like this:
+
+public interface Person {
+
+    /**
+     *
+     * @return
+     * @should say hello, and nothing more that that
+     */
+    String sayHello();
+}
+
+So with this plugin you could generate a test class for this interface like this one automatically:
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class PersonTest {
+
+	/**
+	 * @see Person#sayHello()
+	 * @verifies say hello, and nothing more that that
+	 */
+	@Test
+	public void sayHello_shouldSayHelloAndNothingMoreThatThat() throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
+}
+
+And then test your implementation code like this
 
 
-public class TipoDispositivoFileMetadataProviderTest extends KardexBaseContextSensitiveTest {
+    public void sayHello_shouldSayHelloAndNothingMoreThatThat() throws Exception {
+        assertThat(intance.sayHello(), is("hello world"));
+
+	}
 
 
+This way you can realize that for testing this behaviour you just wrote the should annotation in the sut (system under test) in a really
+descriptive way.
 
+    /**
+     *
+     * @return
+     * @should say hello, and nothing more that that
+     */
+    String sayHello();
 
-    public  static class FooTest   extends  KardexBaseContextSensitiveTest {
+Auto-generated the test class and test method (using the plugin) and then tested the actual expected behaviour with (hamcrest style junit test):
 
-        @Test
-        public void getConfigurationFile_shouldDevolverUnArchivoFile() throws Exception {
-            fail();
-        }
+     assertThat(intance.sayHello(), is("hello world"));
 
-    }
+Nothing more.

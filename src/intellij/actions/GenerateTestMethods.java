@@ -1,5 +1,6 @@
 package intellij.actions;
 
+import com.intellij.codeInsight.TestUtil;
 import com.intellij.codeInsight.generation.ClassMember;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.openapi.actionSystem.*;
@@ -12,6 +13,7 @@ import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.util.PsiTreeUtil;
 import intellij.GenerateTestCasesProjectComponent;
 import intellij.ui.codeinsight.generation.PsiDocAnnotationMember;
+import intellij.util.BddUtil;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -135,7 +137,7 @@ public class GenerateTestMethods extends AnAction {
                     String shouldDescription = anotacionShould.getText();
                     PsiElement element = anotacionShould.getElement();
                     String nombreMetodoDeOrigen = ((PsiMethod) element.getParent().getParent()).getName();
-                    String nombreMetodoDePrueba = generateTestMethodName(nombreMetodoDeOrigen, shouldDescription);
+                    String nombreMetodoDePrueba = BddUtil.generateTestMethodName(nombreMetodoDeOrigen, shouldDescription);
                     // TODO verificar si el metodo que se desea crear no existe
 
                     //  crear metodo con retorno void y este nombre generado en claseDePruebas
@@ -171,27 +173,7 @@ public class GenerateTestMethods extends AnAction {
     }
 
 
-    	private String generateTestMethodName(String originMethodName, String shouldDescription) {
-
-            // TODO mover a una clase estatica y validar argumentos
-
-		StringBuilder builder = new StringBuilder(originMethodName
-				+ "_should");
-		String[] tokens = shouldDescription.split("\\s+");
-		for (String token : tokens) {
-
-			char[] allChars = token.toCharArray();
-			StringBuilder validChars = new StringBuilder();
-			for (char validChar : allChars) {
-				if (Character.isJavaIdentifierPart(validChar)) {
-					validChars.append(validChar);
-				}
-			}
-
-			builder.append(toCamelCase(validChars.toString()));
-		}
-		return builder.toString();
-	}
+    	
 
     private static String toCamelCase(String input) {
         assert input != null;

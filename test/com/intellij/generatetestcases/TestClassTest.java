@@ -12,6 +12,7 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.generatetestcases.test.BaseTests;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -187,4 +188,26 @@ public class TestClassTest extends BaseTests {
         }
         return returnContentSourceRoot;
     }
+
+	/**
+	 * @see TestClass#getAllMethods()
+	 * @verifies always reflect the test class state of created methods
+	 */
+	@Test
+	public void testgetAllMethods_shouldAlwaysReflectTheTestClassStateOfCreatedMethods()
+			throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
+
+	/**
+	 * @see TestClass#getAllMethods()
+	 * @verifies get all test methods matching sut should tags
+	 */
+	@Test
+	public void testgetAllMethods_shouldGetAllTestMethodsMatchingSutShouldTags()
+			throws Exception {
+		//TODO auto-generated
+		Assert.fail("Not yet implemented");
+	}
 }

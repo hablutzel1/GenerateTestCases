@@ -1,6 +1,7 @@
 package com.intellij.generatetestcases.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: Jaime Hablutzel
@@ -17,7 +18,7 @@ public class BddUtil {
      * @should create a appropiate name for the test method
      * @should fail if wrong args
      */
-    public static String generateTestMethodName(String originMethodName, String shouldDescription) {
+    public static String generateTestMethodName(@NotNull String originMethodName, @NotNull String shouldDescription) {
 
         if (StringUtils.isBlank(originMethodName) || StringUtils.isBlank(shouldDescription)) {
                                                                                               throw new IllegalArgumentException();
@@ -25,6 +26,7 @@ public class BddUtil {
 
         StringBuilder builder = new StringBuilder(originMethodName
                 + "_should");
+        @NotNull
         String[] tokens = shouldDescription.split("\\s+");
         for (String token : tokens) {
             char[] allChars = token.toCharArray();

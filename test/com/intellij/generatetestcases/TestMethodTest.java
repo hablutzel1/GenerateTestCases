@@ -14,6 +14,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.*;
 
@@ -35,7 +36,7 @@ public class TestMethodTest extends BaseTests {
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, null);
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass));
         TestMethod tm = tm1;
         String description = tm.getDescription();
 
@@ -71,7 +72,7 @@ public class TestMethodTest extends BaseTests {
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, null);
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass));
         TestMethod tm = tm1;
         assertThat(tm.getSutMethod().getName(), is("getUserByUuid"));
 
@@ -141,48 +142,99 @@ public class TestMethodTest extends BaseTests {
         assertThat(tm.reallyExists(), is(false));
 
 
-	}
+    }
 
-	/**
-	 * @see TestMethod#create()
-	 * @verifies add required imports in test class as required for its javadoc and its body
-	 */
-	@Test
-	public void testcreate_shouldAddRequiredImportsInTestClassAsRequiredForItsJavadocAndItsBody()
-			throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+    /**
+     * @verifies add required imports in test class as required for its javadoc and its body
+     * @see TestMethod#create()
+     */
+    @Test
+    public void testcreate_shouldAddRequiredImportsInTestClassAsRequiredForItsJavadocAndItsBody()
+            throws Exception {
 
-	/**
-	 * @see TestMethod#create()
-	 * @verifies create a test method with the expected body and javadoc
-	 */
-	@Test
-	public void testcreate_shouldCreateATestMethodWithTheExpectedBodyAndJavadoc()
-			throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+        // TODO create sut and test psi classes where test class doesn't have all required imports
 
-	/**
-	 * @see TestMethod#create()
-	 * @verifies create the current test method
-	 */
-	@Test
-	public void testcreate_shouldCreateTheCurrentTestMethod() throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+        // TODO this is an oportunity to implement test framework strategy
 
-	/**
-	 * @see TestMethod#create()
-	 * @verifies create the parent in the same content source root that its backing method if it didn't exist already
-	 */
-	@Test
-	public void testcreate_shouldCreateTheParentInTheSameContentSourceRootThatItsBackingMethodIfItDidntExistAlready()
-			throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies create a test method with the expected body and javadoc
+     * @see TestMethod#create()
+     */
+    @Test
+    public void testcreate_shouldCreateATestMethodWithTheExpectedBodyAndJavadoc()
+            throws Exception {
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
+
+    /**
+     * @verifies create the current test method
+     * @see TestMethod#create()
+     */
+    @Test
+    public void testcreate_shouldCreateTheCurrentTestMethod() throws Exception {
+
+        //  create a psi sut
+        PsiClass psiClass = createSutClass(myProject);
+        //  create a psi test class
+        createTestClassForSut(myProject);
+
+        //  create TestClass
+        TestClass testClass = BDDCore.createTestClass(myProject, psiClass);
+
+        //  get test method
+        List<TestMethod> methods = testClass.getAllMethods();
+
+        //  verify it is unitialized
+
+        TestMethod tm = findTestMethodInCollection(methods, "find object given valid uuid", "getUserByUuid");
+        assertThat(tm.reallyExists(), is(false));
+
+        //  create it
+        tm.create();
+
+        //  verify it got initialized and its backing method exists
+
+        assertThat(tm.reallyExists(), is(true));
+        assertThat(tm.getBackingMethod(), is(not(nullValue())));
+
+        //  assert the backing test method is the right one
+
+        assertThat(tm.getBackingMethod().getName(), is("getUserByUuid_shouldFindObjectGivenValidUuid"));
+    }
+
+    /**
+     * @verifies create the parent in the same content source root that its backing method if it didn't exist already
+     * @see TestMethod#create()
+     */
+    @Test
+    public void testcreate_shouldCreateTheParentInTheSameContentSourceRootThatItsBackingMethodIfItDidntExistAlready()
+            throws Exception {
+            //  create a psi sut without psi test class
+
+
+        //  create TestClass
+
+
+        //  get test method
+
+
+        //  verify test method  is unitialized
+
+        // TODO verify test class is unitialized and backingClass is null
+
+        //  create it
+
+        // get the parent test class backing psi class,
+
+        // TODO assert location is the same that sut class
+
+
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
 }

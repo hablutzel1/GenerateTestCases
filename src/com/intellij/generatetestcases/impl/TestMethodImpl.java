@@ -3,10 +3,10 @@ package com.intellij.generatetestcases.impl;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiMethod;
+import com.intellij.openapi.project.Project;
+import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * User: Jaime Hablutzel
@@ -21,10 +21,13 @@ public class TestMethodImpl implements TestMethod {
     private String description;
 
     private TestClass parent;
-    private PsiMethod backingMethod;
 
-    public TestMethodImpl(PsiDocTag shouldTag, TestClass parent) {
+    private PsiMethod backingMethod;
+    private Project project;
+
+    public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent) {
         this.shouldTag = shouldTag;
+        this.project = shouldTag.getProject();
 
 
         //  obtener el metodo a partir del docTag
@@ -34,6 +37,10 @@ public class TestMethodImpl implements TestMethod {
 
         //  bind the current test parent...
         // TODO get this using the shouldTag, or investigate it better
+        // TO get the TestClass parent from here without passing it through the constructor
+        // it would be needed to implement a registry where we could look for instances for
+        // some determined class to guarantee that uniqueness of parents for test methods
+        //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
         this.parent = parent;
         PsiMethod backingMethod = resolveBackingMethod(parent);
         this.backingMethod = backingMethod;
@@ -43,16 +50,28 @@ public class TestMethodImpl implements TestMethod {
 
     private PsiMethod resolveBackingMethod(TestClass parent) {
         //  resolve (find) backing test method in test class
-        String nombreMetodoDePrueba = BddUtil.generateTestMethodName(sutMethod.getName(), description);
+        String nombreMetodoDePrueba = getExpectedNameForThisTestMethod();
         PsiClass parentBackingClass = null;
         PsiMethod backingMethod = null;
         if (parent != null && null != (parentBackingClass = parent.getBackingClass())) {
             PsiMethod[] byNameMethods = parentBackingClass.findMethodsByName(nombreMetodoDePrueba, false);
             if (byNameMethods.length > 0) {
-           backingMethod      = byNameMethods[0];
+                backingMethod = byNameMethods[0];
             }
         }
         return backingMethod;
+    }
+
+    /**
+     * It returns the expected name for this method, it could make use
+     * of an strategy for naming, investigate it further
+     *
+     *
+     * @return
+     */
+    @NotNull
+    private String getExpectedNameForThisTestMethod() {
+        return BddUtil.generateTestMethodName(sutMethod.getName(), description);
     }
 
 
@@ -79,11 +98,35 @@ public class TestMethodImpl implements TestMethod {
     }
 
     public boolean reallyExists() {
-        return(null != resolveBackingMethod(parent)) ?true:false;
+        return (null != resolveBackingMethod(parent)) ? true : false;
 
     }
 
     public void create() {
+
+
+        if (parent == null) {
+            // TODO need to look for the parent psi test class in some other way
+            // TODO create a stub for the parent or look in registry
+            // TODO log it 
+        } else if (parent != null && !parent.reallyExists()) {
+            //  if parent doesn't exist, create it
+            parent.create(null);
+
+        }
+
+        //  if it exists, just create this method
+        PsiClass psiClass = parent.getBackingClass();
+        // TODO get test method name
+
+        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+
+
+        PsiMethod metodoDePrueba = elementFactory.createMethod(getExpectedNameForThisTestMethod(), PsiType.VOID);
+
+        //  correr esto dentro de un write-action   ( Write access is allowed inside write-action only )
+        psiClass.add(metodoDePrueba);
+
 
     }
 

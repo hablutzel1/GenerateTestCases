@@ -11,6 +11,12 @@ import java.util.List;
 public interface TestClass {
 
 
+    /**
+     *
+     * @return
+     * @should get all test methods matching sut should tags
+     * @should always reflect the test class state of created methods
+     */
     List<TestMethod> getAllMethods();
 
     // TODO agregar metodos para buscar metodos de prueba

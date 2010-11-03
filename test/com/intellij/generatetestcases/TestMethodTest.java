@@ -214,13 +214,20 @@ public class TestMethodTest extends BaseTests {
     @Test
     public void testcreate_shouldCreateTheParentInTheSameContentSourceRootThatItsBackingMethodIfItDidntExistAlready()
             throws Exception {
-            //  create a psi sut without psi test class
 
+        //  create a psi sut without psi test class
+        String text = "package com.example;  public interface FooBar {" +
+                "" +
+                "" +
+                "" +
+                "}";
+        PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
 
         //  create TestClass
-
+        TestClass testClass = BDDCore.createTestClass(myProject, aClass);
 
         //  get test method
+//        assertThat(testClass.getAllMethods().size(), is(0));
 
 
         //  verify test method  is unitialized

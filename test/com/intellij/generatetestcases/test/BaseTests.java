@@ -1,20 +1,24 @@
 package com.intellij.generatetestcases.test;
 
+import com.intellij.generatetestcases.BDDCore;
+import com.intellij.generatetestcases.TestMethod;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
-import com.intellij.generatetestcases.TestMethod;
 import org.junit.Ignore;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -27,13 +31,11 @@ public class BaseTests extends PsiTestCase {
     private PsiClass javaTestClass;
     public PsiDirectory sourceRootDirectory;
 
-    
 
     @Override
     protected Sdk getTestProjectJdk() {
         return JavaSdkImpl.getMockJdk15("java 1.5");
     }
-
 
 
     protected void setUp() throws Exception {
@@ -54,15 +56,56 @@ public class BaseTests extends PsiTestCase {
                             PsiDirectory psiDirectory = getSourcePackageRoot(project);
                             BaseTests.this.sourceRootDirectory = psiDirectory;
                             comExamplePackage = DirectoryUtil.createSubdirectories(containingPackage, psiDirectory, ".");
+
+
+                            //  add junit to classpath
+                            //  add home path
+                            String path = getPluginHomePath();
+
+                            String jarName = "junit-4.7.jar";
+
+                            String junitLibraryPath = path + File.separatorChar + "testData"+ File.separatorChar +  "lib" + File.separatorChar;
+//                            final File junitLibraryFile = new File(junitLibraryPath + "/" + jarName);
+
+                            PsiTestUtil.addLibrary(myModule, "Junit",junitLibraryPath, jarName );
+//                            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.getCanonicalPath().replace(File.separatorChar, '/'));
+//                            addLibraryToRoots(file, OrderRootType.CLASSES);
+
+
                         }
                         catch (Exception e) {
                             LOG.error(e);
                         }
+
+
                     }
                 }
         );
 
 
+    }
+
+    private static String getPluginHomePath() {
+        final Class aClass = BDDCore.class;
+        String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
+        assert rootPath != null;
+        File root = new File(rootPath).getAbsoluteFile();
+        do {
+            final String parent = root.getParent();
+            if (parent == null) continue;
+            root = new File(parent).getAbsoluteFile(); // one step back to get folder
+        }
+        while (root != null && !isIdeaHome(root));
+        String s = root != null ? root.getAbsolutePath() : null;
+        String path = new File(s, "plugins/" + "GenerateTestCases").getPath();
+
+//        LocalFileSystem.getInstance().refreshAndFindFileByPath(path.replace(File.separatorChar, '/'));
+        return path;
+    }
+
+    private static boolean isIdeaHome(final File root) {
+        return new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
+                new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
     }
 
     /**
@@ -159,15 +202,15 @@ public class BaseTests extends PsiTestCase {
 
                 //  change it to create classes using JavaDirectoryService   strategy
                 FileType type = StdFileTypes.JAVA;
-                 javaFile[0] = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(type, className + ".java", text, 0, text.length());
+                javaFile[0] = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(type, className + ".java", text, 0, text.length());
                 final PsiClass[] classes = javaFile[0].getClasses();
 //                final PsiClass createdClass = classes[0];
-                String fileName  = className + ".java";
+                String fileName = className + ".java";
 
                 JavaDirectoryService.getInstance().checkCreateInterface(inPackage, className);
                 javaFile[0] = (PsiJavaFile) javaFile[0].setName(fileName);
 //                PsiFile containingFile = createdClass.getContainingFile();
-              javaFile[0] = (PsiJavaFile) inPackage.add(javaFile[0]);
+                javaFile[0] = (PsiJavaFile) inPackage.add(javaFile[0]);
 
             }
         });

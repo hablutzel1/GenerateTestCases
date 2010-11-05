@@ -3,20 +3,21 @@ package com.intellij.generatetestcases;
 
 import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.javadoc.PsiDocMethodOrFieldRef;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.generatetestcases.test.BaseTests;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.core.Is.*;
+import static org.junit.Assert.*;
 
 public class TestMethodTest extends BaseTests {
 
@@ -179,16 +180,7 @@ public class TestMethodTest extends BaseTests {
                 "import org.junit.Assert;\n" +
                 "import org.junit.Test;\n" +
                 "\n" +
-                "public class FooBarTest {\n" +
-                "\t/**\n" +
-                "\t * @see FooBar#zas()\n" +
-                "\t * @verifies do nothing\n" +
-                "\t */\n" +
-                "\t@org.junit.Test\n" +
-                "\tpublic void zas_shouldDoNothing() throws Exception {\n" +
-                "\t\t//TODO auto-generated\n" +
-                "\t\tAssert.fail(\"Not yet implemented\");\n" +
-                "\t}\n" +
+                "public class FooBarTest {\n" +   
                 "}";
         createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
 
@@ -197,53 +189,59 @@ public class TestMethodTest extends BaseTests {
 
         //  get unitialized test method
         TestMethod testMethod = testClass.getAllMethods().get(0);
-//        assertThat(testMethod.reallyExists(), is(false));
+        assertThat(testMethod.reallyExists(), is(false));
 
         //  actually create
-//        testMethod.create();
+        testMethod.create();
 
         //  verify backing method structure like this one
+
+        /////////////////////////////////////////////////
+        //	/**
+        //	 * @see FooBar#zas()
+        //	 * @verifies do nothing
+        //	 */
+        //	@Test
+        //	public void zas_shouldDoNothing() throws Exception {
+        //		//TODO auto-generated
+        //		Assert.fail("Not yet implemented");
+        //	}
+        //////////////////////////////////////////////////
+
+
         PsiMethod backingMethod = testMethod.getBackingMethod();
 
 
         PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
         assertThat(docTags.length, is(2));
-        assertThat(docTags[0].getName(), is("see") );
+        assertThat(docTags[0].getName(), is("see"));
         assertThat(((PsiDocMethodOrFieldRef) docTags[0].getValueElement()).getText(), is("com.example.FooBar#zas()"));
 
-        assertThat(docTags[1].getName(), is("verifies") );
+        assertThat(docTags[1].getName(), is("verifies"));
         PsiElement[] elements = docTags[1].getDataElements();
         String verifiesDescription = "";
         for (PsiElement element : elements) {
             verifiesDescription += element.getText() + " ";
         }
         verifiesDescription = verifiesDescription.trim();
-        assertThat(verifiesDescription, is ("do nothing"));
+        assertThat(verifiesDescription, is("do nothing"));
 
         //  assert for test annotation
-                //  get qualified name, consider the package
+        //  get qualified name, consider the package
 //        PsiAnnotation annotation = (PsiAnnotation) backingMethod.getModifierList().getAnnotations()[0].getOriginalElement();
         assertThat(backingMethod.getModifierList().getAnnotations()[0].getQualifiedName(), is("org.junit.Test"));
-        // TODO assert presence of throws clause
-        //backingMethod.getThrowsList().getReferencedTypes()[0]
 
-        // TODO assert comment in the body
+        //  assert presence of throws clause
+        assertThat(backingMethod.getThrowsList().getReferencedTypes()[0].getCanonicalText(), is("java.lang.Exception"));
 
-        // TODO assert Assert.fail... is present
+        MethodBodyVisitor bodyVisitor = new MethodBodyVisitor();
+        backingMethod.getBody().acceptChildren(bodyVisitor);
+        //  assert comment in the body
+        assertThat(bodyVisitor.getComments().get(0).getText(), is("//TODO auto-generated"));
 
+        // assert Assert.fail... is present
+        assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
 
-//	/**
-//	 * @see FooBar#zas()
-//	 * @verifies do nothing
-//	 */
-//	@Test
-//	public void zas_shouldDoNothing() throws Exception {
-//		//TODO auto-generated
-//		Assert.fail("Not yet implemented");
-//	}
-
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
     }
 
     /**
@@ -337,5 +335,44 @@ public class TestMethodTest extends BaseTests {
                 "}";
         PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
         return aClass;
+    }
+
+    /**
+     * Counts comments and statements in a pSi method body
+     */
+    private static class MethodBodyVisitor extends PsiElementVisitor {
+        public List<PsiComment> getComments() {
+            return comments;
+        }
+
+        public List<PsiStatement> getStatements() {
+            return statements;
+
+
+        }
+
+
+        private MethodBodyVisitor() {
+            comments  = new ArrayList<PsiComment>();
+            statements = new ArrayList<PsiStatement>();
+        }
+
+        private List<PsiComment> comments;
+        private List<PsiStatement> statements;
+
+
+        @Override
+        public void visitComment(PsiComment comment) {
+
+            this.comments.add(comment);
+        }
+
+        @Override
+        public void visitElement(PsiElement element) {
+            if (element instanceof PsiStatement) {
+                PsiStatement psiStatement = (PsiStatement)element;
+                this.statements.add(psiStatement);
+            }
+        }
     }
 }

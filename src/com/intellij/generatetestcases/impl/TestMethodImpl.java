@@ -5,6 +5,7 @@ import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,10 +25,13 @@ public class TestMethodImpl implements TestMethod {
 
     private PsiMethod backingMethod;
     private Project project;
+    private PsiElementFactory elementFactory;
 
     public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent) {
         this.shouldTag = shouldTag;
         this.project = shouldTag.getProject();
+
+        elementFactory = JavaPsiFacade.getElementFactory(project);
 
 
         //  obtener el metodo a partir del docTag
@@ -65,7 +69,6 @@ public class TestMethodImpl implements TestMethod {
     /**
      * It returns the expected name for this method, it could make use
      * of an strategy for naming, investigate it further
-     *
      *
      * @return
      */
@@ -117,15 +120,32 @@ public class TestMethodImpl implements TestMethod {
 
         //  if it exists, just create this method
         PsiClass psiClass = parent.getBackingClass();
-        // TODO get test method name
-
-        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+        //  get test method name
 
 
-        PsiMethod metodoDePrueba = elementFactory.createMethod(getExpectedNameForThisTestMethod(), PsiType.VOID);
+        PsiMethod factoriedTestMethod = elementFactory.createMethod(getExpectedNameForThisTestMethod(), PsiType.VOID);
 
         //  correr esto dentro de un write-action   ( Write access is allowed inside write-action only )
-        psiClass.add(metodoDePrueba);
+        psiClass.add(factoriedTestMethod);
+        PsiMethod realTestMethod = psiClass.findMethodBySignature(factoriedTestMethod, false);
+
+        String commentText = "/**\n" +
+                "* @see FooBar#zas()\n" +
+                "* @verifies do nothing\n" +
+                "*/";
+        
+        PsiDocComment psiDocComment = elementFactory.createDocCommentFromText(commentText, null);
+
+//           PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
+//        assertThat(docTags.length, is(2));
+//        assertThat(docTags[0].getName(), is("see"));
+//        assertThat(((PsiDocMethodOrFieldRef) docTags[0].getValueElement()).getText(), is("com.example.FooBar#zas()"));
+
+
+        // TODO referesh psiClass because a test cliente cannot have access to test method javadoc
+
+        psiClass.addBefore(psiDocComment, realTestMethod);
+
 
 
     }

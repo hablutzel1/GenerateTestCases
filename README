@@ -56,3 +56,9 @@ Auto-generated the test class and test method (using the plugin) and then tested
      assertThat(intance.sayHello(), is("hello world"));
 
 Nothing more.
+
+
+Instructions to compile it and run it.
+
+By the time it is strongly coupled to Intellij Community Edition 9.0.3, and the folders that contains the plugin files need
+to reside in the plugins/ folder in the D:\jaime\intellij\ideaIC-95.429 

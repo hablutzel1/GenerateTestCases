@@ -4,8 +4,8 @@ package com.intellij.generatetestcases;
 import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiMethod;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.javadoc.PsiDocMethodOrFieldRef;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.generatetestcases.test.BaseTests;
 import org.junit.Assert;
@@ -167,6 +167,81 @@ public class TestMethodTest extends BaseTests {
     @Test
     public void testcreate_shouldCreateATestMethodWithTheExpectedBodyAndJavadoc()
             throws Exception {
+
+        //  create sut class
+        PsiClass aClass = createFooBarSutClass();
+
+        //  create test class for sut
+
+        String testClassText = "package com.example;\n" +
+                "\n" +
+                "\n" +
+                "import org.junit.Assert;\n" +
+                "import org.junit.Test;\n" +
+                "\n" +
+                "public class FooBarTest {\n" +
+                "\t/**\n" +
+                "\t * @see FooBar#zas()\n" +
+                "\t * @verifies do nothing\n" +
+                "\t */\n" +
+                "\t@org.junit.Test\n" +
+                "\tpublic void zas_shouldDoNothing() throws Exception {\n" +
+                "\t\t//TODO auto-generated\n" +
+                "\t\tAssert.fail(\"Not yet implemented\");\n" +
+                "\t}\n" +
+                "}";
+        createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
+
+        //  create test class
+        TestClass testClass = BDDCore.createTestClass(myProject, aClass);
+
+        //  get unitialized test method
+        TestMethod testMethod = testClass.getAllMethods().get(0);
+//        assertThat(testMethod.reallyExists(), is(false));
+
+        //  actually create
+//        testMethod.create();
+
+        //  verify backing method structure like this one
+        PsiMethod backingMethod = testMethod.getBackingMethod();
+
+
+        PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
+        assertThat(docTags.length, is(2));
+        assertThat(docTags[0].getName(), is("see") );
+        assertThat(((PsiDocMethodOrFieldRef) docTags[0].getValueElement()).getText(), is("com.example.FooBar#zas()"));
+
+        assertThat(docTags[1].getName(), is("verifies") );
+        PsiElement[] elements = docTags[1].getDataElements();
+        String verifiesDescription = "";
+        for (PsiElement element : elements) {
+            verifiesDescription += element.getText() + " ";
+        }
+        verifiesDescription = verifiesDescription.trim();
+        assertThat(verifiesDescription, is ("do nothing"));
+
+        //  assert for test annotation
+                //  get qualified name, consider the package
+//        PsiAnnotation annotation = (PsiAnnotation) backingMethod.getModifierList().getAnnotations()[0].getOriginalElement();
+        assertThat(backingMethod.getModifierList().getAnnotations()[0].getQualifiedName(), is("org.junit.Test"));
+        // TODO assert presence of throws clause
+        //backingMethod.getThrowsList().getReferencedTypes()[0]
+
+        // TODO assert comment in the body
+
+        // TODO assert Assert.fail... is present
+
+
+//	/**
+//	 * @see FooBar#zas()
+//	 * @verifies do nothing
+//	 */
+//	@Test
+//	public void zas_shouldDoNothing() throws Exception {
+//		//TODO auto-generated
+//		Assert.fail("Not yet implemented");
+//	}
+
         //TODO auto-generated
         Assert.fail("Not yet implemented");
     }
@@ -216,32 +291,51 @@ public class TestMethodTest extends BaseTests {
             throws Exception {
 
         //  create a psi sut without psi test class
-        String text = "package com.example;  public interface FooBar {" +
-                "" +
-                "" +
-                "" +
-                "}";
-        PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
+        PsiClass aClass = createFooBarSutClass();
 
         //  create TestClass
         TestClass testClass = BDDCore.createTestClass(myProject, aClass);
 
         //  get test method
-//        assertThat(testClass.getAllMethods().size(), is(0));
-
+        TestMethod testMethod = testClass.getAllMethods().get(0);
 
         //  verify test method  is unitialized
 
-        // TODO verify test class is unitialized and backingClass is null
+        assertThat(testMethod.reallyExists(), is(false));
+
+        //  verify test class is unitialized and backingClass is null
+
+        assertThat(testClass.getBackingClass(), is(nullValue()));
+        assertThat(testClass.reallyExists(), is(false));
 
         //  create it
+        testMethod.create();
 
         // get the parent test class backing psi class,
+        PsiClass backingClass = testClass.getBackingClass();
 
-        // TODO assert location is the same that sut class
+        //  assert location is the same that sut class
+        PsiDirectory sutContentSourceRoot = getContentSourceRoot((PsiJavaFile) backingClass.getContainingFile());
+        PsiDirectory testContentSourceRoot = getContentSourceRoot((PsiJavaFile) aClass.getContainingFile());
+        assertThat(testContentSourceRoot, is(sutContentSourceRoot));
+
+        ///  assert test class really exists and the same for the method
+        assertThat(testClass.reallyExists(), is(true));
+        assertThat(testMethod.reallyExists(), is(true));
 
 
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
+    }
+
+    private PsiClass createFooBarSutClass() {
+        String text = "package com.example;\n" +
+                "\n" +
+                "public interface FooBar {\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tvoid zas();\n" +
+                "}";
+        PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
+        return aClass;
     }
 }

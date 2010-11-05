@@ -166,30 +166,7 @@ public class TestClassTest extends BaseTests {
         }
     }
 
-    private PsiDirectory getContentSourceRoot(PsiJavaFile javaFile) {
-        ProjectRootManager projectRootManager = ProjectRootManager.getInstance(myProject);
-        VirtualFile[] contentSourceRoots = projectRootManager.getContentSourceRoots();
-        PsiDirectory returnContentSourceRoot = null;
-        for (VirtualFile contentSourceRoot : contentSourceRoots) {
-            PsiElement foo = null;
-            PsiDirectory parent = javaFile.getParent();
-
-            do {
-                if (parent != null && parent instanceof PsiDirectory) {
-                    PsiDirectory zas = parent;
-                    if (contentSourceRoot.equals(zas.getVirtualFile())) {
-                        returnContentSourceRoot = zas;
-                    }
-                }
-            }
-            while (parent != null && null != (parent = parent.getParent()));
-
-
-        }
-        return returnContentSourceRoot;
-    }
-
-	/**
+    /**
 	 * @see TestClass#getAllMethods()
 	 * @verifies always reflect the test class state of created methods
 	 */

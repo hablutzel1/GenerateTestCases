@@ -5,6 +5,8 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -25,11 +27,21 @@ public class BaseTests extends PsiTestCase {
     private PsiClass javaTestClass;
     public PsiDirectory sourceRootDirectory;
 
+    
+
+    @Override
+    protected Sdk getTestProjectJdk() {
+        return JavaSdkImpl.getMockJdk15("java 1.5");
+    }
+
+
+
     protected void setUp() throws Exception {
         super.setUp();
 
         //  get project
         final Project project = getProject();
+        //configure("", "");
         ApplicationManager.getApplication().runWriteAction(
                 new Runnable() {
 
@@ -183,5 +195,28 @@ public class BaseTests extends PsiTestCase {
             }
         }
         return exists;
+    }
+
+    protected PsiDirectory getContentSourceRoot(PsiJavaFile javaFile) {
+        ProjectRootManager projectRootManager = ProjectRootManager.getInstance(myProject);
+        VirtualFile[] contentSourceRoots = projectRootManager.getContentSourceRoots();
+        PsiDirectory returnContentSourceRoot = null;
+        for (VirtualFile contentSourceRoot : contentSourceRoots) {
+            PsiElement foo = null;
+            PsiDirectory parent = javaFile.getParent();
+
+            do {
+                if (parent != null && parent instanceof PsiDirectory) {
+                    PsiDirectory zas = parent;
+                    if (contentSourceRoot.equals(zas.getVirtualFile())) {
+                        returnContentSourceRoot = zas;
+                    }
+                }
+            }
+            while (parent != null && null != (parent = parent.getParent()));
+
+
+        }
+        return returnContentSourceRoot;
     }
 }

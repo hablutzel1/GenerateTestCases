@@ -1,19 +1,41 @@
 package com.intellij.generatetestcases.impl;
 
+import com.intellij.codeInsight.intention.AddAnnotationFix;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
+import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
 
 /**
  * User: Jaime Hablutzel
  */
 public class TestMethodImpl implements TestMethod {
+
+    /**
+     * TODO implement
+     * State class for two possible states that TestMetho c
+     */
+    private class TestMethodState {
+
+        private void created(TestMethod tm) {
+
+        }
+
+        private void notCreated(TestMethod tm) {
+
+        }
+
+    }
+
+    // TODO create a strategy for creating test methods
 
 
     private PsiMethod sutMethod;
@@ -129,25 +151,68 @@ public class TestMethodImpl implements TestMethod {
         psiClass.add(factoriedTestMethod);
         PsiMethod realTestMethod = psiClass.findMethodBySignature(factoriedTestMethod, false);
 
-        // TODO get sut class name
-        String sutClassName = parent.getClassUnderTest().getName();
 
-        // TODO get sut method name and signature
+        //  get sut method name and signature
+        // use fqn#methodName(ParamType)
+        String methodQualifiedName;
+
+        PsiClass aClass = sutMethod.getContainingClass();
+        String className = aClass == null ? "" : aClass.getQualifiedName();
+        methodQualifiedName = className == null ? "" : className;
+        if (methodQualifiedName.length() != 0) methodQualifiedName += "#";
+        methodQualifiedName += sutMethod.getName() + "(";
+        PsiParameter[] parameters = sutMethod.getParameterList().getParameters();
+        for (int i = 0; i < parameters.length; i++) {
+            PsiParameter parameter = parameters[i];
+            if (i != 0) methodQualifiedName += ", ";
+            methodQualifiedName += parameter.getType().getCanonicalText();
+        }
+        methodQualifiedName += ")";
 
 
-
-        // TODO get test method description
+        //  get test method description
 
         String commentText = "/**\n" +
-                "* @see FooBar#zas()\n" +
-                "* @verifies do nothing\n" +
+                "* @see  " + methodQualifiedName + "\n" +
+                "* @verifies " + description + "\n" +
                 "*/";
 
         PsiComment psiComment = elementFactory.createCommentFromText(commentText, null);
 
-        // TODO referesh psiClass because a test cliente cannot have access to test method javadoc
-        CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
         realTestMethod.addBefore(psiComment, realTestMethod.getFirstChild());
+
+        //  add junit 4 Test annotation
+
+        //  verify org.junit.Test exists in classpath as an anntoation, if it doesn't throw exception
+        String jUnit4TestAnnotation = "org.junit.Test";
+        PsiClass junitTestAnnotation = JavaPsiFacade.getInstance(project).findClass(jUnit4TestAnnotation, GlobalSearchScope.allScope(project));
+        if (junitTestAnnotation == null) {
+            // TODO display alert, look for something similiar, not obstrusive :D
+            throw new RuntimeException(jUnit4TestAnnotation + " haven't been found in classpath");
+        } else {
+            //  add the annotation to the method
+            AddAnnotationFix fix = new AddAnnotationFix(jUnit4TestAnnotation, realTestMethod);
+            if (fix.isAvailable(project, null, realTestMethod.getContainingFile())) {
+                fix.invoke(project, null, realTestMethod.getContainingFile());
+            }
+        }
+
+        // TODO add throws Exception
+
+        PsiClass javaLangException = JavaPsiFacade.getInstance(project).findClass("java.lang.Exception", GlobalSearchScope.allScope(project));
+
+        for (PsiClassType unhandledException : javaLangException) {
+            PsiClass exceptionClass = unhandledException.resolve();
+            if (exceptionClass != null) {
+                PsiUtil.addException(realTestMethod, exceptionClass);
+            }
+        }
+
+        // TODO add //TODO auto-generated comment in the body
+
+        // TODO add Assert.fail("Not yet implemented");, verify import for Assert
+
+        CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
         codeStyleManager.reformat(realTestMethod); // to reformat javadoc
     }
 

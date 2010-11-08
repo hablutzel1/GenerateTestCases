@@ -5,6 +5,7 @@ import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.CodeStyleManager;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +47,7 @@ public class TestMethodImpl implements TestMethod {
         // some determined class to guarantee that uniqueness of parents for test methods
         //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
         this.parent = parent;
-        PsiMethod backingMethod = resolveBackingMethod(parent);
-        this.backingMethod = backingMethod;
+        this.backingMethod = resolveBackingMethod(parent);
 
 
     }
@@ -129,25 +129,26 @@ public class TestMethodImpl implements TestMethod {
         psiClass.add(factoriedTestMethod);
         PsiMethod realTestMethod = psiClass.findMethodBySignature(factoriedTestMethod, false);
 
+        // TODO get sut class name
+        String sutClassName = parent.getClassUnderTest().getName();
+
+        // TODO get sut method name and signature
+
+
+
+        // TODO get test method description
+
         String commentText = "/**\n" +
                 "* @see FooBar#zas()\n" +
                 "* @verifies do nothing\n" +
                 "*/";
-        
-        PsiDocComment psiDocComment = elementFactory.createDocCommentFromText(commentText, null);
 
-//           PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
-//        assertThat(docTags.length, is(2));
-//        assertThat(docTags[0].getName(), is("see"));
-//        assertThat(((PsiDocMethodOrFieldRef) docTags[0].getValueElement()).getText(), is("com.example.FooBar#zas()"));
-
+        PsiComment psiComment = elementFactory.createCommentFromText(commentText, null);
 
         // TODO referesh psiClass because a test cliente cannot have access to test method javadoc
-
-        psiClass.addBefore(psiDocComment, realTestMethod);
-
-
-
+        CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
+        realTestMethod.addBefore(psiComment, realTestMethod.getFirstChild());
+        codeStyleManager.reformat(realTestMethod); // to reformat javadoc
     }
 
     private boolean existsInSut;

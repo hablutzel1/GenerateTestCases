@@ -155,4 +155,9 @@ public class TestClassImpl implements TestClass {
     public PsiClass getBackingClass() {
         return findBackingPsiClass();
     }
+
+
+    public PsiClass getClassUnderTest() {
+        return this.sutClass;
+    }
 }

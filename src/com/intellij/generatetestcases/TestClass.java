@@ -55,4 +55,12 @@ public interface TestClass {
      */
     PsiClass getBackingClass();
 
+    /**
+     * This method will return the sut that this test class has been created for
+     * @return
+     * @should return the sut class
+     */
+    PsiClass getClassUnderTest();
+
+
 }

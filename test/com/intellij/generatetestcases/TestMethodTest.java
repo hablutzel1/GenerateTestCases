@@ -180,7 +180,7 @@ public class TestMethodTest extends BaseTests {
                 "import org.junit.Assert;\n" +
                 "import org.junit.Test;\n" +
                 "\n" +
-                "public class FooBarTest {\n" +   
+                "public class FooBarTest {\n" +
                 "}";
         createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
 
@@ -211,14 +211,15 @@ public class TestMethodTest extends BaseTests {
 
         PsiMethod backingMethod = testMethod.getBackingMethod();
 
-
         PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
         assertThat(docTags.length, is(2));
-        assertThat(docTags[0].getName(), is("see"));
-        assertThat(((PsiDocMethodOrFieldRef) docTags[0].getValueElement()).getText(), is("com.example.FooBar#zas()"));
 
-        assertThat(docTags[1].getName(), is("verifies"));
-        PsiElement[] elements = docTags[1].getDataElements();
+        PsiDocTag tag = findDocTagByName(backingMethod, "see");
+
+        assertThat(tag.getValueElement().getText(), is("FooBar#zas()"));
+
+        PsiDocTag verifiesTag = findDocTagByName(backingMethod, "verifies");
+        PsiElement[] elements = verifiesTag.getDataElements();
         String verifiesDescription = "";
         for (PsiElement element : elements) {
             verifiesDescription += element.getText() + " ";
@@ -242,6 +243,25 @@ public class TestMethodTest extends BaseTests {
         // assert Assert.fail... is present
         assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
 
+    }
+
+    /**
+     * Find the first doctag for the docTagName, return null if nothing found
+     *
+     * @param backingMethod
+     * @param docTagName
+     * @return
+     */
+    private PsiDocTag findDocTagByName(PsiMethod backingMethod, String docTagName) {
+        PsiDocTag[] docTags2 = backingMethod.getDocComment().getTags();
+        PsiDocTag tag = null;
+        for (PsiDocTag docTag : docTags2) {
+            if (docTag.getName().equals(docTagName)) {
+                tag = docTag;
+                break;
+            }
+        }
+        return tag;
     }
 
     /**
@@ -353,7 +373,7 @@ public class TestMethodTest extends BaseTests {
 
 
         private MethodBodyVisitor() {
-            comments  = new ArrayList<PsiComment>();
+            comments = new ArrayList<PsiComment>();
             statements = new ArrayList<PsiStatement>();
         }
 
@@ -370,7 +390,7 @@ public class TestMethodTest extends BaseTests {
         @Override
         public void visitElement(PsiElement element) {
             if (element instanceof PsiStatement) {
-                PsiStatement psiStatement = (PsiStatement)element;
+                PsiStatement psiStatement = (PsiStatement) element;
                 this.statements.add(psiStatement);
             }
         }

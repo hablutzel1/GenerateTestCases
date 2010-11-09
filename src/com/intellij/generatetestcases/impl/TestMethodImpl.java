@@ -197,23 +197,33 @@ public class TestMethodImpl implements TestMethod {
             }
         }
 
-        // TODO add throws Exception
+        //  add throws Exception
 
-        PsiClass javaLangException = JavaPsiFacade.getInstance(project).findClass("java.lang.Exception", GlobalSearchScope.allScope(project));
+//        PsiClass javaLangException = JavaPsiFacade.getInstance(project).findClass("java.lang.Exception", GlobalSearchScope.allScope(project));
 
-        for (PsiClassType unhandledException : javaLangException) {
-            PsiClass exceptionClass = unhandledException.resolve();
-            if (exceptionClass != null) {
-                PsiUtil.addException(realTestMethod, exceptionClass);
-            }
+        PsiClassType fqExceptionName = JavaPsiFacade.getInstance(project)
+                .getElementFactory().createTypeByFQClassName(
+                        CommonClassNames.JAVA_LANG_EXCEPTION, GlobalSearchScope.allScope(project));
+        
+        PsiClass exceptionClass = fqExceptionName.resolve();
+        if (exceptionClass != null) {
+            PsiUtil.addException(realTestMethod, exceptionClass);
         }
 
-        // TODO add //TODO auto-generated comment in the body
+        //  add //TODO auto-generated comment in the body
+        PsiComment fromText = elementFactory.createCommentFromText("//TODO auto-generated", null);
+        realTestMethod.getBody().addBefore(fromText, null);
 
-        // TODO add Assert.fail("Not yet implemented");, verify import for Assert
+        // TODO add Assert.fail("Not yet implemented");,
+
+        // TODO verify import for Assert
+//        elementFactory.createe
+
 
         CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
+
         codeStyleManager.reformat(realTestMethod); // to reformat javadoc
+
     }
 
     private boolean existsInSut;

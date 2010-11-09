@@ -8,8 +8,11 @@ import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
+import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
+import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -26,6 +29,7 @@ import java.util.List;
  */
 @Ignore
 public class BaseTests extends PsiTestCase {
+
     protected PsiDirectory comExamplePackage;
     protected PsiClass sutClass;
     private PsiClass javaTestClass;
@@ -34,7 +38,12 @@ public class BaseTests extends PsiTestCase {
 
     @Override
     protected Sdk getTestProjectJdk() {
-        return JavaSdkImpl.getMockJdk15("java 1.5");
+        /// add jdk
+        //  TODO find better way to override
+//        File mockJdkCEPath = new File(getPluginHomePath(), "java/mockJDK");
+//        return createMockJdk(mockJdkCEPath.getPath(), "java 1.4",
+//                ApplicationManager.getApplication().getComponent(JavaSdk.class));
+        return JavaSdkImpl.getMockJdk("1.4");
     }
 
 
@@ -64,10 +73,10 @@ public class BaseTests extends PsiTestCase {
 
                             String jarName = "junit-4.7.jar";
 
-                            String junitLibraryPath = path + File.separatorChar + "testData"+ File.separatorChar +  "lib" + File.separatorChar;
+                            String junitLibraryPath = path + File.separatorChar + "testData" + File.separatorChar + "lib" + File.separatorChar;
 //                            final File junitLibraryFile = new File(junitLibraryPath + "/" + jarName);
 
-                            PsiTestUtil.addLibrary(myModule, "Junit",junitLibraryPath, jarName );
+                            PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);
 //                            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.getCanonicalPath().replace(File.separatorChar, '/'));
 //                            addLibraryToRoots(file, OrderRootType.CLASSES);
 
@@ -84,6 +93,26 @@ public class BaseTests extends PsiTestCase {
 
 
     }
+
+//    private static Sdk createMockJdk(String jdkHome, final String versionName, JavaSdk javaSdk) {
+//        File jdkHomeFile = new File(jdkHome);
+//        if (!jdkHomeFile.exists()) return null;
+//
+//        final Sdk jdk = new ProjectJdkImpl(versionName, javaSdk);
+//        final SdkModificator sdkModificator = jdk.getSdkModificator();
+//
+//        String path = jdkHome.replace(File.separatorChar, '/');
+//        sdkModificator.setHomePath(path);
+//        sdkModificator.setVersionString(versionName); // must be set after home path, otherwise setting home path clears the version string
+//
+//        addSources(jdkHomeFile, sdkModificator);
+//        addClasses(jdkHomeFile, sdkModificator, false);
+//        addClasses(jdkHomeFile, sdkModificator, true);
+//        sdkModificator.commitChanges();
+//
+//        return jdk;
+//    }
+
 
     private static String getPluginHomePath() {
         final Class aClass = BDDCore.class;

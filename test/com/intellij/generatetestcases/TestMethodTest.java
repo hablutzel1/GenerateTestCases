@@ -6,9 +6,7 @@ import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.source.javadoc.PsiDocMethodOrFieldRef;
 import com.intellij.psi.javadoc.PsiDocTag;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -145,21 +143,7 @@ public class TestMethodTest extends BaseTests {
 
     }
 
-    /**
-     * @verifies add required imports in test class as required for its javadoc and its body
-     * @see TestMethod#create()
-     */
-    @Test
-    public void testcreate_shouldAddRequiredImportsInTestClassAsRequiredForItsJavadocAndItsBody()
-            throws Exception {
 
-        // TODO create sut and test psi classes where test class doesn't have all required imports
-
-        // TODO this is an oportunity to implement test framework strategy
-
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
-    }
 
     /**
      * @verifies create a test method with the expected body and javadoc
@@ -241,6 +225,7 @@ public class TestMethodTest extends BaseTests {
         assertThat(bodyVisitor.getComments().get(0).getText(), is("//TODO auto-generated"));
 
         // assert Assert.fail... is present
+        fail("org.junit.Assert.fail(\"Not yet implemented\"); no se debe ver el import completo");
         assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
 
     }
@@ -356,6 +341,8 @@ public class TestMethodTest extends BaseTests {
         PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
         return aClass;
     }
+
+   
 
     /**
      * Counts comments and statements in a pSi method body

@@ -1,17 +1,22 @@
 package com.intellij.generatetestcases.actions;
 
 import com.intellij.codeInsight.generation.ClassMember;
+import com.intellij.generatetestcases.BDDCore;
 import com.intellij.generatetestcases.GenerateTestCasesProjectComponent;
+import com.intellij.generatetestcases.TestClass;
+import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
-import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.ide.IdeBundle;
+import com.intellij.ide.util.DirectoryChooser;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.javadoc.PsiDocComment;
-import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,53 +52,21 @@ public class GenerateTestMethods extends AnAction {
 
         if (psiClass != null) {
 
-            //  crear listado de metodos para la clase actualmente abierta en el editor
-            PsiMethod[] methods = psiClass.getMethods();
-
-            //  choose fields to initialize by constructor (action corresponding to generate constructors action) it uses a nice treeview
-
-            // TODO   crear un modelo de arbol con los metodos y anotaciones should debajo
-            // TODO extender ClassMember para que soporte anotaciones should
-
+            //  create test class for this psiClass
+            TestClass testClass = BDDCore.createTestClass(project, psiClass);
 
             ArrayList<ClassMember> array = new ArrayList<ClassMember>();
-            //  iterar sobre los metodos
-            for (PsiMethod method : methods) {
 
+            List<TestMethod> methods = testClass.getAllMethods();
 
-                //  iterar sobre los comentarios del javadoc
-                PsiDocComment comment = method.getDocComment();
-                if (comment == null) { // if no doc comment
-                    continue;
+            //  iterar sobre los metodos de prueba
+            for (TestMethod method : methods) {
+
+                if (!method.reallyExists()) {
+                    //  crear a psiDocAnnotation para cada metodo no existente
+                    PsiDocAnnotationMember member = new PsiDocAnnotationMember(method);
+                    array.add(member);
                 }
-                PsiDocTag[] tags = comment.getTags();
-                for (PsiDocTag tag : tags) {
-
-                    // TODO comprobar si este tag no existe en la clase de pruebas
-
-                    //  conseguir text del tag y ponerlo en una sola linea
-
-                    //  comprobar que el tag sea del tipo should
-                    if (tag.getName().equals("should")) {
-                        //  usar cada metodo como padre del doc annotation
-                        final StringBuilder description = new StringBuilder();
-
-                        PsiElement[] dataElements = tag.getDataElements();
-                        boolean isFirst = true;
-                        for (PsiElement dataElement : dataElements) {
-                            description.append(dataElement.getText());
-                            // TODO get the description taking into account the whitespaces
-                            if (isFirst) {
-                                description.append(" ");
-                            }
-                            isFirst = false;
-                        }
-
-                        PsiDocAnnotationMember member = new PsiDocAnnotationMember(tag, description.toString(), method);
-                        array.add(member);
-                    }
-                }
-
 
             }
 
@@ -104,75 +77,79 @@ public class GenerateTestMethods extends AnAction {
             chooser.show();
             List<ClassMember> selectedElements = chooser.getSelectedElements();
 
-            // TODO generar clase de pruebas con metodos correspondientes a estos tags
+            if (selectedElements == null || selectedElements.size() == 0) {
+                //  canceled or nothing selected
+                return;
+            }
 
-            //  obtener paquete de la clase actual
-            PsiElement classScope = psiClass.getScope();
-            if (classScope instanceof PsiJavaFile) {
-                
-                PsiJavaFile javaFileForClass = (PsiJavaFile) classScope;
-                PsiDirectory psiDirectory = javaFileForClass.getParent();
+            //  ensure if parent exists
 
-                // obtener nombre de clase actual
-                String nombreClaseDeOrigen = psiClass.getName();
+            if (!testClass.reallyExists()) {
 
-                //  crear clase con sufijo Test
-                String nombreClaseDePruebas = nombreClaseDeOrigen + "Test";
+                //   otherwise allow to create in specified test sources root
+                VirtualFile[] sourceRoots = ProjectRootManager.getInstance(project).getContentSourceRoots();
 
-                // TODO dar al usuario la opcion de escoger la carpeta raiz del classpath
+                //  get a list of all test roots
+                final PsiManager manager = PsiManager.getInstance(project);
+                List<PsiDirectory> allTestRoots = new ArrayList<PsiDirectory>(2);
+                for (VirtualFile sourceRoot : sourceRoots) {
+                    if (sourceRoot.isDirectory()) {
+                        PsiDirectory directory = manager.findDirectory(sourceRoot);
+                        allTestRoots.add(directory);
+                    }
+                }
 
-                // TODO verificar si la clase de prueba ya existe antes de crearla
-                //  efectivamente crear la clase
-                PsiClass claseDePruebas = JavaDirectoryService.getInstance().createClass(psiDirectory, nombreClaseDePruebas, "Class");
+                DirectoryChooser fileChooser = new DirectoryChooser(project);
+                fileChooser.setTitle(IdeBundle.message("title.choose.destination.directory"));
+                fileChooser.fillList(allTestRoots.toArray(new PsiDirectory[allTestRoots.size()]), null, project, "");
+                // TODO only display if more than one source root
+                fileChooser.show();
+
+                PsiDirectory psiDirectory = fileChooser.isOK() ? fileChooser.getSelectedDirectory() : null;
 
 
-   
-                //  generar metodo para cada uno de estos
-                for (ClassMember classMember : selectedElements) {
-                    //  ascender classMember a la implementacion
-                    PsiDocAnnotationMember anotacionShould = (PsiDocAnnotationMember) classMember;
+                if (psiDirectory != null) {
+                    //  create in specified test root
+                    // TODO run in write action together with method generation
+                    testClass.create(psiDirectory);
 
-                    //  generar el nombre para el metodo
-                    String shouldDescription = anotacionShould.getText();
-                    PsiElement element = anotacionShould.getElement();
-                    String nombreMetodoDeOrigen = ((PsiMethod) element.getParent().getParent()).getName();
-                    String nombreMetodoDePrueba = BddUtil.generateTestMethodName(nombreMetodoDeOrigen, shouldDescription);
-                    // TODO verificar si el metodo que se desea crear no existe
 
-                    //  crear metodo con retorno void y este nombre generado en claseDePruebas
-                    //claseDePruebas.add
-                    PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
+                } else {
+                    //  just cancel
+                    return;
 
-                    // TODO revisar TestNG y permitir que el usuario escoja el framework de pruebas unitarias
-
-                    // TODO revisar la existencia del framework, de no existir mostrar alerta
-
-                    // TODO crear javadoc adecuado para cada uno de los metodos de prueba
-
-                    // TODO importar clases de junit necesarias
-
-                    // TODO agregar anotacion de junit
-                    PsiMethod metodoDePrueba = elementFactory.createMethod(nombreMetodoDePrueba, PsiType.VOID);
-
-                    // TODO correr esto dentro de un write-action   ( Write access is allowed inside write-action only )
-                    claseDePruebas.add(metodoDePrueba);
                 }
 
 
             }
 
-        } else {
-            //  si no hay ninguna clase en el editor se deberia desactivar la accion
+            //  if backing test class exists, just create the methods in the same
+
+            for (ClassMember selectedElement : selectedElements) {
+                if (selectedElement instanceof PsiDocAnnotationMember) {
+                    PsiDocAnnotationMember member = (PsiDocAnnotationMember) selectedElement;
+                    final TestMethod testMethod = member.getTestMethod();
+                    if (!testMethod.reallyExists()) {
+                        //  para cada uno de los seleccionados llamar a create
+
+                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                            public void run() {
+                                testMethod.create();
+                            }
+                        });
+
+                    }
+                }
+            }
+
+
+            // TODO if something has been created jump to the last created test method
+
         }
-
-
-        // TODO crear primera interfaz del modelo (TestMethod) Utilizar patron adapter, considerar agregar metodo getBackingElement
 
 
     }
 
-
-    	
 
     private static String toCamelCase(String input) {
         assert input != null;
@@ -181,7 +158,6 @@ public class GenerateTestMethods extends AnAction {
         }
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
-
 
 
     public void update(Editor editor, Presentation presentation, DataContext dataContext) {
@@ -221,6 +197,7 @@ public class GenerateTestMethods extends AnAction {
         }
 
         // must not be an interface
-        return clazz.isInterface() ? null : clazz;
+//        return clazz.isInterface() ? null : clazz;
+        return clazz;
     }
 }

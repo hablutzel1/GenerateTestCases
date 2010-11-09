@@ -58,7 +58,19 @@ Auto-generated the test class and test method (using the plugin) and then tested
 Nothing more.
 
 
-Instructions to compile it and run it.
+Instructions to compile it and run it in development stage
+------------------------------------------------------------
 
 By the time it is strongly coupled to Intellij Community Edition 9.0.3, and the folders that contains the plugin files need
-to reside in the plugins/ folder in the D:\jaime\intellij\ideaIC-95.429 
+to reside in the plugins/ folder in the D:\jaime\intellij\ideaIC-95.429
+
+ Furthermore if you want to build and run ideaIC-95.429 you will need to place a jar generated for the plugin because of you have putted
+ plugin's directory in the same directory that the idea project, and to the time I don't know how to let idea project to build the plugin
+ for itself.
+
+Another thing needed to run unit tests is to copy java\mockJDK residing in ideaIC-95.429\ to
+
+C:\Documents and Settings\JHABLUTZEL\.IntelliJIdea90\system\plugins-sandbox\test
+
+because when you run a unit test "C:\Documents and Settings\JHABLUTZEL\.IntelliJIdea90\system\plugins-sandbox\" is the home path
+for the plugin.

@@ -3,6 +3,7 @@ package com.intellij.generatetestcases.impl;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
@@ -32,11 +33,10 @@ public class TestClassImpl implements TestClass {
         this.sutClass = psiClass;
 
         // init a reference to the current project
-              project = sutClass.getProject();
-        
+        project = sutClass.getProject();
+
 
         findAndInitializeAllTestMethods(psiClass);
-
 
 
     }
@@ -79,7 +79,7 @@ public class TestClassImpl implements TestClass {
 
     public void create(PsiDirectory sourceRoot) {
 
-        if (sourceRoot == null) {
+        if (sourceRoot == null || sourceRoot.equals(sutClass.getContainingFile().getParent())) {
             //  create the test class in the same source root
 
             //  get psiDirectory for sut class
@@ -97,9 +97,17 @@ public class TestClassImpl implements TestClass {
             // get test class name
             String testClassName = getCandidateTestClassName();
 
-            //  check or create entire path to package
-            PsiDirectory psiDirectory = DirectoryUtil.createSubdirectories(getPackageName(), sourceRoot, ".");
 
+            VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(getPackageName().replace(".", "/"));
+            PsiDirectory psiDirectory =  null;
+            if (path == null) {
+                //  check or create entire path to package
+             psiDirectory =    DirectoryUtil.createSubdirectories(getPackageName(), sourceRoot, ".");
+
+            } else {
+                //  just create a psi directory for VirtualFile
+                psiDirectory = PsiManager.getInstance(project).findDirectory(path);
+            }
             //  check
             JavaDirectoryService.getInstance().checkCreateClass(psiDirectory, testClassName);
             //  create

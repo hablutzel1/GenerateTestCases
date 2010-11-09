@@ -12,8 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
-
 /**
  * User: Jaime Hablutzel
  */
@@ -212,12 +210,13 @@ public class TestMethodImpl implements TestMethod {
 
         //  add //TODO auto-generated comment in the body
         PsiComment fromText = elementFactory.createCommentFromText("//TODO auto-generated", null);
-        realTestMethod.getBody().addBefore(fromText, null);
+        PsiElement todoComment = realTestMethod.getBody().addBefore(fromText, null);
 
-        // TODO add Assert.fail("Not yet implemented");,
+        //  add org.junit.Assert.fail("Not yet implemented");,
 
         // TODO verify import for Assert
-//        elementFactory.createe
+        PsiStatement statement = elementFactory.createStatementFromText("org.junit.Assert.fail(\"Not yet implemented\");", null);
+        realTestMethod.getBody().addAfter(statement, todoComment);
 
 
         CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
@@ -235,6 +234,11 @@ public class TestMethodImpl implements TestMethod {
 
     public PsiMethod getSutMethod() {
         return this.sutMethod;
+    }
+
+
+    public PsiDocTag getBackingTag() {
+        return shouldTag;
     }
 
     public PsiMethod getBackingMethod() {

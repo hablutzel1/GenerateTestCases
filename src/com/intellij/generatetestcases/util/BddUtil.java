@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 public class BddUtil {
 
     /**
-     *
      * TODO the plugin should have support for generating junit 3 test methods (this is: with test as prefix for the name
      * and without annotations).
+     *
      * @param originMethodName
      * @param shouldDescription
      * @return
@@ -21,7 +21,7 @@ public class BddUtil {
     public static String generateTestMethodName(@NotNull String originMethodName, @NotNull String shouldDescription) {
 
         if (StringUtils.isBlank(originMethodName) || StringUtils.isBlank(shouldDescription)) {
-                                                                                              throw new IllegalArgumentException();
+            throw new IllegalArgumentException();
         }
 
         StringBuilder builder = new StringBuilder(originMethodName
@@ -48,5 +48,7 @@ public class BddUtil {
         }
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
+
+   
 
 }

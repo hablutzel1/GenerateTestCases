@@ -2,17 +2,15 @@ package com.intellij.generatetestcases;
 
 
 import com.intellij.generatetestcases.impl.TestClassImpl;
+import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ContentEntry;
 import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.generatetestcases.test.BaseTests;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -163,28 +161,11 @@ public class TestClassTest extends BaseTests {
             PsiDirectory testClassContentSourceRoot = getContentSourceRoot((PsiJavaFile) containingFile);
             assertThat(testClassContentSourceRoot, is(psiDirectory));
 
+            fail("should only create destination package if it doesn't exists already");
+
         }
     }
 
-    /**
-	 * @see TestClass#getAllMethods()
-	 * @verifies always reflect the test class state of created methods
-	 */
-	@Test
-	public void testgetAllMethods_shouldAlwaysReflectTheTestClassStateOfCreatedMethods()
-			throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
 
-	/**
-	 * @see TestClass#getAllMethods()
-	 * @verifies get all test methods matching sut should tags
-	 */
-	@Test
-	public void testgetAllMethods_shouldGetAllTestMethodsMatchingSutShouldTags()
-			throws Exception {
-		//TODO auto-generated
-		Assert.fail("Not yet implemented");
-	}
+
 }

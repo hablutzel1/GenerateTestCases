@@ -11,9 +11,9 @@
 
   <project-components>
     <!-- Add your project components here -->
-      <component>
-          <implementation-class>com.intellij.generatetestcases.GenerateTestCasesProjectComponent</implementation-class>
-      </component>
+      <!--<component>-->
+          <!--<implementation-class>com.intellij.generatetestcases.GenerateTestCasesProjectComponent</implementation-class>-->
+      <!--</component>-->
   </project-components>
 
   <actions>

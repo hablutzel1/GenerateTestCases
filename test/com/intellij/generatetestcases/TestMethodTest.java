@@ -228,6 +228,8 @@ public class TestMethodTest extends BaseTests {
         fail("org.junit.Assert.fail(\"Not yet implemented\"); no se debe ver el import completo");
         assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
 
+        fail("al crear el @link para  public static <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type) no generar texto para los datos genericos");
+
     }
 
     /**

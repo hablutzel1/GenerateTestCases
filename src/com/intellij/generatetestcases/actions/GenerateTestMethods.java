@@ -2,7 +2,6 @@ package com.intellij.generatetestcases.actions;
 
 import com.intellij.codeInsight.generation.ClassMember;
 import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.GenerateTestCasesProjectComponent;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
@@ -32,20 +31,15 @@ public class GenerateTestMethods extends AnAction {
 
 
     public GenerateTestMethods() {
-//        super(text, description, icon);
         super("Generate Test Methods", "Generate test methods for current file", IconLoader.getIcon("/images/junitopenmrs.gif"));
     }
 
 
     public void actionPerformed(AnActionEvent e) {
-
-
-        //  obtener proyecto actual
-        Project project = GenerateTestCasesProjectComponent.getProject();
-
-        //  conseguir clase abierta en el editor
-
         DataContext dataContext = e.getDataContext();
+
+        //  to get the current project
+        final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
         Editor editor = getEditor(dataContext);
 
         PsiClass psiClass = getSubjectClass(editor, dataContext);
@@ -53,7 +47,7 @@ public class GenerateTestMethods extends AnAction {
         if (psiClass != null) {
 
             //  create test class for this psiClass
-            TestClass testClass = BDDCore.createTestClass(project, psiClass);
+            final TestClass testClass = BDDCore.createTestClass(project, psiClass);
 
             ArrayList<ClassMember> array = new ArrayList<ClassMember>();
 
@@ -105,13 +99,19 @@ public class GenerateTestMethods extends AnAction {
                 // TODO only display if more than one source root
                 fileChooser.show();
 
-                PsiDirectory psiDirectory = fileChooser.isOK() ? fileChooser.getSelectedDirectory() : null;
+               final  PsiDirectory psiDirectory = fileChooser.isOK() ? fileChooser.getSelectedDirectory() : null;
 
 
                 if (psiDirectory != null) {
                     //  create in specified test root
                     // TODO run in write action together with method generation
-                    testClass.create(psiDirectory);
+
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        public void run() {
+                            testClass.create(psiDirectory);
+                        }
+
+                    });
 
 
                 } else {
@@ -195,9 +195,6 @@ public class GenerateTestMethods extends AnAction {
         if (clazz == null) {
             return null;
         }
-
-        // must not be an interface
-//        return clazz.isInterface() ? null : clazz;
         return clazz;
     }
 }

@@ -3,17 +3,15 @@ package com.intellij.generatetestcases;
 
 import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.test.BaseTests;
+import com.intellij.generatetestcases.test.TestUtil;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ContentEntry;
-import com.intellij.openapi.roots.ModifiableRootModel;
-import com.intellij.openapi.roots.ModuleRootManager;
-import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.vfs.LocalFileSystem;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.PsiManagerImpl;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collection;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNot.*;
@@ -130,22 +128,20 @@ public class TestClassTest extends BaseTests {
 
         {
             //  get a psiClass without corresponding test class
+            PsiDirectory packageName = comExamplePackage;
+
             String text = "package com.example;  public interface Yola {}";
-            PsiClass aClass = createClassFromTextInPackage(myProject, text, "Yola", comExamplePackage);
+            PsiClass aClass = createClassFromTextInPackage(myProject, text, "Yola", packageName);
 
 
             //  create or get a source test root
-            File dir = FileUtil.createTempDirectory("test", null);
-            myFilesToDelete.add(dir);
-            VirtualFile vDir = LocalFileSystem.getInstance().refreshAndFindFileByPath(dir.getCanonicalPath().replace(File.separatorChar, '/'));
-            final ModuleRootManager rootManager = ModuleRootManager.getInstance(myModule);
-            final ModifiableRootModel rootModel = rootManager.getModifiableModel();
-            final ContentEntry contentEntry = rootModel.addContentEntry(vDir);
-            contentEntry.addSourceFolder(vDir, false);
-            rootModel.commit();
-            //  create it in specified source test root
-            PsiManager psiManager = PsiManager.getInstance(myProject);
-            PsiDirectory psiDirectory = psiManager.findDirectory(vDir);
+
+            String sourceRootName = "test";
+            Module module = myModule;
+            Collection<File> filesToDelete = myFilesToDelete;
+            PsiManagerImpl myPsiManager = this.myPsiManager;
+
+            PsiDirectory psiDirectory = TestUtil.createSourceRoot(sourceRootName, module, filesToDelete, myPsiManager);
 
             //  create test class
             TestClass testClass = BDDCore.createTestClass(myProject, aClass);
@@ -161,11 +157,43 @@ public class TestClassTest extends BaseTests {
             PsiDirectory testClassContentSourceRoot = getContentSourceRoot((PsiJavaFile) containingFile);
             assertThat(testClassContentSourceRoot, is(psiDirectory));
 
-            fail("should only create destination package if it doesn't exists already");
+
+        }
+
+        {
+            //  create a source root
+            String sourceRootName = "mysrc";
+
+            PsiDirectory root = TestUtil.createSourceRoot(sourceRootName, myModule, myFilesToDelete, myPsiManager);
+
+            //  create a package within it
+            PsiDirectory peGobHndacPackage = TestUtil.createPackageInSourceRoot("pe.gob.hndac", root);
+
+            //  create a sut class
+
+            String text = "package pe.gob.hndac;  public interface A {}";
+            PsiClass aClass = createClassFromTextInPackage(myProject, text, "A", peGobHndacPackage);
+
+            //  create a test source root
+            PsiDirectory testSR = TestUtil.createSourceRoot("mytest", myModule, myFilesToDelete, myPsiManager);
+
+            //  create corresponding package
+            PsiDirectory testPeGobHndacPackage = TestUtil.createPackageInSourceRoot("pe.gob.hndac", testSR);
+
+            //  create class
+            TestClass testClass = BDDCore.createTestClass(myProject, aClass);
+            //  actually create
+            testClass.create(testSR);
+
+            PsiClass psiClass = testClass.getBackingClass();
+
+            //  assert test file location
+            PsiFile containingFile = psiClass.getContainingFile();
+            assertThat(getContentSourceRoot((PsiJavaFile) containingFile), is(testSR));
+            assertTrue("should only create destination package if it doesn't exists already", true);
 
         }
     }
-
 
 
 }

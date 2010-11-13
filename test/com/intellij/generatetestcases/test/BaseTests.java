@@ -1,20 +1,13 @@
 package com.intellij.generatetestcases.test;
 
-import com.intellij.generatetestcases.BDDCore;
 import com.intellij.generatetestcases.TestMethod;
-import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
 import com.intellij.openapi.projectRoots.Sdk;
-import com.intellij.openapi.projectRoots.SdkModificator;
 import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
-import com.intellij.openapi.projectRoots.impl.ProjectJdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.testFramework.PsiTestCase;
@@ -33,7 +26,7 @@ public class BaseTests extends PsiTestCase {
     protected PsiDirectory comExamplePackage;
     protected PsiClass sutClass;
     private PsiClass javaTestClass;
-    public PsiDirectory sourceRootDirectory;
+//    public PsiDirectory sourceRootDirectory;
 
 
     @Override
@@ -60,16 +53,16 @@ public class BaseTests extends PsiTestCase {
                     public void run() {
                         try {
                             //  obtener ruta de proyecto de pruebas
-                            VirtualFile root = PsiTestUtil.createTestProjectStructure("src", myModule, null, myFilesToDelete, true);
-                            String containingPackage = "com.example";
-                            PsiDirectory psiDirectory = getSourcePackageRoot(project);
-                            BaseTests.this.sourceRootDirectory = psiDirectory;
-                            comExamplePackage = DirectoryUtil.createSubdirectories(containingPackage, psiDirectory, ".");
-
+                            VirtualFile structure = PsiTestUtil.createTestProjectStructure("src", myModule, null, myFilesToDelete, true);
+                            String packageName = "com.example";
+                            PsiDirectory sourcePackageRoot = myPsiManager.findDirectory(structure);
+                            //PsiDirectory sourcePackageRoot = getFirstSourcePackageRoot(project);
+//                            BaseTests.this.sourceRootDirectory = sourcePackageRoot;
+                            comExamplePackage = TestUtil.createPackageInSourceRoot(packageName, sourcePackageRoot);
 
                             //  add junit to classpath
                             //  add home path
-                            String path = getPluginHomePath();
+                            String path = TestUtil.getPluginHomePath();
 
                             String jarName = "junit-4.7.jar";
 
@@ -94,7 +87,7 @@ public class BaseTests extends PsiTestCase {
 
     }
 
-//    private static Sdk createMockJdk(String jdkHome, final String versionName, JavaSdk javaSdk) {
+    //    private static Sdk createMockJdk(String jdkHome, final String versionName, JavaSdk javaSdk) {
 //        File jdkHomeFile = new File(jdkHome);
 //        if (!jdkHomeFile.exists()) return null;
 //
@@ -113,29 +106,6 @@ public class BaseTests extends PsiTestCase {
 //        return jdk;
 //    }
 
-
-    private static String getPluginHomePath() {
-        final Class aClass = BDDCore.class;
-        String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
-        assert rootPath != null;
-        File root = new File(rootPath).getAbsoluteFile();
-        do {
-            final String parent = root.getParent();
-            if (parent == null) continue;
-            root = new File(parent).getAbsoluteFile(); // one step back to get folder
-        }
-        while (root != null && !isIdeaHome(root));
-        String s = root != null ? root.getAbsolutePath() : null;
-        String path = new File(s, "plugins/" + "GenerateTestCases").getPath();
-
-//        LocalFileSystem.getInstance().refreshAndFindFileByPath(path.replace(File.separatorChar, '/'));
-        return path;
-    }
-
-    private static boolean isIdeaHome(final File root) {
-        return new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
-                new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists();
-    }
 
     /**
      * Creates the fixture sut class and returns a psi element for it
@@ -207,17 +177,6 @@ public class BaseTests extends PsiTestCase {
         //  create test class in the same package
         final String className = "FooTest";
         this.javaTestClass = createClassFromTextInPackage(project, testClass, className, comExamplePackage);
-    }
-
-    private PsiDirectory getSourcePackageRoot(Project project) {
-        //  create or get source root
-        ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-        VirtualFile[] contentSourceRoots = projectRootManager.getContentSourceRoots();
-        VirtualFile root = contentSourceRoots[0];
-        //  convert this virtualFile to source root (PsiDirectory)
-        PsiManager psiManager = PsiManager.getInstance(project);
-        PsiDirectory psiDirectory = psiManager.findDirectory(root);
-        return psiDirectory;
     }
 
     protected PsiClass createClassFromTextInPackage(final Project project, final String text, final String className, final PsiDirectory inPackage) {

@@ -1,5 +1,6 @@
 package com.intellij.generatetestcases;
 
+import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.psi.PsiMethod;
 
 /**
@@ -8,6 +9,11 @@ import com.intellij.psi.PsiMethod;
 public interface TestMethod {
 
     // TODO agregar operaciones que permitan conocer la ubicacion del tag javadoc
+
+
+
+    
+
 
     /**
      * Devuelve la descripcion correspondiente

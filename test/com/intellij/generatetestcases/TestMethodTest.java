@@ -144,7 +144,6 @@ public class TestMethodTest extends BaseTests {
     }
 
 
-
     /**
      * @verifies create a test method with the expected body and javadoc
      * @see TestMethod#create()
@@ -172,7 +171,8 @@ public class TestMethodTest extends BaseTests {
         TestClass testClass = BDDCore.createTestClass(myProject, aClass);
 
         //  get unitialized test method
-        TestMethod testMethod = testClass.getAllMethods().get(0);
+        List<TestMethod> allTestMethods = testClass.getAllMethods();
+        TestMethod testMethod = findTestMethodInCollection(allTestMethods, "do nothing", "zas");
         assertThat(testMethod.reallyExists(), is(false));
 
         //  actually create
@@ -225,11 +225,21 @@ public class TestMethodTest extends BaseTests {
         assertThat(bodyVisitor.getComments().get(0).getText(), is("//TODO auto-generated"));
 
         // assert Assert.fail... is present
-        fail("org.junit.Assert.fail(\"Not yet implemented\"); no se debe ver el import completo");
+
         assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
+//        fail("org.junit.Assert.fail(\"Not yet implemented\"); no se debe ver el import completo");
 
-        fail("al crear el @link para  public static <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type) no generar texto para los datos genericos");
 
+        TestMethod testMethodWithGenerics = findTestMethodInCollection(allTestMethods, "do nothing", "getHandlersForType");
+        testMethodWithGenerics.create();
+        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingMethod();
+
+        PsiDocTag seeWithGenerics = findDocTagByName(methodWithGenericsBackingMethod, "see");
+
+        String desc = seeWithGenerics.getText().substring(seeWithGenerics.getText().indexOf("Foo"));
+        assertThat(desc, is("FooBar#getHandlersForType(Class, Class)"));
+//        @see FooBar#getHandlersForType(Class<H>, Class<T>)
+//        fail("al crear el @link para  public static <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type) no generar texto para los datos genericos");
     }
 
     /**
@@ -339,12 +349,18 @@ public class TestMethodTest extends BaseTests {
                 "\t * @should do nothing\n" +
                 "\t */\n" +
                 "\tvoid zas();\n" +
-                "}";
+                "\t\n" +
+                "\t\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tpublic <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type);\n" +
+                "}\n" +
+                "";
         PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
         return aClass;
     }
 
-   
 
     /**
      * Counts comments and statements in a pSi method body

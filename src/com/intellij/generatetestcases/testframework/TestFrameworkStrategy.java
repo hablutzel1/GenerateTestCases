@@ -1,6 +1,8 @@
 package com.intellij.generatetestcases.testframework;
 
+import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * this will compute the right TestFramework Model, or a visitor for test class instead of model...
@@ -19,10 +21,11 @@ public interface TestFrameworkStrategy {
      * By definition an strategy will need all the required information from the its client, research what information
      * it will need.
      *
-     * @param sutMethod
-     * @param testDescription
-     * @return
+     * @param testClass
+     *@param sutMethod
+     * @param testDescription   @return
      */
-    PsiMethod createBackingTestMethod(PsiMethod sutMethod, String testDescription);
+    PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription);
 
+    PsiMethod resolveBackingTestMethod(@NotNull PsiClass testClass, PsiMethod sutMethod, @NotNull String testDescription);
 }

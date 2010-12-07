@@ -4,6 +4,7 @@ package com.intellij.generatetestcases;
 import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.test.BaseTests;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
@@ -35,7 +36,7 @@ public class TestMethodTest extends BaseTests {
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass));
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy()), new JUnit4Strategy());
         TestMethod tm = tm1;
         String description = tm.getDescription();
 
@@ -71,7 +72,7 @@ public class TestMethodTest extends BaseTests {
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass));
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy()), new JUnit4Strategy());
         TestMethod tm = tm1;
         assertThat(tm.getSutMethod().getName(), is("getUserByUuid"));
 
@@ -90,7 +91,7 @@ public class TestMethodTest extends BaseTests {
         PsiClass psiClass = createSutClass(myProject);
         createTestClassForSut(myProject);
 
-        TestClassImpl testClass = new TestClassImpl(psiClass);
+        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy());
         List<TestMethod> methods = testClass.getAllMethods();
 
         //  create or get a test method that really exists
@@ -129,7 +130,7 @@ public class TestMethodTest extends BaseTests {
         PsiClass psiClass = createSutClass(myProject);
         createTestClassForSut(myProject);
 
-        TestClassImpl testClass = new TestClassImpl(psiClass);
+        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy());
         List<TestMethod> methods = testClass.getAllMethods();
 
         //  create or get a test method that really exists

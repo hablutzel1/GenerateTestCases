@@ -8,6 +8,7 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -15,10 +16,10 @@ import org.jetbrains.annotations.NotNull;
  * Date: 09/11/2010
  * Time: 03:06:09 PM
  */
-public class JUnit4Strategy implements TestFrameworkStrategy {
+public class JUnit3Strategy implements TestFrameworkStrategy {
     private PsiElementFactory elementFactory;
 
-    public JUnit4Strategy() {
+    public JUnit3Strategy() {
 
 
     }
@@ -50,10 +51,19 @@ public class JUnit4Strategy implements TestFrameworkStrategy {
      */
     @NotNull
     private String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
-        return BddUtil.generateTestMethodName(sutMethodName, description);
+        String s = BddUtil.generateTestMethodName(sutMethodName, description);
+        return "test" + StringUtils.capitalize(s);
     }
 
 
+    /**
+     *
+     * @param testClass
+     * @param sutMethod
+     * @param testDescription @return
+     * @return
+     * @should generate a junit 3 appropiate method
+     */
     @Override
     public PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
 
@@ -100,7 +110,6 @@ public class JUnit4Strategy implements TestFrameworkStrategy {
         PsiComment psiComment = elementFactory.createCommentFromText(commentText, null);
         psiComment.add(docTag);
 
-        final JavaCodeStyleManager codeStyleManagerEx = JavaCodeStyleManager.getInstance(project);
 
         //    codeStyleManagerEx.shortenClassReferences(element, JavaCodeStyleManager.UNCOMPLETE_CODE);
         

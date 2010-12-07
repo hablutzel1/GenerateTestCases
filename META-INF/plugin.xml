@@ -1,30 +1,36 @@
 <idea-plugin version="2">
-  <name>GenerateTestCases</name>
-  <description>GenerateTestCases plugin </description>
-  <version>1.0</version>
-  <vendor>OpenMRS</vendor>
-  <idea-version since-build="8000"/>
+    <name>GenerateTestCases</name>
+    <description>GenerateTestCases plugin</description>
+    <version>1.0</version>
+    <vendor>OpenMRS</vendor>
+    <idea-version since-build="8000"/>
+    <resource-bundle>messages.GenerateTestCases</resource-bundle>
 
-  <application-components>
-    <!-- Add your application components here -->
-  </application-components>
+    <application-components>
+        <!-- Add your application components here -->
+    </application-components>
 
-  <project-components>
-    <!-- Add your project components here -->
-      <!--<component>-->
-          <!--<implementation-class>com.intellij.generatetestcases.GenerateTestCasesProjectComponent</implementation-class>-->
-      <!--</component>-->
-  </project-components>
+    <project-components>
+        <!-- Add your project components here -->
+        <component>
+            <implementation-class>com.intellij.generatetestcases.impl.GenerateTestCasesSettings</implementation-class>
+        </component>
+    </project-components>
 
-  <actions>
-    <!-- Add your actions here -->
-      <action id="com.intellij.generatetestcases.actions.GenerateTestMethods" class="com.intellij.generatetestcases.actions.GenerateTestMethods" text="Generate Test Methods"
-              description="It generates BDD test methods for class" >
-          <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
-      </action>
-  </actions>
+    <actions>
+        <action id="com.intellij.generatetestcases.actions.GenerateTestMethods"
+                class="com.intellij.generatetestcases.actions.GenerateTestMethods" text="Generate Test Methods"
+                description="It generates BDD test methods for class">
+            <add-to-group group-id="ToolbarRunGroup" anchor="first"/>
+        </action>
+    </actions>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <!-- Add your extensions here -->
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable id="generatetestcases"
+                                 implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
+        <!--<projectService serviceInterface="com.intellij.generatetestcases.impl.GenerateTestCasesSettings"-->
+                    <!--serviceImplementation="com.intellij.generatetestcases.impl.GenerateTestCasesSettings"/>-->
+
+    </extensions>
+
 </idea-plugin>

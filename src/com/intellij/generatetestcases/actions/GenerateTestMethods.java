@@ -4,19 +4,29 @@ import com.intellij.codeInsight.generation.ClassMember;
 import com.intellij.generatetestcases.BDDCore;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
+import com.intellij.generatetestcases.testframework.JUnit3Strategy;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
+import com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.DirectoryChooser;
 import com.intellij.ide.util.MemberChooser;
+import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurableGroup;
+import com.intellij.openapi.options.ShowSettingsUtil;
+import com.intellij.openapi.options.ex.ProjectConfigurablesGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiTreeUtil;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -42,17 +52,64 @@ public class GenerateTestMethods extends AnAction {
         final Project project = PlatformDataKeys.PROJECT.getData(dataContext);
         Editor editor = getEditor(dataContext);
 
+        //  prompt to choose the strategy if it haven't been choosen before
+        GenerateTestCasesSettings casesSettings = GenerateTestCasesSettings.getInstance(project);
+        String s = casesSettings.getTestFramework();
+        if (StringUtils.isEmpty(s)) { //  it haven't been defined yet
+
+            ConfigurableGroup[] group = new ConfigurableGroup[]{
+                    new ProjectConfigurablesGroup(project, false) {
+
+                        @Override
+                        public Configurable[] getConfigurables() {
+                            final Configurable[] extensions = project.getExtensions(Configurable.PROJECT_CONFIGURABLES);
+                            List<Configurable> list = new ArrayList<Configurable>();
+                            for (Configurable component : extensions) {
+                                if (component instanceof GenerateTestCasesConfigurable) {
+                                    list.add(component);
+                                }
+                            }
+                            return list.toArray(new Configurable[0]);    //To change body of overridden methods use File | Settings | File Templates.
+                        }
+                    },
+
+            };
+
+            //  allow to define it as default
+            ShowSettingsUtil.getInstance().showSettingsDialog(project, group);
+
+            //  verify if something has been selected, if not just skip
+            //  overwrite s variable
+            s = casesSettings.getTestFramework();
+            if (StringUtils.isEmpty(s)) {
+
+                // TODO show dialog displaying that there is no framework selection
+
+                return;
+            }
+        }
+
         PsiClass psiClass = getSubjectClass(editor, dataContext);
 
         if (psiClass != null) {
-
             //  create test class for this psiClass
-            final TestClass testClass = BDDCore.createTestClass(project, psiClass);
+
+            //  get the current test framework strategy from settings
+
+
+            final TestClass testClass;
+
+            if (s.equals("JUNIT3")) {
+                testClass = BDDCore.createTestClass(project, psiClass, new JUnit3Strategy());
+            } else {
+                testClass = BDDCore.createTestClass(project, psiClass, new JUnit4Strategy());
+            }
 
             ArrayList<ClassMember> array = new ArrayList<ClassMember>();
 
             List<TestMethod> methods = testClass.getAllMethods();
 
+            // TODO if methods is empty show message dialog
             //  iterar sobre los metodos de prueba
             for (TestMethod method : methods) {
 
@@ -61,7 +118,6 @@ public class GenerateTestMethods extends AnAction {
                     PsiDocAnnotationMember member = new PsiDocAnnotationMember(method);
                     array.add(member);
                 }
-
             }
 
             ClassMember[] classMembers = array.toArray(new ClassMember[array.size()]);
@@ -93,42 +149,41 @@ public class GenerateTestMethods extends AnAction {
                     }
                 }
 
-                DirectoryChooser fileChooser = new DirectoryChooser(project);
-                fileChooser.setTitle(IdeBundle.message("title.choose.destination.directory"));
-                fileChooser.fillList(allTestRoots.toArray(new PsiDirectory[allTestRoots.size()]), null, project, "");
-                // TODO only display if more than one source root
-                fileChooser.show();
-
-               final  PsiDirectory psiDirectory = fileChooser.isOK() ? fileChooser.getSelectedDirectory() : null;
-
-
-                if (psiDirectory != null) {
-                    //  create in specified test root
-                    // TODO run in write action together with method generation
-
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        public void run() {
-                            testClass.create(psiDirectory);
-                        }
-
-                    });
-
-
+                final PsiDirectory destinationRoot;
+                //  only display if more than one source root
+                if (allTestRoots.size() > 1) {
+                    DirectoryChooser fileChooser = new DirectoryChooser(project);
+                    fileChooser.setTitle(IdeBundle.message("title.choose.destination.directory"));
+                    fileChooser.fillList(allTestRoots.toArray(new PsiDirectory[allTestRoots.size()]), null, project, "");
+                    fileChooser.show();
+                    destinationRoot = fileChooser.isOK() ? fileChooser.getSelectedDirectory() : null;
                 } else {
-                    //  just cancel
-                    return;
-
+                    destinationRoot = allTestRoots.get(0);
                 }
 
 
+                if (destinationRoot != null) {
+                    //  create in specified test root
+                    // TODO run in write action together with method generation
+                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
+                        public void run() {
+                            testClass.create(destinationRoot);
+                        }
+                    });
+                } else {
+                    //  just cancel
+                    return;
+                }
             }
 
-            //  if backing test class exists, just create the methods in the same
 
+            TestMethod lastTestMethod = null;
+            //  if backing test class exists, just create the methods in the same
             for (ClassMember selectedElement : selectedElements) {
                 if (selectedElement instanceof PsiDocAnnotationMember) {
                     PsiDocAnnotationMember member = (PsiDocAnnotationMember) selectedElement;
                     final TestMethod testMethod = member.getTestMethod();
+                    lastTestMethod = testMethod;
                     if (!testMethod.reallyExists()) {
                         //  para cada uno de los seleccionados llamar a create
 
@@ -143,8 +198,8 @@ public class GenerateTestMethods extends AnAction {
             }
 
 
-            // TODO if something has been created jump to the last created test method
-
+            //  if something has been created jump to the last created test method, this is 'lastTestMethod'
+            ((NavigationItem)lastTestMethod.getBackingMethod()).navigate(true);
         }
 
 

@@ -16,6 +16,12 @@ import static org.junit.Assert.*;
 public class BDDCoreTest extends BaseTests {
 
 
+    public  <T> T zas(Class<T> foo){
+
+        return null;
+    }
+
+
     /**
      * @verifies create a new test class with test methods unitialized
      * @see BDDCore#createTestClass(com.intellij.openapi.project.Project,com.intellij.psi.PsiClass)

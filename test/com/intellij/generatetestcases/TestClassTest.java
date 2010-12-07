@@ -4,6 +4,7 @@ package com.intellij.generatetestcases;
 import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.test.TestUtil;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -37,7 +38,7 @@ public class TestClassTest extends BaseTests {
         PsiClass aClass = createClassFromTextInPackage(project, text, "Zas", comExamplePackage);
 
         //  instantiate TestClassImpl
-        TestClassImpl testClass = new TestClassImpl(aClass);
+        TestClassImpl testClass = new TestClassImpl(aClass, new JUnit4Strategy());
 
         //  expect reallyExists return false
         assertThat(testClass.reallyExists(), is(false));
@@ -48,7 +49,7 @@ public class TestClassTest extends BaseTests {
         createTestClassForSut(project);
 
 
-        TestClassImpl testClass1 = new TestClassImpl(sutClass);
+        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy());
 
         //  expect reallyExists return true
         assertThat(testClass1.reallyExists(), is(true));
@@ -68,7 +69,7 @@ public class TestClassTest extends BaseTests {
         PsiClass aClass = createClassFromTextInPackage(myProject, text, "Zas", comExamplePackage);
 
         //  instantiate TestClassImpl
-        TestClassImpl testClass = new TestClassImpl(aClass);
+        TestClassImpl testClass = new TestClassImpl(aClass, new JUnit4Strategy());
 
         //  expect reallyExists return false
         assertThat(testClass.reallyExists(), is(false));
@@ -80,7 +81,7 @@ public class TestClassTest extends BaseTests {
         createTestClassForSut(myProject);
 
 
-        TestClassImpl testClass1 = new TestClassImpl(sutClass);
+        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy());
 
         //  expect reallyExists return true
         assertThat(testClass1.reallyExists(), is(true));

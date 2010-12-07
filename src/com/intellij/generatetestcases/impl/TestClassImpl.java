@@ -1,6 +1,8 @@
 package com.intellij.generatetestcases.impl;
 
 import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
+import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -27,10 +29,13 @@ public class TestClassImpl implements TestClass {
     private PsiClass sutClass;
     private static final String TEST_CLASS_SUFFIX = "Test";
     private Project project;
+    private TestFrameworkStrategy frameworkStrategy;
 
-    public TestClassImpl(PsiClass psiClass) {
+    public TestClassImpl(PsiClass psiClass, TestFrameworkStrategy frameworkStrategy) {
         //  popular TestClass con TestMethods
         this.sutClass = psiClass;
+
+        this.frameworkStrategy = frameworkStrategy;
 
         // init a reference to the current project
         project = sutClass.getProject();
@@ -64,7 +69,7 @@ public class TestClassImpl implements TestClass {
             for (PsiDocTag tag : tags) {
                 //  comprobar que el tag sea del tipo should
                 if (tag.getName().equals(BDD_TAG)) {
-                    TestMethod tm = new TestMethodImpl(tag, this);
+                    TestMethod tm = new TestMethodImpl(tag, this, this.frameworkStrategy);
                     array.add(tm);
                 }
             }

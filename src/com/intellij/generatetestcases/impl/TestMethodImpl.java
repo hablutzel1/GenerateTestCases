@@ -2,7 +2,6 @@ package com.intellij.generatetestcases.impl;
 
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -47,10 +46,10 @@ public class TestMethodImpl implements TestMethod {
     private Project project;
     private PsiElementFactory elementFactory;
 
-    public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent) {
+    public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent, TestFrameworkStrategy frameworkStrategy) {
 
         // TODO instantiate an strategy
-        testFrameworkStrategy = new JUnit4Strategy();
+        testFrameworkStrategy = frameworkStrategy;
 
         this.shouldTag = shouldTag;
         this.project = shouldTag.getProject();
@@ -70,7 +69,7 @@ public class TestMethodImpl implements TestMethod {
         //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
         this.parent = parent;
         if (parent.getBackingClass() != null) {
-            this.backingMethod = testFrameworkStrategy.resolveBackingTestMethod(parent.getBackingClass(), sutMethod, description);
+            this.backingMethod = testFrameworkStrategy.findBackingTestMethod(parent.getBackingClass(), sutMethod, description);
         }
 
 
@@ -99,10 +98,15 @@ public class TestMethodImpl implements TestMethod {
         this.description = description.toString().trim();
     }
 
+    /**
+     *
+
+
+     */
     public boolean reallyExists() {
         PsiMethod method1 = null;
         if (this.parent.getBackingClass() != null) {
-            method1 = testFrameworkStrategy.resolveBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
+            method1 = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
         }
         PsiMethod method = method1;
 
@@ -152,7 +156,7 @@ public class TestMethodImpl implements TestMethod {
     public PsiMethod getBackingMethod() {
         PsiMethod method = null;
         if (this.parent.getBackingClass() != null) {
-            method = testFrameworkStrategy.resolveBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
+            method = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
         }
         return method;
     }

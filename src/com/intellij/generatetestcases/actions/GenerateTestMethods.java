@@ -2,6 +2,7 @@ package com.intellij.generatetestcases.actions;
 
 import com.intellij.codeInsight.generation.ClassMember;
 import com.intellij.generatetestcases.BDDCore;
+import com.intellij.generatetestcases.GenerateTestCasesBundle;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
@@ -9,12 +10,16 @@ import com.intellij.generatetestcases.testframework.JUnit3Strategy;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
+import com.intellij.history.LocalHistory;
+import com.intellij.history.LocalHistoryAction;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.DirectoryChooser;
 import com.intellij.ide.util.MemberChooser;
 import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableGroup;
@@ -29,6 +34,7 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +115,7 @@ public class GenerateTestMethods extends AnAction {
 
             List<TestMethod> methods = testClass.getAllMethods();
 
-            // TODO if methods is empty show message dialog
+            // TODO if methods is empty show message dialog, or disable button to generate
             //  iterar sobre los metodos de prueba
             for (TestMethod method : methods) {
 
@@ -125,7 +131,7 @@ public class GenerateTestMethods extends AnAction {
             chooser.setTitle("Choose should annotations");
             chooser.setCopyJavadocVisible(false);
             chooser.show();
-            List<ClassMember> selectedElements = chooser.getSelectedElements();
+            final List<ClassMember> selectedElements = chooser.getSelectedElements();
 
             if (selectedElements == null || selectedElements.size() == 0) {
                 //  canceled or nothing selected
@@ -133,7 +139,8 @@ public class GenerateTestMethods extends AnAction {
             }
 
             //  ensure if parent exists
-
+            PsiDirectory destinationRoot = null;
+            boolean createParent = false;
             if (!testClass.reallyExists()) {
 
                 //   otherwise allow to create in specified test sources root
@@ -149,7 +156,7 @@ public class GenerateTestMethods extends AnAction {
                     }
                 }
 
-                final PsiDirectory destinationRoot;
+
                 //  only display if more than one source root
                 if (allTestRoots.size() > 1) {
                     DirectoryChooser fileChooser = new DirectoryChooser(project);
@@ -163,13 +170,7 @@ public class GenerateTestMethods extends AnAction {
 
 
                 if (destinationRoot != null) {
-                    //  create in specified test root
-                    // TODO run in write action together with method generation
-                    ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                        public void run() {
-                            testClass.create(destinationRoot);
-                        }
-                    });
+                    createParent = true;
                 } else {
                     //  just cancel
                     return;
@@ -177,29 +178,46 @@ public class GenerateTestMethods extends AnAction {
             }
 
 
-            TestMethod lastTestMethod = null;
             //  if backing test class exists, just create the methods in the same
-            for (ClassMember selectedElement : selectedElements) {
-                if (selectedElement instanceof PsiDocAnnotationMember) {
-                    PsiDocAnnotationMember member = (PsiDocAnnotationMember) selectedElement;
-                    final TestMethod testMethod = member.getTestMethod();
-                    lastTestMethod = testMethod;
-                    if (!testMethod.reallyExists()) {
-                        //  para cada uno de los seleccionados llamar a create
+            //  para cada uno de los seleccionados llamar a create
+            //  create an appropiate command name
+            final String commandName = GenerateTestCasesBundle.message("plugin.GenerateTestCases.creatingtestcase", testClass.getClassUnderTest().getName());
+            final boolean finalCreateParent = createParent;
+            final PsiDirectory finalDestinationRoot = destinationRoot;
+            new WriteCommandAction(project, commandName) {
 
-                        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-                            public void run() {
-                                testMethod.create();
+                @Override
+                protected void run(Result result) throws Throwable {
+                    LocalHistoryAction action = LocalHistoryAction.NULL;
+                    //  wrap this with error management
+                    try {
+
+                        action = LocalHistory.startAction(project, commandName);
+                        if (finalCreateParent) {
+                            testClass.create(finalDestinationRoot);
+                        }
+                        TestMethod lastTestMethod = null;
+                        for (ClassMember selectedElement : selectedElements) {
+                            if (selectedElement instanceof PsiDocAnnotationMember) {
+                                PsiDocAnnotationMember member = (PsiDocAnnotationMember) selectedElement;
+                                final TestMethod testMethod = member.getTestMethod();
+                                lastTestMethod = testMethod;
+                                if (!testMethod.reallyExists()) {
+                                    testMethod.create();
+
+                                }
                             }
-                        });
-
+                        }
+                        //  if something has been created jump to the last created test method, this is 'lastTestMethod'
+                        lastTestMethod.getBackingMethod().navigate(true);
+                    } finally {
+                        action.finish();
                     }
+
                 }
-            }
+            }.execute();
 
 
-            //  if something has been created jump to the last created test method, this is 'lastTestMethod'
-            ((NavigationItem)lastTestMethod.getBackingMethod()).navigate(true);
         }
 
 

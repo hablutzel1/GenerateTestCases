@@ -16,7 +16,7 @@
           <horizontalAlignment value="2"/>
           <horizontalTextPosition value="2"/>
           <labelFor value="2a405"/>
-          <text resource-bundle="messages/GenerateTestCases" key="plugin.GenerateTestCases.framework"/>
+          <text resource-bundle="GenerateTestCasesBundle" key="plugin.GenerateTestCases.framework"/>
           <verifyInputWhenFocusTarget value="false"/>
         </properties>
       </component>

@@ -4,14 +4,12 @@
     <version>1.0</version>
     <vendor>OpenMRS</vendor>
     <idea-version since-build="8000"/>
-    <resource-bundle>messages.GenerateTestCases</resource-bundle>
 
     <application-components>
-        <!-- Add your application components here -->
+
     </application-components>
 
     <project-components>
-        <!-- Add your project components here -->
         <component>
             <implementation-class>com.intellij.generatetestcases.impl.GenerateTestCasesSettings</implementation-class>
         </component>
@@ -28,9 +26,6 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable id="generatetestcases"
                                  implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
-        <!--<projectService serviceInterface="com.intellij.generatetestcases.impl.GenerateTestCasesSettings"-->
-                    <!--serviceImplementation="com.intellij.generatetestcases.impl.GenerateTestCasesSettings"/>-->
-
     </extensions>
 
 </idea-plugin>

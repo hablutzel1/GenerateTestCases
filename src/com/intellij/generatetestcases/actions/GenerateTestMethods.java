@@ -116,6 +116,7 @@ public class GenerateTestMethods extends AnAction {
             List<TestMethod> methods = testClass.getAllMethods();
 
             // TODO if methods is empty show message dialog, or disable button to generate
+//            if (methods.)
             //  iterar sobre los metodos de prueba
             for (TestMethod method : methods) {
 

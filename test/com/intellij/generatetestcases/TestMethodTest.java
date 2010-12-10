@@ -10,7 +10,6 @@ import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -84,7 +83,7 @@ public class TestMethodTest extends BaseTests {
      * @see TestMethod#getBackingMethod()
      */
     @Test
-    public void testgetBackingMethod_shouldReturnAValidPsiMethodIfReallyExistsReturnsTrueFalseOtherwise()
+    public void testGetBackingMethod_shouldReturnAValidPsiMethodIfReallyExistsReturnsTrueFalseOtherwise()
             throws Exception {
 
 
@@ -108,7 +107,7 @@ public class TestMethodTest extends BaseTests {
         assertThat(tm.reallyExists(), is(false));
     }
 
-    private TestMethod findTestMethodInCollection(List<TestMethod> methods, String shouldDescription, String sutMethodName) {
+    public static TestMethod findTestMethodInCollection(List<TestMethod> methods, String shouldDescription, String sutMethodName) {
         TestMethod tm = null;
         for (TestMethod method : methods) {
             if (method.getDescription().equals(shouldDescription) && method.getSutMethod().getName().equals(sutMethodName)) {
@@ -124,7 +123,7 @@ public class TestMethodTest extends BaseTests {
      * @see TestMethod#reallyExists()
      */
     @Test
-    public void testreallyExists_shouldReturnTrueOnlyIfThisTestMethodHasABackingPsiMethod()
+    public void testReallyExists_shouldReturnTrueOnlyIfThisTestMethodHasABackingPsiMethod()
             throws Exception {
 
         PsiClass psiClass = createSutClass(myProject);
@@ -146,128 +145,11 @@ public class TestMethodTest extends BaseTests {
 
 
     /**
-     * @verifies create a test method with the expected body and javadoc
-     * @see TestMethod#create()
-     */
-    @Test
-    public void testcreate_shouldCreateATestMethodWithTheExpectedBodyAndJavadoc()
-            throws Exception {
-
-        //  create sut class
-        PsiClass aClass = createFooBarSutClass();
-
-        //  create test class for sut
-
-        String testClassText = "package com.example;\n" +
-                "\n" +
-                "\n" +
-                "import org.junit.Assert;\n" +
-                "import org.junit.Test;\n" +
-                "\n" +
-                "public class FooBarTest {\n" +
-                "}";
-        createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
-
-        //  create test class
-        TestClass testClass = BDDCore.createTestClass(myProject, aClass);
-
-        //  get unitialized test method
-        List<TestMethod> allTestMethods = testClass.getAllMethods();
-        TestMethod testMethod = findTestMethodInCollection(allTestMethods, "do nothing", "zas");
-        assertThat(testMethod.reallyExists(), is(false));
-
-        //  actually create
-        testMethod.create();
-
-        //  verify backing method structure like this one
-
-        /////////////////////////////////////////////////
-        //	/**
-        //	 * @see FooBar#zas()
-        //	 * @verifies do nothing
-        //	 */
-        //	@Test
-        //	public void zas_shouldDoNothing() throws Exception {
-        //		//TODO auto-generated
-        //		Assert.fail("Not yet implemented");
-        //	}
-        //////////////////////////////////////////////////
-
-
-        PsiMethod backingMethod = testMethod.getBackingMethod();
-
-        PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
-        assertThat(docTags.length, is(2));
-
-        PsiDocTag tag = findDocTagByName(backingMethod, "see");
-
-        assertThat(tag.getValueElement().getText(), is("FooBar#zas()"));
-
-        PsiDocTag verifiesTag = findDocTagByName(backingMethod, "verifies");
-        PsiElement[] elements = verifiesTag.getDataElements();
-        String verifiesDescription = "";
-        for (PsiElement element : elements) {
-            verifiesDescription += element.getText() + " ";
-        }
-        verifiesDescription = verifiesDescription.trim();
-        assertThat(verifiesDescription, is("do nothing"));
-
-        //  assert for test annotation
-        //  get qualified name, consider the package
-//        PsiAnnotation annotation = (PsiAnnotation) backingMethod.getModifierList().getAnnotations()[0].getOriginalElement();
-        assertThat(backingMethod.getModifierList().getAnnotations()[0].getQualifiedName(), is("org.junit.Test"));
-
-        //  assert presence of throws clause
-        assertThat(backingMethod.getThrowsList().getReferencedTypes()[0].getCanonicalText(), is("java.lang.Exception"));
-
-        MethodBodyVisitor bodyVisitor = new MethodBodyVisitor();
-        backingMethod.getBody().acceptChildren(bodyVisitor);
-        //  assert comment in the body
-        assertThat(bodyVisitor.getComments().get(0).getText(), is("//TODO auto-generated"));
-
-        // assert Assert.fail... is present
-
-        assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
-//        fail("org.junit.Assert.fail(\"Not yet implemented\"); no se debe ver el import completo");
-
-
-        TestMethod testMethodWithGenerics = findTestMethodInCollection(allTestMethods, "do nothing", "getHandlersForType");
-        testMethodWithGenerics.create();
-        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingMethod();
-
-        PsiDocTag seeWithGenerics = findDocTagByName(methodWithGenericsBackingMethod, "see");
-
-        String desc = seeWithGenerics.getText().substring(seeWithGenerics.getText().indexOf("Foo"));
-        assertThat(desc, is("FooBar#getHandlersForType(Class, Class)"));
-//        @see FooBar#getHandlersForType(Class<H>, Class<T>)
-//        fail("al crear el @link para  public static <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type) no generar texto para los datos genericos");
-    }
-
-    /**
-     * Find the first doctag for the docTagName, return null if nothing found
-     *
-     * @param backingMethod
-     * @param docTagName
-     * @return
-     */
-    private PsiDocTag findDocTagByName(PsiMethod backingMethod, String docTagName) {
-        PsiDocTag[] docTags2 = backingMethod.getDocComment().getTags();
-        PsiDocTag tag = null;
-        for (PsiDocTag docTag : docTags2) {
-            if (docTag.getName().equals(docTagName)) {
-                tag = docTag;
-                break;
-            }
-        }
-        return tag;
-    }
-
-    /**
      * @verifies create the current test method
      * @see TestMethod#create()
      */
     @Test
-    public void testcreate_shouldCreateTheCurrentTestMethod() throws Exception {
+    public void testCreate_shouldCreateTheCurrentTestMethod() throws Exception {
 
         //  create a psi sut
         PsiClass psiClass = createSutClass(myProject);
@@ -303,7 +185,7 @@ public class TestMethodTest extends BaseTests {
      * @see TestMethod#create()
      */
     @Test
-    public void testcreate_shouldCreateTheParentInTheSameContentSourceRootThatItsBackingMethodIfItDidntExistAlready()
+    public void testCreate_shouldCreateTheParentInTheSameContentSourceRootThatItsBackingMethodIfItDidntExistAlready()
             throws Exception {
 
         //  create a psi sut without psi test class
@@ -363,42 +245,4 @@ public class TestMethodTest extends BaseTests {
     }
 
 
-    /**
-     * Counts comments and statements in a pSi method body
-     */
-    private static class MethodBodyVisitor extends PsiElementVisitor {
-        public List<PsiComment> getComments() {
-            return comments;
-        }
-
-        public List<PsiStatement> getStatements() {
-            return statements;
-
-
-        }
-
-
-        private MethodBodyVisitor() {
-            comments = new ArrayList<PsiComment>();
-            statements = new ArrayList<PsiStatement>();
-        }
-
-        private List<PsiComment> comments;
-        private List<PsiStatement> statements;
-
-
-        @Override
-        public void visitComment(PsiComment comment) {
-
-            this.comments.add(comment);
-        }
-
-        @Override
-        public void visitElement(PsiElement element) {
-            if (element instanceof PsiStatement) {
-                PsiStatement psiStatement = (PsiStatement) element;
-                this.statements.add(psiStatement);
-            }
-        }
-    }
 }

@@ -3,7 +3,6 @@ package com.intellij.generatetestcases.util;
 
 import com.intellij.generatetestcases.test.ExpectExceptionsExecutor;
 import com.intellij.generatetestcases.test.ExpectExceptionsTemplate;
-import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.testFramework.IdeaTestCase;
 import org.junit.Test;
 
@@ -51,7 +50,7 @@ public class BddUtilTest extends IdeaTestCase {
 
     /**
      * @verifies create a appropiate name for the test method
-     * @see BddUtil#generateTestMethodName(String,String)
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String,String)
      */
     @Test
     public void testGenerateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod()
@@ -59,14 +58,14 @@ public class BddUtilTest extends IdeaTestCase {
 
         String methodName = "generateTestMethodName";
         String description = "create a appropiate name for the test method";
-        String testMethodName = BddUtil.generateTestMethodName(methodName, description);
+        String testMethodName = BddUtil.generateTestMethodNameForJUNIT4(methodName, description);
         assertEquals("generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod", testMethodName);
 
     }
 
     /**
      * @verifies fail if wrong args
-     * @see BddUtil#generateTestMethodName(String,String)
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String,String)
      */
     @Test
     public void testGenerateTestMethodName_shouldFailIfWrongArgs() throws Exception {
@@ -77,7 +76,7 @@ public class BddUtilTest extends IdeaTestCase {
             }
 
             public void doInttemplate() {
-                BddUtil.generateTestMethodName("", "");
+                BddUtil.generateTestMethodNameForJUNIT4("", "");
             }
         });
 
@@ -87,7 +86,7 @@ public class BddUtilTest extends IdeaTestCase {
             }
 
             public void doInttemplate() {
-                BddUtil.generateTestMethodName(null, null);
+                BddUtil.generateTestMethodNameForJUNIT4(null, null);
             }
         });
 

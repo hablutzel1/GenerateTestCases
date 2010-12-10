@@ -21,6 +21,8 @@ public class BDDCore {
      * It loads an existing test class for the psiClass passed OR
      * creates a new TestClass will all of its test methods not yet
      * created, but available in {@link TestClass#getAllMethods()}
+     * <br>
+     * <b>It does create a TestClass with JUNIT 4 framework support</b>
      *
      * @param project
      * @param psiClass origin class

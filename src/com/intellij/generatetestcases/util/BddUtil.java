@@ -18,7 +18,7 @@ public class BddUtil {
      * @should create a appropiate name for the test method
      * @should fail if wrong args
      */
-    public static String generateTestMethodName(@NotNull String originMethodName, @NotNull String shouldDescription) {
+    public static String generateTestMethodNameForJUNIT4(@NotNull String originMethodName, @NotNull String shouldDescription) {
 
         if (StringUtils.isBlank(originMethodName) || StringUtils.isBlank(shouldDescription)) {
             throw new IllegalArgumentException();
@@ -49,6 +49,9 @@ public class BddUtil {
         return input.substring(0, 1).toUpperCase() + input.substring(1);
     }
 
-   
 
+    public static String generateJUNIT3MethodName(String sutMethodName, String description) {
+        String s = generateTestMethodNameForJUNIT4(sutMethodName, description);
+        return "test" + StringUtils.capitalize(s);
+    }
 }

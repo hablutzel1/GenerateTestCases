@@ -52,9 +52,6 @@ public interface TestMethod {
      *
      * @should create the current test method
      * @should create the parent in the same content source root that its backing method if it didn't exist already
-     * @should add required imports in test class as required for its javadoc and its body
-     * @should create a test method with the expected body and javadoc
-     * @should format the test file appropriately
      */
     void create();
 

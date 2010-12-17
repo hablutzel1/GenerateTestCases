@@ -1,7 +1,12 @@
 package com.intellij.generatetestcases.util;
 
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PsiImportStatementImpl;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Jaime Hablutzel
@@ -53,5 +58,34 @@ public class BddUtil {
     public static String generateJUNIT3MethodName(String sutMethodName, String description) {
         String s = generateTestMethodNameForJUNIT4(sutMethodName, description);
         return "test" + StringUtils.capitalize(s);
+    }
+
+    public static List<PsiImportStatementBase> findImportsInClass(PsiClass testBackingClass, String importName) {
+
+        final PsiImportList[] psiImportList = {null};
+        testBackingClass.getScope().acceptChildren(new PsiElementVisitor() {
+            @Override
+            public void visitElement(PsiElement element) {
+                if (element instanceof PsiImportList) {
+                    psiImportList[0] = (PsiImportList) element;
+                }
+            }
+
+        });
+
+        PsiImportList list = psiImportList[0];
+
+
+        PsiImportStatementBase[] importStatementBases = list.getAllImportStatements();
+        List<PsiImportStatementBase> matchingImports1 = new ArrayList<PsiImportStatementBase>();
+        for (PsiImportStatementBase importStatementBase : importStatementBases) {
+            String s = ((PsiImportStatementImpl) importStatementBase).getQualifiedName();
+            if (s.equals(importName)) {
+                matchingImports1.add(importStatementBase);
+            }
+
+        }
+        List<PsiImportStatementBase> matchingImports = matchingImports1;
+        return matchingImports;
     }
 }

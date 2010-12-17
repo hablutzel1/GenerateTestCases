@@ -4,9 +4,11 @@ import com.intellij.generatetestcases.BDDCore;
 import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.test.BaseTests;
+import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
-import org.junit.Assert;
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -173,18 +175,106 @@ public class JUnitStrategyBaseTest extends BaseTests {
     @Test
     public void testCreateBackingTestMethod_shouldManageAppropiatelyExistenceOfMultipleAssertsImports() throws Exception {
 
-        // TODO create a test class with junit.framework.Assert
+        //  invoke create foobarsut class
+        PsiClass aClass = createClassFromTextInPackage(myProject, "package com.example;\n" +
+                "\n" +
+                "public interface FooBar {\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tvoid zas();\n" +
+                "\t\n" +
+                "\t\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tpublic <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type);\n" +
+                "}\n" +
+                "", "FooBar", comExamplePackage);
 
-        // TODO verify backing class structure with only that import
+        //  create test class with this import: org.junit.Assert
+
+        createClassFromTextInPackage(myProject, "package com.example;\n" +
+                "\n" +
+                "\n" +
+                "import org.junit.Assert;\n" +
+                "\n" +
+                "public class FooBarTest {\n" +
+                "}", "FooBarTest", comExamplePackage);
+
+        PsiClass testBackingClass = triggerCreateTestClassAndMethod(aClass);
+
+
+        List<PsiImportStatementBase> matchingImports = BddUtil.findImportsInClass(testBackingClass, "org.junit.Assert");
+
+        //  verify this import exists after the creation oof a test method
+        assertThat(matchingImports.size(), is(1));
+
+        //  delete the test class
+        testBackingClass.delete();
+
+        //  create a test class with junit.framework.Assert
+        createClassFromTextInPackage(myProject, "package com.example;\n" +
+                "\n" +
+                "\n" +
+                "import junit.framework.Assert;\n" +
+                "\n" +
+                "public class FooBarTest {\n" +
+                "}", "FooBarTest", comExamplePackage);
+
+        testBackingClass = triggerCreateTestClassAndMethod(aClass);
+
+        //  verify backing class structure with only that import
+        assertThat(BddUtil.findImportsInClass(testBackingClass, "junit.framework.Assert").size(), is(1));
+        assertThat(BddUtil.findImportsInClass(testBackingClass, "org.junit.Assert").size(), is(0));
+
+        // ensure this will not qualify the expression statmente for Assert.fail("Not yet implemented");
+        String expressionStatement  = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
+        assertThat(expressionStatement.startsWith("org.junit"), is(false));
+
+        testBackingClass.delete();
 
         // TODO create Assert class/type
 
-        // TODO create a test class with unknown Assert import
+        //  create a test class with unknown Assert import
+        createClassFromTextInPackage(myProject, "package com.example;\n" +
+                "\n" +
+                "\n" +
+                "import strange.Assert;\n" +
+                "\n" +
+                "public class FooBarTest {\n" +
+                "}", "FooBarTest", comExamplePackage);
 
-        // TODO verify statement in method with 	org.junit.Assert.fail("Not yet implemented"); fully qualified
 
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
+        testBackingClass = triggerCreateTestClassAndMethod(aClass);
+
+        //  verify imports
+        assertThat(BddUtil.findImportsInClass(testBackingClass, "junit.framework.Assert").size(), is(0));
+        assertThat(BddUtil.findImportsInClass(testBackingClass, "org.junit.Assert").size(), is(0));
+        assertThat(BddUtil.findImportsInClass(testBackingClass, "strange.Assert").size(), is(1));
+
+        //  verify statement in method org.junit.Assert.fail("Not yet implemented"); fully qualified
+       String expressionStatement2  = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
+        assertThat(expressionStatement2.startsWith("org.junit"), is(true));
+
+    }
+
+    private PsiClass triggerCreateTestClassAndMethod(PsiClass aClass) {
+        //  create the test class and invoke a method to create
+        //  create test class
+        TestClass testClass1 = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy());
+
+        //  get unitialized test method
+        List<TestMethod> allTestMethods = testClass1.getAllMethods();
+        TestMethod testMethod = findTestMethodInCollection(allTestMethods, "do nothing", "zas");
+        assertThat(testMethod.reallyExists(), is(false));
+
+        //  actually create
+        testMethod.create();
+        TestClass testClass = testClass1;
+
+        PsiClass testBackingClass = testClass.getBackingClass();
+        return testBackingClass;
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.intellij.generatetestcases.testframework;
 
 import com.intellij.codeInsight.intention.AddAnnotationFix;
+import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
@@ -137,22 +138,51 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
         //  add org.junit.Assert.fail("Not yet implemented");,
 
-        // TODO verify import for Assert before actually importing
-
-        // TODO verify if junit.framework.Assert exists, if it does do not import org.junit.Assert
+        boolean assertImportExists = ((PsiJavaFile) testClass.getContainingFile()).getImportList().findSingleImportStatement("Assert") == null ? false: true;
+        boolean makeFullQualified = false;
 
         // TODO if Assert exists and is different to both of previous, place fully qualified statement
+        if (assertImportExists) {
 
+            //  verify if junit.framework.Assert exists, if it does do not import org.junit.Assert
+            //  verify import for Assert before actually importing
+
+            List<PsiImportStatementBase> basicExpectedImport = BddUtil.findImportsInClass(testClass, "org.junit.Assert");
+
+            List<PsiImportStatementBase> otherExpectedImport = BddUtil.findImportsInClass(testClass, "junit.framework.Assert");
+
+            // TODO fix it
+            if (basicExpectedImport.size() == 0 && otherExpectedImport.size() == 0) {
+                // then it is a weird class
+                makeFullQualified = true;
+            }
+
+
+        } else {
+            //  create basic org.junit.Assert
+            addBasicImport(testClass, project);
+        }
+
+
+        // org.junit.Assert
+        PsiStatement statement;
+
+        if (makeFullQualified) {
+            statement = elementFactory.createStatementFromText("org.junit.Assert.fail(\"Not yet implemented\");", null);
+        } else {
+            statement = elementFactory.createStatementFromText("Assert.fail(\"Not yet implemented\");", null);
+        }
+
+        realTestMethod.getBody().addAfter(statement, todoComment);
+
+        return realTestMethod;
+    }
+
+    private void addBasicImport(PsiClass testClass, Project project) {
         PsiClass junitAssert = JavaPsiFacade.getInstance(project).findClass("org.junit.Assert", GlobalSearchScope.allScope(project));
         PsiImportStatement importStaticStatement = elementFactory.createImportStatement(junitAssert);
         PsiImportList list = ((PsiJavaFile) testClass.getContainingFile()).getImportList();
         list.add(importStaticStatement);
-
-        // org.junit.Assert
-        PsiStatement statement = elementFactory.createStatementFromText("Assert.fail(\"Not yet implemented\");", null);
-        realTestMethod.getBody().addAfter(statement, todoComment);
-
-        return realTestMethod;
     }
 
 }

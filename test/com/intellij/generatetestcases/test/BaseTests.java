@@ -25,7 +25,8 @@ public class BaseTests extends PsiTestCase {
 
     protected PsiDirectory comExamplePackage;
     protected PsiClass sutClass;
-    private PsiClass javaTestClass;
+    protected PsiDirectory defaultSourcePackageRoot;
+//    private PsiClass javaTestClass;
 //    public PsiDirectory sourceRootDirectory;
 
 
@@ -44,7 +45,7 @@ public class BaseTests extends PsiTestCase {
         super.setUp();
 
         //  get project
-        final Project project = getProject();
+//        final Project project = getProject();
         //configure("", "");
         ApplicationManager.getApplication().runWriteAction(
                 new Runnable() {
@@ -55,10 +56,11 @@ public class BaseTests extends PsiTestCase {
                             //  obtener ruta de proyecto de pruebas
                             VirtualFile structure = PsiTestUtil.createTestProjectStructure("src", myModule, null, myFilesToDelete, true);
                             String packageName = "com.example";
-                            PsiDirectory sourcePackageRoot = myPsiManager.findDirectory(structure);
+                            defaultSourcePackageRoot = myPsiManager.findDirectory(structure);
                             //PsiDirectory sourcePackageRoot = getFirstSourcePackageRoot(project);
 //                            BaseTests.this.sourceRootDirectory = sourcePackageRoot;
-                            comExamplePackage = TestUtil.createPackageInSourceRoot(packageName, sourcePackageRoot);
+                            comExamplePackage = TestUtil.createPackageInSourceRoot(packageName, defaultSourcePackageRoot);
+
 
                             //  add junit to classpath
                             //  add home path
@@ -176,7 +178,7 @@ public class BaseTests extends PsiTestCase {
 
         //  create test class in the same package
         final String className = "FooTest";
-        this.javaTestClass = createClassFromTextInPackage(project, testClass, className, comExamplePackage);
+        createClassFromTextInPackage(project, testClass, className, comExamplePackage);
     }
 
     protected PsiClass createClassFromTextInPackage(final Project project, final String text, final String className, final PsiDirectory inPackage) {

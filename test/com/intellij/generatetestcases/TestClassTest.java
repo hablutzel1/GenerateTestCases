@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -62,7 +63,7 @@ public class TestClassTest extends BaseTests {
      * @see TestClass#getBackingClass()
      */
     @Test
-    public void testgetBackingClass_shouldReturnAPsiClassIfThisReallyExistsNullOtherwise()
+    public void testGetBackingClass_shouldReturnAPsiClassIfThisReallyExistsNullOtherwise()
             throws Exception {
 
         String text = "package com.example;  public interface Zas {}";
@@ -96,7 +97,7 @@ public class TestClassTest extends BaseTests {
      * @see TestClass#create(com.intellij.psi.PsiDirectory)
      */
     @Test
-    public void testcreate_shouldCreateTheNewJavaTestClassInTheSameDirectoryThatTheOriginClassIfTestRootIsNullInTheSpecifiedTestRootIfNotNull()
+    public void testCreate_shouldCreateTheNewJavaTestClassInTheSameDirectoryThatTheOriginClassIfTestRootIsNullInTheSpecifiedTestRootIfNotNull()
             throws Exception {
 
 
@@ -194,7 +195,30 @@ public class TestClassTest extends BaseTests {
             assertTrue("should only create destination package if it doesn't exists already", true);
 
         }
+
+
     }
 
 
+    /**
+     * @verifies create the backing test class in the same package than the sut class
+     * @see TestClass#create(com.intellij.psi.PsiDirectory)
+     */
+    @Test
+    public void testCreate_shouldCreateTheBackingTestClassInTheSamePackageThanTheSutClass() throws Exception {
+
+        // TODO create test in some package
+
+        // TODO verify sucess
+
+        // TODO create test in the default package
+
+        // TODO verify sucess
+
+
+          // TODO allow to test classes not in any package
+        fail();
+        //TODO auto-generated
+        Assert.fail("Not yet implemented");
+    }
 }

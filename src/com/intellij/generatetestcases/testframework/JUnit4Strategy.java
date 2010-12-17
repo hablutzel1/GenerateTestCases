@@ -8,6 +8,7 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
+import com.intellij.testIntegration.TestFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -36,4 +37,8 @@ public class JUnit4Strategy extends JUnitStrategyBase {
     }
 
 
+    @Override
+    public TestFrameworkDescriptor getTestFrameworkDescriptor() {
+        return  BddUtil.findTestFrameworkDescriptorByName("JUnit4");
+    }
 }

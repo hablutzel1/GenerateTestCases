@@ -29,6 +29,7 @@ public interface TestClass {
      *
      *
      * @should create the new java test class in the same directory that the origin class if testRoot is null, in the specified test root if not null
+     * @should create the backing test class in the same package than the sut class
      * @param sourceRoot the specific PsiDirectory source root where the test class and package should be created
      */
     void create(PsiDirectory sourceRoot);

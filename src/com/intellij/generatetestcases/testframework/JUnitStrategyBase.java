@@ -1,7 +1,12 @@
 package com.intellij.generatetestcases.testframework;
 
+import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
 import com.intellij.codeInsight.intention.AddAnnotationFix;
 import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.JavaCodeStyleManager;
@@ -10,6 +15,9 @@ import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +25,9 @@ import java.util.List;
  * User: Jaime Hablutzel
  */
 public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
+
     private PsiElementFactory elementFactory;
+
 
     @Override
     public PsiMethod findBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
@@ -28,14 +38,14 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 //        PsiClass parent = testClass.getContainingClass();
         // TODO get the test class
 
-//        if (parent != null) {
+
         PsiMethod[] byNameMethods = parentBackingClass.findMethodsByName(nombreMetodoDePrueba, false);
         if (byNameMethods.length > 0) {
             backingMethod = byNameMethods[0];
         }
 
 
-//        }
+
         return backingMethod;
     }
 
@@ -50,6 +60,8 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
      * @return
      * @should create a junit test method with the expected body and javadoc and verify class structure
      * @should manage appropiately existence of multiple Assert's imports
+     * @should manage appropiately any condition of the backing test class (imports, existing methods, modifiers, etc)
+     * @should create test method even with broken references if test libraries aren't available
      */
     @Override
     public PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
@@ -99,26 +111,56 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
         final JavaCodeStyleManager codeStyleManagerEx = JavaCodeStyleManager.getInstance(project);
 
-        //    codeStyleManagerEx.shortenClassReferences(element, JavaCodeStyleManager.UNCOMPLETE_CODE);
 
         realTestMethod.addBefore(psiComment, realTestMethod.getFirstChild());
-
         //  add junit 4 Test annotation
-
         //  verify org.junit.Test exists in classpath as an anntoation, if it doesn't throw exception
-        String jUnit4TestAnnotation = "org.junit.Test";
-        PsiClass junitTestAnnotation = JavaPsiFacade.getInstance(project).findClass(jUnit4TestAnnotation, GlobalSearchScope.allScope(project));
-        if (junitTestAnnotation == null) {
+        
+
+//        PsiClass junitTestAnnotation = JavaPsiFacade.getInstance(project).findClass(jUnit4TestAnnotation, GlobalSearchScope.allScope(project));
+
+        //  get current module
+        Module module = ModuleUtil.findModuleForPsiElement(sutMethod);
+
+        //  test if framework is available in project
+//        boolean isLibraryAvailable = getTestFrameworkDescriptor().isLibraryAttached(module);
+
+        //  TODO if it isn't display dialog allowing the user to add library to the project
+//        if (!isLibraryAvailable){
+
+            
             // TODO display alert, look for something similiar, not obstrusive :D
-            throw new RuntimeException(jUnit4TestAnnotation + " haven't been found in classpath");
-        } else {
+//        }
+
+
+//        if (junitTestAnnotation == null) {
+
+//             myFixLibraryButton = new JButton(CodeInsightBundle.message("intention.create.test.dialog.fix.library"));
+//    myFixLibraryButton.addActionListener(new ActionListener() {
+//      public void actionPerformed(ActionEvent e) {
+//        ApplicationManager.getApplication().runWriteAction(new Runnable() {
+//          public void run() {
+//            OrderEntryFix.addJarToRoots(mySelectedTestDescriptor.getLibraryPath(), myTargetModule, null);
+//          }
+//        });
+//        myFixLibraryPanel.setVisible(false);
+//      }
+//    });
+//            getTestFrameworkDescriptor().get
+
+
+
+//            throw new RuntimeException(jUnit4TestAnnotation + " haven't been found in classpath");
+//        } else {
+          String jUnit4TestAnnotation = "org.junit.Test";
+
             //  add the annotation to the method
             AddAnnotationFix fix = new AddAnnotationFix(jUnit4TestAnnotation, realTestMethod);
             if (fix.isAvailable(project, null, realTestMethod.getContainingFile())) {
                 fix.invoke(project, null, realTestMethod.getContainingFile());
             }
-        }
-
+//        }
+//
         //  add throws Exception
 
 //        PsiClass javaLangException = JavaPsiFacade.getInstance(project).findClass("java.lang.Exception", GlobalSearchScope.allScope(project));
@@ -138,7 +180,9 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
         //  add org.junit.Assert.fail("Not yet implemented");,
 
-        boolean assertImportExists = ((PsiJavaFile) testClass.getContainingFile()).getImportList().findSingleImportStatement("Assert") == null ? false: true;
+        PsiJavaFile javaFile = (PsiJavaFile) testClass.getContainingFile();
+
+        boolean assertImportExists = javaFile.getImportList().findSingleImportStatement("Assert") == null ? false: true;
         boolean makeFullQualified = false;
 
         // TODO if Assert exists and is different to both of previous, place fully qualified statement
@@ -147,12 +191,15 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
             //  verify if junit.framework.Assert exists, if it does do not import org.junit.Assert
             //  verify import for Assert before actually importing
 
-            List<PsiImportStatementBase> basicExpectedImport = BddUtil.findImportsInClass(testClass, "org.junit.Assert");
 
-            List<PsiImportStatementBase> otherExpectedImport = BddUtil.findImportsInClass(testClass, "junit.framework.Assert");
+            //  replace it by ((PsiJavaFile) testClass.getContainingFile()).getImportList()
+            PsiImportStatement bei = javaFile.getImportList().findSingleClassImportStatement("org.junit.Assert");
+//            List<PsiImportStatementBase> basicExpectedImport = BddUtil.findImportsInClass(testClass, );
 
-            // TODO fix it
-            if (basicExpectedImport.size() == 0 && otherExpectedImport.size() == 0) {
+            PsiImportStatement oei = javaFile.getImportList().findSingleClassImportStatement("junit.framework.Assert");
+//            List<PsiImportStatementBase> otherExpectedImport = BddUtil.findImportsInClass(testClass, "");
+
+            if (bei == null && oei == null) {
                 // then it is a weird class
                 makeFullQualified = true;
             }

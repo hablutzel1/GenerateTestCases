@@ -1,7 +1,7 @@
 <idea-plugin version="2">
     <name>GenerateTestCases</name>
     <description>GenerateTestCases plugin</description>
-    <version>1.0</version>
+    <version>1.0.2</version>
     <vendor>OpenMRS</vendor>
     <idea-version since-build="8000"/>
 
@@ -26,6 +26,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable id="generatetestcases"
                                  implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
+        <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
     </extensions>
 
 </idea-plugin>

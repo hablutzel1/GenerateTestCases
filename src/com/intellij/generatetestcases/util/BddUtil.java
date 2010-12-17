@@ -1,10 +1,14 @@
 package com.intellij.generatetestcases.util;
 
+import com.intellij.openapi.extensions.Extensions;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
+import com.intellij.testIntegration.JavaTestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFrameworkDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,6 +64,8 @@ public class BddUtil {
         return "test" + StringUtils.capitalize(s);
     }
 
+
+    
     public static List<PsiImportStatementBase> findImportsInClass(PsiClass testBackingClass, String importName) {
 
         final PsiImportList[] psiImportList = {null};
@@ -79,13 +85,35 @@ public class BddUtil {
         PsiImportStatementBase[] importStatementBases = list.getAllImportStatements();
         List<PsiImportStatementBase> matchingImports1 = new ArrayList<PsiImportStatementBase>();
         for (PsiImportStatementBase importStatementBase : importStatementBases) {
-            String s = ((PsiImportStatementImpl) importStatementBase).getQualifiedName();
-            if (s.equals(importName)) {
-                matchingImports1.add(importStatementBase);
-            }
 
+//            if (importStatementBase instanceof PsiImportStatementImpl) {
+                String s = ((PsiImportStatementImpl) importStatementBase).getQualifiedName();
+                if (s.equals(importName)) {
+                    matchingImports1.add(importStatementBase);
+                }
+//            }
         }
         List<PsiImportStatementBase> matchingImports = matchingImports1;
         return matchingImports;
+    }
+
+
+    /**
+     * It will search in com.intellij.testFrameworkDescriptor extension point
+     * for descriptors with the expected name
+     *
+     * @param name
+     * @return
+     */
+    public static JavaTestFrameworkDescriptor findTestFrameworkDescriptorByName(String name) {
+
+        //  get a test framework from platform extension
+        for (final TestFrameworkDescriptor descriptor : Extensions.getExtensions(TestFrameworkDescriptor.EXTENSION_NAME)) {
+            if (descriptor.getName().equals(name)) {
+                return (JavaTestFrameworkDescriptor) descriptor;
+            }
+        }
+        //  return null if not found
+        return null;
     }
 }

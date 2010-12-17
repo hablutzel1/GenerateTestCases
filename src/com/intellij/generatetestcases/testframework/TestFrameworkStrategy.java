@@ -2,6 +2,7 @@ package com.intellij.generatetestcases.testframework;
 
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiMethod;
+import com.intellij.testIntegration.TestFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -26,4 +27,15 @@ public interface TestFrameworkStrategy {
 
 
     @Nullable PsiMethod findBackingTestMethod(@NotNull PsiClass testClass, @NotNull PsiMethod sutMethod, @NotNull String testDescription);
+
+    /**
+     * It will return the test framework descriptor for the specified test framework, this descriptor will give us information
+     * like this:
+     * 
+     *
+     *
+     * @return
+     */
+    TestFrameworkDescriptor getTestFrameworkDescriptor();
+
 }

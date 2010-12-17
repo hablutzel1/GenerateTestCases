@@ -7,12 +7,14 @@ import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
+import com.intellij.testIntegration.TestFrameworkDescriptor;
 import org.jetbrains.annotations.NotNull;
 
 /**
  * User: JHABLUTZEL
  * Date: 09/11/2010
  * Time: 03:06:09 PM
+ *
  */
 public class JUnit3Strategy extends JUnitStrategyBase {
 
@@ -21,5 +23,9 @@ public class JUnit3Strategy extends JUnitStrategyBase {
     protected String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
         return BddUtil.generateJUNIT3MethodName(sutMethodName, description);
     }
-    
+
+    @Override
+    public TestFrameworkDescriptor getTestFrameworkDescriptor() {
+        return BddUtil.findTestFrameworkDescriptorByName("JUnit3");
+    }
 }

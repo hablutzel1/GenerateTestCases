@@ -118,7 +118,6 @@ public class JUnitStrategyBaseTest extends BaseTests {
 
     }
 
-
     private PsiClass createFooBarSutClass() {
         String text = "package com.example;\n" +
                 "\n" +
@@ -229,7 +228,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
         assertThat(BddUtil.findImportsInClass(testBackingClass, "org.junit.Assert").size(), is(0));
 
         // ensure this will not qualify the expression statmente for Assert.fail("Not yet implemented");
-        String expressionStatement  = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
+        String expressionStatement = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
         assertThat(expressionStatement.startsWith("org.junit"), is(false));
 
         testBackingClass.delete();
@@ -254,8 +253,9 @@ public class JUnitStrategyBaseTest extends BaseTests {
         assertThat(BddUtil.findImportsInClass(testBackingClass, "strange.Assert").size(), is(1));
 
         //  verify statement in method org.junit.Assert.fail("Not yet implemented"); fully qualified
-       String expressionStatement2  = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
+        String expressionStatement2 = ((PsiExpressionStatementImpl) testBackingClass.getMethods()[0].getBody().getStatements()[0]).getExpression().getText();
         assertThat(expressionStatement2.startsWith("org.junit"), is(true));
+
 
     }
 
@@ -275,6 +275,40 @@ public class JUnitStrategyBaseTest extends BaseTests {
 
         PsiClass testBackingClass = testClass.getBackingClass();
         return testBackingClass;
+    }
+
+    /**
+     * @verifies create test method even with broken references if test libraries aren't available
+     * @see JUnitStrategyBase#createBackingTestMethod(com.intellij.psi.PsiClass, com.intellij.psi.PsiMethod, String)
+     */
+    @Test
+    public void testCreateBackingTestMethod_shouldCreateTestMethodEvenWithBrokenReferencesIfTestLibrariesArentAvailable() throws Exception {
+        //TODO auto-generated
+        fail();
+    }
+
+    /**
+     * @verifies manage appropiately any condition of the backing test class (imports, existing methods, modifiers, etc)
+     * @see JUnitStrategyBase#createBackingTestMethod(com.intellij.psi.PsiClass, com.intellij.psi.PsiMethod, String)
+     */
+    @Test
+    public void testCreateBackingTestMethod_shouldManageAppropiatelyAnyConditionOfTheBackingTestClassImportsExistingMethodsModifiersEtc() throws Exception {
+
+        //  create backnig test class with static imports
+         PsiClass aClass = createFooBarSutClass();
+        //"consider situation where target class has static imports"
+        createClassFromTextInPackage(myProject, "package com.example;\n" +
+                "\n" +
+                "\n" +
+                "import org.junit.Assert;\n" +
+                "\n" +
+                "import static org.junit.Assert.fail;\n" +
+                "public class FooBarTest {\n" +
+                "}", "FooBarTest", comExamplePackage);
+
+        PsiClass psiClass = triggerCreateTestClassAndMethod(aClass);
+
+        assertThat(psiClass.getMethods().length, is(1));
     }
 
     /**

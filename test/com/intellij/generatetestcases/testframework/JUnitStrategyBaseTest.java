@@ -277,12 +277,27 @@ public class JUnitStrategyBaseTest extends BaseTests {
         return testBackingClass;
     }
 
+
+    @Override
+    protected boolean addJunit4Library() {
+        return false;
+    }
+
     /**
      * @verifies create test method even with broken references if test libraries aren't available
      * @see JUnitStrategyBase#createBackingTestMethod(com.intellij.psi.PsiClass, com.intellij.psi.PsiMethod, String)
      */
     @Test
     public void testCreateBackingTestMethod_shouldCreateTestMethodEvenWithBrokenReferencesIfTestLibrariesArentAvailable() throws Exception {
+
+        // todo set up mock project without junit library
+
+
+        // todo create test for should annotation
+
+        // todo verify operation completed succesfully
+
+
         //TODO auto-generated
         fail();
     }

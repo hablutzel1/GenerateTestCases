@@ -104,10 +104,10 @@ public class TestClassImpl implements TestClass {
 
 
             VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(getPackageName().replace(".", "/"));
-            PsiDirectory psiDirectory =  null;
+            PsiDirectory psiDirectory = null;
             if (path == null) {
                 //  check or create entire path to package
-             psiDirectory =    DirectoryUtil.createSubdirectories(getPackageName(), sourceRoot, ".");
+                psiDirectory = DirectoryUtil.createSubdirectories(getPackageName(), sourceRoot, ".");
 
             } else {
                 //  just create a psi directory for VirtualFile
@@ -137,32 +137,39 @@ public class TestClassImpl implements TestClass {
     private PsiClass findBackingPsiClass() {
         String fullyQualifiedTestClass = getFullyQualifiedTestClassName();
         //  verify if the test class really exists in classpath for the current module/project
-        PsiClass psiClass = JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
-        return psiClass;
+        return JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
     }
 
     private String getFullyQualifiedTestClassName() {
 
         String packageName = getPackageName();
         String testClassName = getCandidateTestClassName();
-        String fullyQualifiedTestClass = packageName + "." + testClassName;
 
-        return fullyQualifiedTestClass;
+        return packageName == null ? testClassName : packageName + "." + testClassName;
     }
 
     private String getCandidateTestClassName() {
         //  build the test class name
         //  get the sut class name
         String s = sutClass.getName();
-        String testClassName = s + TEST_CLASS_SUFFIX;
-        return testClassName;
+        return s + TEST_CLASS_SUFFIX;
     }
 
+    /**
+     * It will return null if no package declaration is found
+     * 
+     * @return
+     */
     private String getPackageName() {
         //  get the package
         String qualifiedSutName = sutClass.getQualifiedName();
-        String packageName = sutClass.getQualifiedName().substring(0, qualifiedSutName.lastIndexOf("."));
-        return packageName;
+        int i = qualifiedSutName.lastIndexOf(".");
+        if (i != -1) {
+            return qualifiedSutName
+                    .substring(0, i);
+        } else {
+            return null;
+        }
     }
 
     public PsiClass getBackingClass() {

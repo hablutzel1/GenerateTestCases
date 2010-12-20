@@ -3,6 +3,7 @@ package com.intellij.generatetestcases;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.generatetestcases.test.BaseTests;
+import com.intellij.psi.PsiClass;
 import org.junit.Test;
 
 import java.util.List;
@@ -31,10 +32,10 @@ public class BDDCoreTest extends BaseTests {
             throws Exception {
         //  get project
         Project project = getProject();
-        createSutClass(project);
+        PsiClass psiClass = createSutClass(project);
 
         //  create class there
-        TestClass testClass = BDDCore.createTestClass(project, sutClass);
+        TestClass testClass = BDDCore.createTestClass(project, psiClass);
         //  verificar que el retorno sea valido
         assertThat(" test class returned ", testClass, notNullValue());
 
@@ -71,11 +72,11 @@ public class BDDCoreTest extends BaseTests {
 
         //  get project
         Project project = getProject();
-        createSutClass(project);
+        PsiClass psiClass = createSutClass(project);
         //  create class there
         createTestClassForSut(project);
 
-        TestClass testClass = BDDCore.createTestClass(project, sutClass);
+        TestClass testClass = BDDCore.createTestClass(project, psiClass);
 
         //  esperar que la clase testClass really exists
         assertThat(testClass.reallyExists(), is(true));

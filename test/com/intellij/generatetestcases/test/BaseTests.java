@@ -24,8 +24,12 @@ import java.util.List;
 public class BaseTests extends PsiTestCase {
 
     protected PsiDirectory comExamplePackage;
-    protected PsiClass sutClass;
     protected PsiDirectory defaultSourcePackageRoot;
+
+    protected boolean addJunit4Library(){
+        return true;
+    }
+
 //    private PsiClass javaTestClass;
 //    public PsiDirectory sourceRootDirectory;
 
@@ -60,20 +64,9 @@ public class BaseTests extends PsiTestCase {
                             //PsiDirectory sourcePackageRoot = getFirstSourcePackageRoot(project);
 //                            BaseTests.this.sourceRootDirectory = sourcePackageRoot;
                             comExamplePackage = TestUtil.createPackageInSourceRoot(packageName, defaultSourcePackageRoot);
-
-
-                            //  add junit to classpath
-                            //  add home path
-                            String path = TestUtil.getPluginHomePath();
-
-                            String jarName = "junit-4.7.jar";
-
-                            String junitLibraryPath = path + File.separatorChar + "testData" + File.separatorChar + "lib" + File.separatorChar;
-//                            final File junitLibraryFile = new File(junitLibraryPath + "/" + jarName);
-
-                            PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);
-//                            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.getCanonicalPath().replace(File.separatorChar, '/'));
-//                            addLibraryToRoots(file, OrderRootType.CLASSES);
+                      if
+                          (addJunit4Library())
+                            addJunit4LibraryToMockProject();
 
 
                         }
@@ -87,6 +80,21 @@ public class BaseTests extends PsiTestCase {
         );
 
 
+    }
+
+    protected void addJunit4LibraryToMockProject() {
+        //  add junit to classpath
+        //  add home path
+        String path = TestUtil.getPluginHomePath();
+
+        String jarName = "junit-4.7.jar";
+
+        String junitLibraryPath = path + File.separatorChar + "testData" + File.separatorChar + "lib" + File.separatorChar;
+//                            final File junitLibraryFile = new File(junitLibraryPath + "/" + jarName);
+
+        PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);
+//                            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.getCanonicalPath().replace(File.separatorChar, '/'));
+//                            addLibraryToRoots(file, OrderRootType.CLASSES);
     }
 
     //    private static Sdk createMockJdk(String jdkHome, final String versionName, JavaSdk javaSdk) {
@@ -145,8 +153,8 @@ public class BaseTests extends PsiTestCase {
                 "}";
 
         final String className = "Foo";
-        this.sutClass = createClassFromTextInPackage(project, text, className, comExamplePackage);
-        return sutClass;
+
+        return createClassFromTextInPackage(project, text, className, comExamplePackage);
     }
 
     protected void createTestClassForSut(Project project) {

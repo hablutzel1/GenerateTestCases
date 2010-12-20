@@ -116,4 +116,22 @@ public class BddUtil {
         //  return null if not found
         return null;
     }
+
+    /**
+     * It will return null if no package declaration is found
+     *
+     * @return
+     * @param sutClass
+     */
+    public static String getPackageName(PsiClass sutClass) {
+        //  get the package
+        String qualifiedSutName = sutClass.getQualifiedName();
+        int i = qualifiedSutName.lastIndexOf(".");
+        if (i != -1) {
+            return qualifiedSutName
+                    .substring(0, i);
+        } else {
+            return null;
+        }
+    }
 }

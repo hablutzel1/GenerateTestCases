@@ -26,7 +26,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <projectConfigurable id="generatetestcases"
                                  implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
-        <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
+        <!--<inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>-->
     </extensions>
 
 </idea-plugin>

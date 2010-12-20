@@ -26,7 +26,7 @@ public class BaseTests extends PsiTestCase {
     protected PsiDirectory comExamplePackage;
     protected PsiDirectory defaultSourcePackageRoot;
 
-    protected boolean addJunit4Library(){
+    protected boolean isAddJunit4Library() {
         return true;
     }
 
@@ -64,9 +64,10 @@ public class BaseTests extends PsiTestCase {
                             //PsiDirectory sourcePackageRoot = getFirstSourcePackageRoot(project);
 //                            BaseTests.this.sourceRootDirectory = sourcePackageRoot;
                             comExamplePackage = TestUtil.createPackageInSourceRoot(packageName, defaultSourcePackageRoot);
-                      if
-                          (addJunit4Library())
-                            addJunit4LibraryToMockProject();
+
+                            if (isAddJunit4Library()) {
+                                addJunit4LibraryToMockProject();
+                            }
 
 
                         }
@@ -120,12 +121,11 @@ public class BaseTests extends PsiTestCase {
     /**
      * Creates the fixture sut class and returns a psi element for it
      *
-     * @param project
      * @return
      */
-    protected PsiClass createSutClass(Project project) {
+    protected PsiClass createSutClass() {
         //  create PsiClass with two methods, and some @should annotations
-        String text = "package com.example;  public interface Foo {\n" +
+        String text = "package com.example;  public interface Foo  {\n" +
                 "\n" +
                 "\t/**\n" +
                 "\t * Get user by internal user identifier.\n" +
@@ -154,7 +154,7 @@ public class BaseTests extends PsiTestCase {
 
         final String className = "Foo";
 
-        return createClassFromTextInPackage(project, text, className, comExamplePackage);
+        return createClassFromTextInPackage(myProject, text, className, comExamplePackage);
     }
 
     protected void createTestClassForSut(Project project) {

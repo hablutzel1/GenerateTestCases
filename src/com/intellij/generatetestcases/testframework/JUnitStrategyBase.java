@@ -1,25 +1,19 @@
 package com.intellij.generatetestcases.testframework;
 
-import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInsight.daemon.impl.quickfix.OrderEntryFix;
-import com.intellij.codeInsight.intention.AddAnnotationFix;
+import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.module.Module;
-import com.intellij.openapi.module.ModuleUtil;
+import com.intellij.ide.util.DirectoryUtil;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
-import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
+import com.intellij.testIntegration.TestFrameworkDescriptor;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
-
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * User: Jaime Hablutzel
@@ -28,25 +22,27 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
     private PsiElementFactory elementFactory;
 
+    protected JUnitStrategyBase(Project project) {
+        this.project = project;
+    }
+
+    private Project project;
+
 
     @Override
     public PsiMethod findBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
         //  resolve (find) backing test method in test class
         String nombreMetodoDePrueba = getExpectedNameForThisTestMethod(sutMethod.getName(), testDescription);
-        PsiClass parentBackingClass = testClass;
-        PsiMethod backingMethod = null;
+//        PsiMethod backingMethod = null;
 //        PsiClass parent = testClass.getContainingClass();
+
         // TODO get the test class
-
-
-        PsiMethod[] byNameMethods = parentBackingClass.findMethodsByName(nombreMetodoDePrueba, false);
+        PsiMethod[] byNameMethods = testClass.findMethodsByName(nombreMetodoDePrueba, false);
         if (byNameMethods.length > 0) {
-            backingMethod = byNameMethods[0];
+            return byNameMethods[0];
         }
 
-
-
-        return backingMethod;
+        return null;
     }
 
     @NotNull
@@ -109,61 +105,14 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
         PsiComment psiComment = elementFactory.createCommentFromText(commentText, null);
         psiComment.add(docTag);
 
-        final JavaCodeStyleManager codeStyleManagerEx = JavaCodeStyleManager.getInstance(project);
+//        final JavaCodeStyleManager codeStyleManagerEx = JavaCodeStyleManager.getInstance(project);
 
 
         realTestMethod.addBefore(psiComment, realTestMethod.getFirstChild());
         //  add junit 4 Test annotation
-        //  verify org.junit.Test exists in classpath as an anntoation, if it doesn't throw exception
-        
-
-//        PsiClass junitTestAnnotation = JavaPsiFacade.getInstance(project).findClass(jUnit4TestAnnotation, GlobalSearchScope.allScope(project));
-
-        //  get current module
-        Module module = ModuleUtil.findModuleForPsiElement(sutMethod);
-
-        //  test if framework is available in project
-//        boolean isLibraryAvailable = getTestFrameworkDescriptor().isLibraryAttached(module);
-
-        //  TODO if it isn't display dialog allowing the user to add library to the project
-//        if (!isLibraryAvailable){
-
-            
-            // TODO display alert, look for something similiar, not obstrusive :D
-//        }
 
 
-//        if (junitTestAnnotation == null) {
-
-//             myFixLibraryButton = new JButton(CodeInsightBundle.message("intention.create.test.dialog.fix.library"));
-//    myFixLibraryButton.addActionListener(new ActionListener() {
-//      public void actionPerformed(ActionEvent e) {
-//        ApplicationManager.getApplication().runWriteAction(new Runnable() {
-//          public void run() {
-//            OrderEntryFix.addJarToRoots(mySelectedTestDescriptor.getLibraryPath(), myTargetModule, null);
-//          }
-//        });
-//        myFixLibraryPanel.setVisible(false);
-//      }
-//    });
-//            getTestFrameworkDescriptor().get
-
-
-
-//            throw new RuntimeException(jUnit4TestAnnotation + " haven't been found in classpath");
-//        } else {
-          String jUnit4TestAnnotation = "org.junit.Test";
-
-            //  add the annotation to the method
-            AddAnnotationFix fix = new AddAnnotationFix(jUnit4TestAnnotation, realTestMethod);
-            if (fix.isAvailable(project, null, realTestMethod.getContainingFile())) {
-                fix.invoke(project, null, realTestMethod.getContainingFile());
-            }
-//        }
-//
-        //  add throws Exception
-
-//        PsiClass javaLangException = JavaPsiFacade.getInstance(project).findClass("java.lang.Exception", GlobalSearchScope.allScope(project));
+        afterCreatingMethod(project, realTestMethod);
 
         PsiClassType fqExceptionName = JavaPsiFacade.getInstance(project)
                 .getElementFactory().createTypeByFQClassName(
@@ -182,7 +131,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
         PsiJavaFile javaFile = (PsiJavaFile) testClass.getContainingFile();
 
-        boolean assertImportExists = javaFile.getImportList().findSingleImportStatement("Assert") == null ? false: true;
+        boolean assertImportExists = javaFile.getImportList().findSingleImportStatement("Assert") == null ? false : true;
         boolean makeFullQualified = false;
 
         // TODO if Assert exists and is different to both of previous, place fully qualified statement
@@ -215,7 +164,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
         PsiStatement statement;
 
         if (makeFullQualified) {
-            statement = elementFactory.createStatementFromText("org.junit.Assert.fail(\"Not yet implemented\");", null);
+            statement = elementFactory.createStatementFromText(getFrameworkBasePackage() + ".Assert.fail(\"Not yet implemented\");", null);
         } else {
             statement = elementFactory.createStatementFromText("Assert.fail(\"Not yet implemented\");", null);
         }
@@ -225,11 +174,103 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
         return realTestMethod;
     }
 
+    protected void afterCreatingMethod(Project project, PsiMethod realTestMethod) {
+
+    }
+
     private void addBasicImport(PsiClass testClass, Project project) {
-        PsiClass junitAssert = JavaPsiFacade.getInstance(project).findClass("org.junit.Assert", GlobalSearchScope.allScope(project));
-        PsiImportStatement importStaticStatement = elementFactory.createImportStatement(junitAssert);
+
+        String s = getFrameworkBasePackage();
+        String text = "import " + s + ".Assert;";
+        String ext = StdFileTypes.JAVA.getDefaultExtension();
+        @NonNls String fileName = "_Dummy_." + ext;
+        FileType type = StdFileTypes.JAVA;
+        PsiJavaFile javaFile = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(type, fileName, text, 0, text.length());
+        PsiImportStatement statement = javaFile.getImportList().getImportStatements()[0];
         PsiImportList list = ((PsiJavaFile) testClass.getContainingFile()).getImportList();
-        list.add(importStaticStatement);
+        list.add(statement);
+    }
+
+    protected abstract String getFrameworkBasePackage();
+
+    private static final String TEST_CLASS_SUFFIX = "Test";
+
+    /**
+     * It will return the test framework descriptor for the specified test framework, this descriptor will give us information
+     * like this:
+     *
+     * @return
+     */
+    public abstract TestFrameworkDescriptor getTestFrameworkDescriptor();
+
+
+    @Override
+    public PsiClass findBackingPsiClass(PsiClass sutClass) {
+
+        String packageName = BddUtil.getPackageName(sutClass);
+        String testClassName = getCandidateClassName(sutClass);
+
+
+        String fullyQualifiedTestClass = packageName == null ? testClassName : packageName + "." + testClassName;
+        //  verify if the test class really exists in classpath for the current module/project
+        return JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
+    }
+
+    private String getCandidateClassName(PsiClass sutClass) {
+        //  build the test class name
+        //  get the sut class name
+        String s = sutClass.getName();
+        String testClassName = s + TEST_CLASS_SUFFIX;
+        return testClassName;
+    }
+
+
+    @Override
+    public PsiClass createBackingTestClass(PsiClass sutClass, PsiDirectory sourceRoot) {
+
+        PsiClass ret;
+        if (sourceRoot == null || sourceRoot.equals(sutClass.getContainingFile().getParent())) {
+            //  create the test class in the same source root
+
+            //  get psiDirectory for sut class
+            PsiElement parentPackage = sutClass.getScope().getParent();
+            // get test class name
+            String testClassName = getCandidateClassName(sutClass);
+            //  check
+            JavaDirectoryService.getInstance().checkCreateClass((PsiDirectory) parentPackage, testClassName);
+            //  create
+            ret = JavaDirectoryService.getInstance().createClass((PsiDirectory) parentPackage, testClassName, "Class");
+
+        } else {
+
+            //  create the test class in the specified source root
+            // get test class name
+            String testClassName = getCandidateClassName(sutClass);
+
+
+            VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(BddUtil.getPackageName(sutClass).replace(".", "/"));
+            PsiDirectory psiDirectory = null;
+            if (path == null) {
+                //  check or create entire path to package
+                psiDirectory = DirectoryUtil.createSubdirectories(BddUtil.getPackageName(sutClass), sourceRoot, ".");
+
+            } else {
+                //  just create a psi directory for VirtualFile
+                psiDirectory = PsiManager.getInstance(project).findDirectory(path);
+            }
+            //  check
+            JavaDirectoryService.getInstance().checkCreateClass(psiDirectory, testClassName);
+            //  create
+            ret = JavaDirectoryService.getInstance().createClass(psiDirectory, testClassName, "Class");
+
+        }
+        afterCreatingClass(project, ret);
+        return ret;
+
+    }
+
+    protected void afterCreatingClass(Project project, PsiClass backingTestClass) {
+
     }
 
 }

@@ -6,10 +6,8 @@ import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.test.TestUtil;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.openapi.module.Module;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -34,13 +32,13 @@ public class TestClassTest extends BaseTests {
 
         //  create a testclass from a PsiClass with no corresponding PsiClass.getName()  +  "Test" in classpath
 
-        PsiClass sutClass = createSutClass(myProject);
+        PsiClass sutClass = createSutClass();
         //  create psi class
 //        String text = "package com.example;  public interface Zas {}";
 //        PsiClass aClass = createClassFromTextInPackage(project, text, "Zas", comExamplePackage);
 
         //  instantiate TestClassImpl
-        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy());
+        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
 
         //  expect reallyExists return false
         assertThat(testClass.reallyExists(), is(false));
@@ -51,7 +49,7 @@ public class TestClassTest extends BaseTests {
         createTestClassForSut(myProject);
 
 
-        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy());
+        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
 
         //  expect reallyExists return true
         assertThat(testClass1.reallyExists(), is(true));
@@ -69,15 +67,15 @@ public class TestClassTest extends BaseTests {
     @Test
     public void testGetBackingClass_shouldReturnAPsiClassIfThisReallyExistsNullOtherwise()
             throws Exception {
-        PsiClass sutClass = createSutClass(myProject);
+        PsiClass sutClass = createSutClass();
         //  instantiate TestClassImpl
-        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy());
+        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
         //  expect reallyExists return false
         assertThat(testClass.reallyExists(), is(false));
         assertThat(testClass.getBackingClass(), nullValue());
         //  create a testclass from PsiClass with corresponding PsiClass.getName() + "Test" in classpatha
         createTestClassForSut(myProject);
-        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy());
+        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
         //  expect reallyExists return true
         assertThat(testClass1.reallyExists(), is(true));
         assertThat(testClass1.getBackingClass(), not(nullValue()));
@@ -207,7 +205,7 @@ public class TestClassTest extends BaseTests {
     public void testCreate_shouldCreateTheBackingTestClassInTheSamePackageThanTheSutClass() throws Exception {
 
         //  create test in some package
-        PsiClass defaultSutClass = createSutClass(myProject);
+        PsiClass defaultSutClass = createSutClass();
 
         TestClass testClass = triggerCreateTestClass(defaultSutClass);
 

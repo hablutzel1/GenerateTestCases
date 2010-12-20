@@ -27,15 +27,15 @@ public class TestMethodTest extends BaseTests {
     public void testGetDescription_shouldReturnADescriptionWithoutLeadingOrTrailingSpaces()
             throws Exception {
 
-        Project project = getProject();
+//        Project project = getProject();
         //  create or get a Test Method
-        PsiClass psiClass = createSutClass(project);
+        PsiClass psiClass = createSutClass();
         PsiMethod[] methods = psiClass.findMethodsByName("getUserByUuid", false);
 
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy()), new JUnit4Strategy());
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy(myProject)), new JUnit4Strategy(myProject));
         TestMethod tm = tm1;
         String description = tm.getDescription();
 
@@ -63,15 +63,15 @@ public class TestMethodTest extends BaseTests {
             throws Exception {
 
         //  instantiate test method
-        Project project = getProject();
+//        Project project = getProject();
         //  create or get a Test Method
-        PsiClass psiClass = createSutClass(project);
+        PsiClass psiClass = createSutClass();
         PsiMethod[] methods = psiClass.findMethodsByName("getUserByUuid", false);
 
         //  create or get a tag
         PsiDocTag tag = methods[0].getDocComment().getTags()[3];
 
-        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy()), new JUnit4Strategy());
+        TestMethod tm1 = new TestMethodImpl(tag, new TestClassImpl(psiClass, new JUnit4Strategy(myProject)), new JUnit4Strategy(myProject));
         TestMethod tm = tm1;
         assertThat(tm.getSutMethod().getName(), is("getUserByUuid"));
 
@@ -87,10 +87,10 @@ public class TestMethodTest extends BaseTests {
             throws Exception {
 
 
-        PsiClass psiClass = createSutClass(myProject);
+        PsiClass psiClass = createSutClass();
         createTestClassForSut(myProject);
 
-        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy());
+        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
         List<TestMethod> methods = testClass.getAllMethods();
 
         //  create or get a test method that really exists
@@ -126,10 +126,10 @@ public class TestMethodTest extends BaseTests {
     public void testReallyExists_shouldReturnTrueOnlyIfThisTestMethodHasABackingPsiMethod()
             throws Exception {
 
-        PsiClass psiClass = createSutClass(myProject);
+        PsiClass psiClass = createSutClass();
         createTestClassForSut(myProject);
 
-        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy());
+        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
         List<TestMethod> methods = testClass.getAllMethods();
 
         //  create or get a test method that really exists
@@ -152,7 +152,7 @@ public class TestMethodTest extends BaseTests {
     public void testCreate_shouldCreateTheCurrentTestMethod() throws Exception {
 
         //  create a psi sut
-        PsiClass psiClass = createSutClass(myProject);
+        PsiClass psiClass = createSutClass();
         //  create a psi test class
         createTestClassForSut(myProject);
 

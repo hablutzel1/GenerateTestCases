@@ -29,6 +29,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
      */
     @Test
     public void testCreateBackingTestMethod_shouldCreateAJunitTestMethodWithTheExpectedBodyAndJavadocAndVerifyClassStructure() throws Exception {
+        addJunit4LibraryToMockProject();
         //  create sut class
         PsiClass aClass = createFooBarSutClass();
 
@@ -45,7 +46,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
         createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
 
         //  create test class
-        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy());
+        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass.getAllMethods();
@@ -55,6 +56,23 @@ public class JUnitStrategyBaseTest extends BaseTests {
         //  actually create
         testMethod.create();
 
+        PsiMethod backingMethod = testMethod.getBackingMethod();
+        verifyStructureForShouldAnnotation(backingMethod);
+
+
+        TestMethod testMethodWithGenerics = findTestMethodInCollection(allTestMethods, "do nothing", "getHandlersForType");
+        testMethodWithGenerics.create();
+        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingMethod();
+
+        PsiDocTag seeWithGenerics = findDocTagByName(methodWithGenericsBackingMethod, "see");
+
+        String desc = seeWithGenerics.getText().substring(seeWithGenerics.getText().indexOf("Foo"));
+        assertThat(desc, is("FooBar#getHandlersForType(Class, Class)"));
+
+
+    }
+
+    private void verifyStructureForShouldAnnotation(PsiMethod backingMethod) {
         //  verify backing method structure like this one
 
         /////////////////////////////////////////////////
@@ -69,8 +87,6 @@ public class JUnitStrategyBaseTest extends BaseTests {
         //	}
         //////////////////////////////////////////////////
 
-
-        PsiMethod backingMethod = testMethod.getBackingMethod();
 
         PsiDocTag[] docTags = backingMethod.getDocComment().getTags();
         assertThat(docTags.length, is(2));
@@ -104,18 +120,6 @@ public class JUnitStrategyBaseTest extends BaseTests {
         // assert Assert.fail... is present
 
         assertThat(bodyVisitor.getStatements().get(0).getText(), is("Assert.fail(\"Not yet implemented\");"));
-
-
-        TestMethod testMethodWithGenerics = findTestMethodInCollection(allTestMethods, "do nothing", "getHandlersForType");
-        testMethodWithGenerics.create();
-        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingMethod();
-
-        PsiDocTag seeWithGenerics = findDocTagByName(methodWithGenericsBackingMethod, "see");
-
-        String desc = seeWithGenerics.getText().substring(seeWithGenerics.getText().indexOf("Foo"));
-        assertThat(desc, is("FooBar#getHandlersForType(Class, Class)"));
-
-
     }
 
     private PsiClass createFooBarSutClass() {
@@ -174,6 +178,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
     @Test
     public void testCreateBackingTestMethod_shouldManageAppropiatelyExistenceOfMultipleAssertsImports() throws Exception {
 
+        addJunit4LibraryToMockProject();
         //  invoke create foobarsut class
         PsiClass aClass = createClassFromTextInPackage(myProject, "package com.example;\n" +
                 "\n" +
@@ -262,7 +267,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
     private PsiClass triggerCreateTestClassAndMethod(PsiClass aClass) {
         //  create the test class and invoke a method to create
         //  create test class
-        TestClass testClass1 = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy());
+        TestClass testClass1 = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass1.getAllMethods();
@@ -279,7 +284,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
 
 
     @Override
-    protected boolean addJunit4Library() {
+    protected boolean isAddJunit4Library() {
         return false;
     }
 
@@ -290,16 +295,28 @@ public class JUnitStrategyBaseTest extends BaseTests {
     @Test
     public void testCreateBackingTestMethod_shouldCreateTestMethodEvenWithBrokenReferencesIfTestLibrariesArentAvailable() throws Exception {
 
-        // todo set up mock project without junit library
+        //  set up mock project without junit library
+
+        //  create test for should annotation
+          PsiClass aClass = createFooBarSutClass();
 
 
-        // todo create test for should annotation
 
-        // todo verify operation completed succesfully
+              //  create test class
+        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
 
+        //  get unitialized test method
+        List<TestMethod> allTestMethods = testClass.getAllMethods();
+        TestMethod testMethod = findTestMethodInCollection(allTestMethods, "do nothing", "zas");
+        assertThat(testMethod.reallyExists(), is(false));
 
-        //TODO auto-generated
-        fail();
+        //  actually create
+        testMethod.create();
+
+        PsiMethod backingMethod = testMethod.getBackingMethod();
+           //  verify operation completed succesfully
+        verifyStructureForShouldAnnotation(backingMethod);
+
     }
 
     /**
@@ -308,9 +325,10 @@ public class JUnitStrategyBaseTest extends BaseTests {
      */
     @Test
     public void testCreateBackingTestMethod_shouldManageAppropiatelyAnyConditionOfTheBackingTestClassImportsExistingMethodsModifiersEtc() throws Exception {
+        addJunit4LibraryToMockProject();
 
         //  create backnig test class with static imports
-         PsiClass aClass = createFooBarSutClass();
+        PsiClass aClass = createFooBarSutClass();
         //"consider situation where target class has static imports"
         createClassFromTextInPackage(myProject, "package com.example;\n" +
                 "\n" +

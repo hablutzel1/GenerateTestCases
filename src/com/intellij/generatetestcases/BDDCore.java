@@ -31,7 +31,7 @@ public class BDDCore {
      * @should return a test class that already exists for a sut class with some test methods initialized
      */
     public static TestClass createTestClass(Project project, PsiClass psiClass) {
-        return createTestClass(project, psiClass, new JUnit4Strategy());
+        return createTestClass(project, psiClass, new JUnit4Strategy(project));
     }
 
     public static TestClass createTestClass(Project project, PsiClass psiClass, TestFrameworkStrategy frameworkStrategy) {

@@ -8,6 +8,8 @@ import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.testframework.JUnit3Strategy;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
+import com.intellij.generatetestcases.testframework.JUnitStrategyBase;
+import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
 import com.intellij.history.LocalHistory;
@@ -15,12 +17,12 @@ import com.intellij.history.LocalHistoryAction;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.DirectoryChooser;
 import com.intellij.ide.util.MemberChooser;
-import com.intellij.navigation.NavigationItem;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableGroup;
 import com.intellij.openapi.options.ShowSettingsUtil;
@@ -34,7 +36,6 @@ import com.intellij.psi.util.PsiTreeUtil;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,11 +106,34 @@ public class GenerateTestMethods extends AnAction {
 
             final TestClass testClass;
 
+            TestFrameworkStrategy tfs;
             if (s.equals("JUNIT3")) {
-                testClass = BDDCore.createTestClass(project, psiClass, new JUnit3Strategy());
+                tfs = new JUnit3Strategy(project);
+                testClass = BDDCore.createTestClass(project, psiClass, tfs);
             } else {
-                testClass = BDDCore.createTestClass(project, psiClass, new JUnit4Strategy());
+                tfs = new JUnit4Strategy(project);
+                testClass = BDDCore.createTestClass(project, psiClass, tfs);
             }
+
+
+            //  use tfs to find out if the required libraries by the test framework area available
+            //  get current module
+            Module module = ModuleUtil.findModuleForPsiElement(psiClass);
+
+            //  test if framework is available in project
+            boolean isAvailable = tfs.isTestFrameworkLibraryAvailable(module);
+
+            //   if it isn't display dialog allowing the user to add library to the project
+            if (!isAvailable) {
+                //  display alert, look for something similiar, not obstrusive :D
+                // TODO improve TestFrameworkStrategy interface to include the descriptor
+                final FixTestLibraryDialog d = new FixTestLibraryDialog(project, module, ((JUnitStrategyBase)tfs).getTestFrameworkDescriptor());
+                d.show();
+                if (!d.isOK()) return;
+            }
+
+            //////////////////////////////
+
 
             ArrayList<ClassMember> array = new ArrayList<ClassMember>();
 

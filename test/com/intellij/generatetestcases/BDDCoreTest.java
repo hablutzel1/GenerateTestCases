@@ -32,7 +32,7 @@ public class BDDCoreTest extends BaseTests {
             throws Exception {
         //  get project
         Project project = getProject();
-        PsiClass psiClass = createSutClass(project);
+        PsiClass psiClass = createSutClass();
 
         //  create class there
         TestClass testClass = BDDCore.createTestClass(project, psiClass);
@@ -72,7 +72,7 @@ public class BDDCoreTest extends BaseTests {
 
         //  get project
         Project project = getProject();
-        PsiClass psiClass = createSutClass(project);
+        PsiClass psiClass = createSutClass();
         //  create class there
         createTestClassForSut(project);
 

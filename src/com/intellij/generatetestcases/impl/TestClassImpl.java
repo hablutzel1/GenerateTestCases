@@ -1,16 +1,14 @@
 package com.intellij.generatetestcases.impl;
 
 import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
-import com.intellij.ide.util.DirectoryUtil;
+import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.generatetestcases.TestClass;
+import com.intellij.psi.search.GlobalSearchScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,47 +82,13 @@ public class TestClassImpl implements TestClass {
 
     public void create(PsiDirectory sourceRoot) {
 
-        if (sourceRoot == null || sourceRoot.equals(sutClass.getContainingFile().getParent())) {
-            //  create the test class in the same source root
-
-            //  get psiDirectory for sut class
-            PsiElement parentPackage = sutClass.getScope().getParent();
-            // get test class name
-            String testClassName = getCandidateTestClassName();
-            //  check
-            JavaDirectoryService.getInstance().checkCreateClass((PsiDirectory) parentPackage, testClassName);
-            //  create
-            JavaDirectoryService.getInstance().createClass((PsiDirectory) parentPackage, testClassName, "Class");
-
-        } else {
-
-            //  create the test class in the specified source root
-            // get test class name
-            String testClassName = getCandidateTestClassName();
-
-
-            VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(getPackageName().replace(".", "/"));
-            PsiDirectory psiDirectory = null;
-            if (path == null) {
-                //  check or create entire path to package
-                psiDirectory = DirectoryUtil.createSubdirectories(getPackageName(), sourceRoot, ".");
-
-            } else {
-                //  just create a psi directory for VirtualFile
-                psiDirectory = PsiManager.getInstance(project).findDirectory(path);
-            }
-            //  check
-            JavaDirectoryService.getInstance().checkCreateClass(psiDirectory, testClassName);
-            //  create
-            JavaDirectoryService.getInstance().createClass(psiDirectory, testClassName, "Class");
-
-        }
+        frameworkStrategy.createBackingTestClass(sutClass, sourceRoot);
 
     }
 
 
     public boolean reallyExists() {
-        PsiClass psiClass = findBackingPsiClass();
+        PsiClass psiClass = frameworkStrategy.findBackingPsiClass(sutClass);
 
         if (psiClass != null) {
             return true;
@@ -134,46 +98,11 @@ public class TestClassImpl implements TestClass {
 
     }
 
-    private PsiClass findBackingPsiClass() {
-        String fullyQualifiedTestClass = getFullyQualifiedTestClassName();
-        //  verify if the test class really exists in classpath for the current module/project
-        return JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
-    }
 
-    private String getFullyQualifiedTestClassName() {
 
-        String packageName = getPackageName();
-        String testClassName = getCandidateTestClassName();
-
-        return packageName == null ? testClassName : packageName + "." + testClassName;
-    }
-
-    private String getCandidateTestClassName() {
-        //  build the test class name
-        //  get the sut class name
-        String s = sutClass.getName();
-        return s + TEST_CLASS_SUFFIX;
-    }
-
-    /**
-     * It will return null if no package declaration is found
-     * 
-     * @return
-     */
-    private String getPackageName() {
-        //  get the package
-        String qualifiedSutName = sutClass.getQualifiedName();
-        int i = qualifiedSutName.lastIndexOf(".");
-        if (i != -1) {
-            return qualifiedSutName
-                    .substring(0, i);
-        } else {
-            return null;
-        }
-    }
 
     public PsiClass getBackingClass() {
-        return findBackingPsiClass();
+        return frameworkStrategy.findBackingPsiClass(sutClass);
     }
 
 

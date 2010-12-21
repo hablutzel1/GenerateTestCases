@@ -108,7 +108,7 @@ public class TestClassTest extends BaseTests {
             PsiClass aClass = createClassFromTextInPackage(myProject, text, "Doo", comExamplePackage);
 
             //  create test class
-            TestClass testClass = triggerCreateTestClass(aClass);
+            TestClass testClass = triggerCreateTestClass(aClass, null);
 
 
             //  get source root for sut
@@ -135,12 +135,7 @@ public class TestClassTest extends BaseTests {
 
             //  create or get a source test root
 
-            String sourceRootName = "test";
-            Module module = myModule;
-            Collection<File> filesToDelete = myFilesToDelete;
-            PsiManagerImpl myPsiManager = this.myPsiManager;
-
-            PsiDirectory psiDirectory = TestUtil.createSourceRoot(sourceRootName, module, filesToDelete, myPsiManager);
+            PsiDirectory psiDirectory = TestUtil.createSourceRoot("test", myModule, myFilesToDelete, this.myPsiManager);
 
             //  create test class
             TestClass testClass = BDDCore.createTestClass(myProject, aClass);
@@ -198,6 +193,9 @@ public class TestClassTest extends BaseTests {
 
 
     /**
+     * FIX: When a class was being created in the default package specifying the source root
+     * it was failing with null pointer exception
+     *
      * @verifies create the backing test class in the same package than the sut class
      * @see TestClass#create(com.intellij.psi.PsiDirectory)
      */
@@ -207,7 +205,7 @@ public class TestClassTest extends BaseTests {
         //  create test in some package
         PsiClass defaultSutClass = createSutClass();
 
-        TestClass testClass = triggerCreateTestClass(defaultSutClass);
+        TestClass testClass = triggerCreateTestClass(defaultSutClass, null);
 
         //  verify sucess
         assertClassesAreInTheSamePackage(defaultSutClass, testClass.getBackingClass());
@@ -215,19 +213,27 @@ public class TestClassTest extends BaseTests {
         // allow to test classes not in any package
         //  create test in the default package
         PsiClass psiClassWithNoPackage = createClassFromTextInPackage(myProject, "public interface B {}", "B", defaultSourcePackageRoot);
-        TestClass testClass1 = triggerCreateTestClass(psiClassWithNoPackage);
-
-
+        TestClass testClass1 = triggerCreateTestClass(psiClassWithNoPackage, null);
 
         //  verify sucess
         assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingClass());
 
-        
+
+        testClass1.getBackingClass().delete();
+
+        //  create source root
+        PsiDirectory psiDirectory = TestUtil.createSourceRoot("test", myModule, myFilesToDelete, this.myPsiManager);
+
+        testClass1 = triggerCreateTestClass(psiClassWithNoPackage, psiDirectory);
+
+        //  verify sucess
+        assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingClass());
+
     }
 
-    private TestClass triggerCreateTestClass(PsiClass psiClass) {
+    private TestClass triggerCreateTestClass(PsiClass psiClass, PsiDirectory sourceRoot) {
         TestClass testClass = BDDCore.createTestClass(myProject, psiClass);
-        testClass.create(null);
+        testClass.create(sourceRoot);
         return testClass;
     }
 

@@ -207,6 +207,9 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
     @Override
     public PsiClass findBackingPsiClass(PsiClass sutClass) {
 
+        if (sutClass instanceof PsiAnonymousClass) {
+            return null;
+        }
         String packageName = BddUtil.getPackageName(sutClass);
         String testClassName = getCandidateClassName(sutClass);
 
@@ -248,11 +251,15 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
             String testClassName = getCandidateClassName(sutClass);
 
 
-            VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(BddUtil.getPackageName(sutClass).replace(".", "/"));
-            PsiDirectory psiDirectory = null;
+            String packageName = BddUtil.getPackageName(sutClass);
+            if (packageName == null) {
+                packageName = "";
+            }
+            VirtualFile path = sourceRoot.getVirtualFile().findFileByRelativePath(packageName.replace(".", "/"));
+            PsiDirectory psiDirectory;
             if (path == null) {
                 //  check or create entire path to package
-                psiDirectory = DirectoryUtil.createSubdirectories(BddUtil.getPackageName(sutClass), sourceRoot, ".");
+                psiDirectory = DirectoryUtil.createSubdirectories(packageName, sourceRoot, ".");
 
             } else {
                 //  just create a psi directory for VirtualFile

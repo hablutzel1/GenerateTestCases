@@ -53,5 +53,11 @@ public interface TestFrameworkStrategy {
     boolean isTestFrameworkLibraryAvailable(Module module);
 
 
+    /**
+     *
+     * @param sutClass
+     * @return
+     * @should ignore anonymous classes 
+     */
     PsiClass findBackingPsiClass(PsiClass sutClass);
 }

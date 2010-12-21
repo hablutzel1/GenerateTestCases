@@ -1,6 +1,10 @@
 package com.intellij.generatetestcases.util;
 
+import com.intellij.generatetestcases.testframework.JUnit3Strategy;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
+import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
 import com.intellij.testIntegration.JavaTestFrameworkDescriptor;
@@ -124,6 +128,10 @@ public class BddUtil {
      * @param sutClass
      */
     public static String getPackageName(PsiClass sutClass) {
+
+//        if (sutClass instanceof PsiAnonymousClass){
+//            return null;
+//        }
         //  get the package
         String qualifiedSutName = sutClass.getQualifiedName();
         int i = qualifiedSutName.lastIndexOf(".");
@@ -133,5 +141,15 @@ public class BddUtil {
         } else {
             return null;
         }
+    }
+
+    public static TestFrameworkStrategy getStrategyForFramework(Project project, String s) {
+        TestFrameworkStrategy tfs;
+        if (s.equals("JUNIT3")) {
+            tfs = new JUnit3Strategy(project);
+        } else {
+            tfs = new JUnit4Strategy(project);
+        }
+        return tfs;
     }
 }

@@ -87,35 +87,13 @@ public class BaseTests extends PsiTestCase {
         //  add junit to classpath
         //  add home path
         String path = TestUtil.getPluginHomePath();
-
         String jarName = "junit-4.7.jar";
-
         String junitLibraryPath = path + File.separatorChar + "testData" + File.separatorChar + "lib" + File.separatorChar;
-//                            final File junitLibraryFile = new File(junitLibraryPath + "/" + jarName);
-
         PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);
-//                            VirtualFile file = LocalFileSystem.getInstance().refreshAndFindFileByPath(junitLibraryFile.getCanonicalPath().replace(File.separatorChar, '/'));
-//                            addLibraryToRoots(file, OrderRootType.CLASSES);
+
     }
 
-    //    private static Sdk createMockJdk(String jdkHome, final String versionName, JavaSdk javaSdk) {
-//        File jdkHomeFile = new File(jdkHome);
-//        if (!jdkHomeFile.exists()) return null;
-//
-//        final Sdk jdk = new ProjectJdkImpl(versionName, javaSdk);
-//        final SdkModificator sdkModificator = jdk.getSdkModificator();
-//
-//        String path = jdkHome.replace(File.separatorChar, '/');
-//        sdkModificator.setHomePath(path);
-//        sdkModificator.setVersionString(versionName); // must be set after home path, otherwise setting home path clears the version string
-//
-//        addSources(jdkHomeFile, sdkModificator);
-//        addClasses(jdkHomeFile, sdkModificator, false);
-//        addClasses(jdkHomeFile, sdkModificator, true);
-//        sdkModificator.commitChanges();
-//
-//        return jdk;
-//    }
+
 
 
     /**
@@ -201,13 +179,11 @@ public class BaseTests extends PsiTestCase {
                 //  change it to create classes using JavaDirectoryService   strategy
                 FileType type = StdFileTypes.JAVA;
                 javaFile[0] = (PsiJavaFile) PsiFileFactory.getInstance(project).createFileFromText(type, className + ".java", text, 0, text.length());
-                final PsiClass[] classes = javaFile[0].getClasses();
-//                final PsiClass createdClass = classes[0];
+
                 String fileName = className + ".java";
 
                 JavaDirectoryService.getInstance().checkCreateInterface(inPackage, className);
                 javaFile[0] = (PsiJavaFile) javaFile[0].setName(fileName);
-//                PsiFile containingFile = createdClass.getContainingFile();
                 javaFile[0] = (PsiJavaFile) inPackage.add(javaFile[0]);
 
             }

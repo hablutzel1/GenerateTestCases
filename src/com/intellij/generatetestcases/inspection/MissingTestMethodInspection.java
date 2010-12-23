@@ -7,9 +7,20 @@ import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.generatetestcases.util.Constants;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
+import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
+import com.intellij.psi.javadoc.PsiDocTag;
+import com.intellij.psi.javadoc.PsiDocTagValue;
+import com.intellij.psi.javadoc.PsiDocToken;
+import com.intellij.psi.tree.IElementType;
+import com.intellij.psi.tree.java.IJavaDocElementType;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +60,6 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
 
 
     /**
-     *
      * @param aClass
      * @param manager
      * @param isOnTheFly
@@ -61,13 +71,19 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
     public ProblemDescriptor[] checkClass(@NotNull PsiClass aClass, @NotNull InspectionManager manager, boolean isOnTheFly) {
 
         if (aClass instanceof PsiAnonymousClass) {
-                   return null;
+            return null;
         }
 
         Project project = aClass.getProject();
-        String testFramework = GenerateTestCasesSettings.getInstance(project).getTestFramework();
-        if (StringUtils.isEmpty(testFramework)) {
-            return null;
+
+        String testFramework;
+        if (!ApplicationManager.getApplication().isUnitTestMode()) {
+            testFramework = GenerateTestCasesSettings.getInstance(project).getTestFramework();
+            if (StringUtils.isEmpty(testFramework)) {
+                return null;
+            }
+        } else {
+            testFramework = Constants.DEF_TEST_FRAMEWORK;
         }
 
         //  create TestClass for current class
@@ -87,21 +103,23 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
 
         //  if test class exists place warning at javadoc tags level
         List<TestMethod> methods = testClass.getAllMethods();
-
-
-
         for (TestMethod method : methods) {
             if (!method.reallyExists()) {
-                //  add warning
-                // TODO highlight should cover all should annotation, but no whitespace
-                result.add(manager.createProblemDescriptor(((TestMethodImpl) method).getBackingTag(),
-                        "Missing test method for should annotation", isOnTheFly, LocalQuickFix.EMPTY_ARRAY, ProblemHighlightType.GENERIC_ERROR_OR_WARNING));
+                highlightShouldTags(manager, isOnTheFly, result, method);
             }
         }
-        
-        // TODO create fix for this problem
 
-        //        return
+        // TODO create fix for this problem
         return result.toArray(new ProblemDescriptor[result.size()]);
+    }
+
+    private void highlightShouldTags(InspectionManager manager, boolean isOnTheFly, List<ProblemDescriptor> result, TestMethod method) {
+        PsiDocTag backingTag = ((TestMethodImpl) method).getBackingTag();
+        List<BddUtil.DocOffsetPair> elementPairsInDocTag = BddUtil.getElementPairsInDocTag(backingTag);
+        for (BddUtil.DocOffsetPair docOffsetPair : elementPairsInDocTag) {
+             ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(docOffsetPair.getStart(), docOffsetPair.getEnd(),
+                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
+                result.add(problemDescriptor);
+        }
     }
 }

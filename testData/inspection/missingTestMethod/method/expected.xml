@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<problems>
+    <problem>
+        <file>X.java</file>
+        <line>3</line>
+       
+        <description>Missing test method for should annotation</description>
+    </problem>
+
+    <problem>
+        <file>X.java</file>
+        <line>4</line>
+        <description>Missing test method for should annotation</description>
+    </problem>
+
+    <problem>
+        <file>X.java</file>
+        <line>9</line>
+        <description>Missing test method for should annotation</description>
+    </problem>
+
+</problems>

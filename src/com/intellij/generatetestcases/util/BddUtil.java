@@ -1,5 +1,9 @@
 package com.intellij.generatetestcases.util;
 
+import com.intellij.codeInspection.LocalQuickFix;
+import com.intellij.codeInspection.ProblemDescriptor;
+import com.intellij.codeInspection.ProblemHighlightType;
+import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.testframework.JUnit3Strategy;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
@@ -7,6 +11,9 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
+import com.intellij.psi.javadoc.PsiDocTag;
+import com.intellij.psi.javadoc.PsiDocTagValue;
+import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.testIntegration.JavaTestFrameworkDescriptor;
 import com.intellij.testIntegration.TestFrameworkDescriptor;
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +27,96 @@ import java.util.List;
  * User: Jaime Hablutzel
  */
 public class BddUtil {
+
+    public static  class DocOffsetPair {
+
+        public DocOffsetPair(PsiElement start, PsiElement end) {
+            this.start = start;
+            this.end = end;
+        }
+
+        public PsiElement getStart() {
+            return start;
+        }
+
+        public void setStart(PsiElement start) {
+            this.start = start;
+        }
+
+        public PsiElement getEnd() {
+            return end;
+        }
+
+        public void setEnd(PsiElement end) {
+            this.end = end;
+        }
+
+        public PsiElement start;
+        public PsiElement end;
+    }
+
+
+    /**
+     *
+     * @param psiDocTag
+     * @return
+     * @should return psi element pairs for start element and end element in each line for each should tag
+     */
+    public static List<DocOffsetPair> getElementPairsInDocTag(PsiDocTag psiDocTag) {
+//        En el PsiDocTag
+//
+//        Buscar el PsiElement (DOC_TAG_VALUE_TOKEN), si es el ultimo elemento crear bloque con el. o sino hasta llegar al DOC_COMMENT_DATA o el proximo Whitespace que contenga un '\n' Despues de cada salto de linea
+//
+//        Buscar el proximo DOC_COMMENT_DATA (nueva seccion con este) repetir proc
+
+//          PsiElement[] elements = ((TestMethodImpl) method).getBackingTag().getChildren();
+//        PsiElement curStart = null; // TODO ensure initialization
+////                for (PsiElement element : elements) {
+//        for (int i = 0; i < elements.length; i++) {
+//            PsiElement element = elements[i];
+//
+//            if (element instanceof PsiDocTagValue) {
+//                curStart = element;
+//                // TODO find the element right before a \n whitespace element or the last one
+//                // TODO create region until there
+//
+//            } else if (element instanceof PsiDocToken && ((PsiDocToken) element).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+//
+//                // TODO create problem until the previous not whitespace
+//                PsiElement endElem = element;
+//
+//                do {
+//
+//                    endElem = endElem.getPrevSibling();
+//
+//                } while (!(endElem.getPrevSibling() instanceof PsiWhiteSpace));
+//
+//                ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(curStart, endElem,
+//                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
+//                result.add(problemDescriptor);
+//                continue;
+//
+//            }   else if (element instanceof PsiDocToken && ((PsiDocToken) element).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+//
+//                // TODO create problem until the previous not whitespace
+//                PsiElement endElem = element;
+//                do {
+//                    assert endElem != null;
+//                    endElem = endElem.getPrevSibling();
+//
+//                } while (!(endElem.getPrevSibling() instanceof PsiWhiteSpace));
+////                        endElem = endElem.getPrevSibling();
+//
+//                ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(curStart, endElem,
+//                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
+//                result.add(problemDescriptor);
+//                continue;
+//            }
+//
+////                    }
+//        }
+        return null;
+    }
 
     /**
      * TODO the plugin should have support for generating junit 3 test methods (this is: with test as prefix for the name

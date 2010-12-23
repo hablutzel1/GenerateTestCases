@@ -111,38 +111,28 @@ public class BddUtilTest extends IdeaTestCase {
 
         // TODO create javadoc templates
         // TODO process each of them
-
         // TODO assert  by elements
 
 //        Case 1
-
-        String docCommentText = "/**\n" +
+        assertForOneShouldTag("/**\n" +
                 "     * @should foo\n" +
-                "     */";
-
-        int shouldTagIndex = 0;
-        int[][] matchings = {{0, 2, 2}};
-        Project project = myProject;
-
-
-        assertForOneShouldTag(docCommentText, shouldTagIndex, matchings, project);
-
+                "     */", 0, new int[][]{{0, 2, 2}}, myProject);
 
         // case 2
-//        PsiDocComment case2DocComment = elementFactory.createDocCommentFromText("/**\n" +
-//                "     * @should foo yoo zas\n" +
-//                "     */", null);
-//        PsiDocTag case2FirstTag = case2DocComment.getTags()[0];
-//
-//        List<BddUtil.DocOffsetPair> case2Matches = BddUtil.getElementPairsInDocTag(case2FirstTag);
-//        assertThat(case2Matches.get(0).getStart(), is(case2FirstTag.getChildren()[2]));
-//        assertThat(case2Matches.get(0).getEnd(), is(case2FirstTag.getChildren()[4]));
-
+        assertForOneShouldTag("/**\n" +
+                "     * @should foo yoo zas\n" +
+                "     */", 0, new int[][]{{0, 2, 4}}, myProject);
 
         //TODO auto-generated
         Assert.fail("Not yet implemented");
     }
 
+    /**
+     * @param docCommentText
+     * @param shouldTagIndex
+     * @param matchings      { {line, startElIdx, endElIdx}, {line, startElIdx, endElIdx}}
+     * @param project
+     */
     private void assertForOneShouldTag(String docCommentText, int shouldTagIndex, int[][] matchings, Project project) {
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
         PsiDocComment case1DocComment = elementFactory.createDocCommentFromText(docCommentText, null);

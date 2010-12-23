@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class BddUtil {
 
-    public static  class DocOffsetPair {
+    public static class DocOffsetPair {
 
         public DocOffsetPair(PsiElement start, PsiElement end) {
             this.start = start;
@@ -57,23 +57,27 @@ public class BddUtil {
 
 
     /**
-     *
      * @param psiDocTag
      * @return
      * @should return psi element pairs for start element and end element in each line for each should tag
      */
-    public static List<DocOffsetPair> getElementPairsInDocTag(PsiDocTag psiDocTag) {
+    public static List<DocOffsetPair> getElementPairsInDocTag(@NotNull PsiDocTag psiDocTag) {
 //        En el PsiDocTag
-//
-//        Buscar el PsiElement (DOC_TAG_VALUE_TOKEN), si es el ultimo elemento crear bloque con el. o sino hasta llegar al DOC_COMMENT_DATA o el proximo Whitespace que contenga un '\n' Despues de cada salto de linea
-//
+//        Buscar el PsiElement (DOC_TAG_VALUE_TOKEN), si es el ultimo elemento crear bloque con el.
+// o sino hasta llegar al DOC_COMMENT_DATA o el proximo Whitespace que contenga un '\n' Despues de cada salto de linea
 //        Buscar el proximo DOC_COMMENT_DATA (nueva seccion con este) repetir proc
 
-//          PsiElement[] elements = ((TestMethodImpl) method).getBackingTag().getChildren();
+        ArrayList<DocOffsetPair> returnPairs = new ArrayList<DocOffsetPair>();
+        PsiElement[] elements = psiDocTag.getChildren();
 //        PsiElement curStart = null; // TODO ensure initialization
-////                for (PsiElement element : elements) {
-//        for (int i = 0; i < elements.length; i++) {
-//            PsiElement element = elements[i];
+        for (int i = 0; i < elements.length; i++) {
+            PsiElement element = elements[i];
+            if (element instanceof PsiDocTagValue) {
+                DocOffsetPair offsetPair = new DocOffsetPair(element, element);
+                returnPairs.add(offsetPair);
+            }
+        }
+
 //
 //            if (element instanceof PsiDocTagValue) {
 //                curStart = element;
@@ -115,7 +119,8 @@ public class BddUtil {
 //
 ////                    }
 //        }
-        return null;
+
+        return returnPairs;
     }
 
     /**
@@ -166,7 +171,6 @@ public class BddUtil {
     }
 
 
-    
     public static List<PsiImportStatementBase> findImportsInClass(PsiClass testBackingClass, String importName) {
 
         final PsiImportList[] psiImportList = {null};
@@ -188,10 +192,10 @@ public class BddUtil {
         for (PsiImportStatementBase importStatementBase : importStatementBases) {
 
 //            if (importStatementBase instanceof PsiImportStatementImpl) {
-                String s = ((PsiImportStatementImpl) importStatementBase).getQualifiedName();
-                if (s.equals(importName)) {
-                    matchingImports1.add(importStatementBase);
-                }
+            String s = ((PsiImportStatementImpl) importStatementBase).getQualifiedName();
+            if (s.equals(importName)) {
+                matchingImports1.add(importStatementBase);
+            }
 //            }
         }
         List<PsiImportStatementBase> matchingImports = matchingImports1;
@@ -221,8 +225,8 @@ public class BddUtil {
     /**
      * It will return null if no package declaration is found
      *
-     * @return
      * @param sutClass
+     * @return
      */
     public static String getPackageName(PsiClass sutClass) {
 

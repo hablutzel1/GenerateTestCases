@@ -35,7 +35,5 @@ public class MissingTestMethodInspectionTest extends InspectionTestCase {
     public void testCheckClass_shouldCreateProblemForShouldAnnotationsWithoutTestMethods() throws Exception {
 
            doTest("missingTestMethod/method", tool);
-        //crear pruebas de inspection para cada uno de estos escenarios 
-        fail("Ensure ony the text for @should annotations is selected");
     }
 }

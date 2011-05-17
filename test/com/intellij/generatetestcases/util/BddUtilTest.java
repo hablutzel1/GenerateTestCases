@@ -6,7 +6,6 @@ import com.intellij.generatetestcases.test.ExpectExceptionsTemplate;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElementFactory;
-import com.intellij.psi.PsiExpression;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.testFramework.IdeaTestCase;
@@ -60,7 +59,7 @@ public class BddUtilTest extends IdeaTestCase {
 
     /**
      * @verifies create a appropiate name for the test method
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String,String)
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
      */
     @Test
     public void testGenerateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod()
@@ -75,7 +74,7 @@ public class BddUtilTest extends IdeaTestCase {
 
     /**
      * @verifies fail if wrong args
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String,String)
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
      */
     @Test
     public void testGenerateTestMethodName_shouldFailIfWrongArgs() throws Exception {
@@ -109,10 +108,6 @@ public class BddUtilTest extends IdeaTestCase {
      */
     public void testGetElementPairsInDocTag_shouldReturnPsiElementPairsForStartElementAndEndElementInEachLineForEachShouldTag() throws Exception {
 
-        // TODO create javadoc templates
-        // TODO process each of them
-        // TODO assert  by elements
-
 //        Case 1
         assertForOneShouldTag("/**\n" +
                 "     * @should foo\n" +
@@ -123,8 +118,21 @@ public class BddUtilTest extends IdeaTestCase {
                 "     * @should foo yoo zas\n" +
                 "     */", 0, new int[][]{{0, 2, 4}}, myProject);
 
-        //TODO auto-generated
-        Assert.fail("Not yet implemented");
+        // case 3
+        assertForOneShouldTag("/**\n" +
+                "     * @should foo bar zas\n" +
+                "     * yoo doo right\n" +
+                "     * asgasdg asdfgasd\n" +
+                "     */", 0, new int[][]{{0, 2, 4}, {1, 7, 7}, {2, 10, 10}}, myProject);
+
+        // matches pair caught for 'yoo' description
+        assertForOneShouldTag("/**\n" +
+                "     * @should doo  \n" +
+                "     * @should yoo\n" +
+                "     * \n" +
+                "     */"
+                , 1, new int[][]{{0, 2, 2}}, myProject);
+
     }
 
     /**
@@ -144,5 +152,31 @@ public class BddUtilTest extends IdeaTestCase {
             assertThat(case1Matches.get(matching[0]).getStart(), is(case1FirstTag.getChildren()[matching[1]]));
             assertThat(case1Matches.get(matching[0]).getEnd(), is(case1FirstTag.getChildren()[matching[2]]));
         }
+    }
+
+    /**
+     * @verifies not consider part of the problem whitespace/nl for not ending tags
+     * @see BddUtil#getElementPairsInDocTag(com.intellij.psi.javadoc.PsiDocTag)
+     */
+    public void testGetElementPairsInDocTag_shouldNotConsiderPartOfTheProblemWhitespacenlForNotEndingTags() throws Exception {
+
+//        int[][] matchings = new int[][]{{0, 2, 2}};
+        PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(myProject);
+        //  count psiDocTags for first tag in javadoc and expect one only
+        PsiDocComment docCommentFromText1 = elementFactory.createDocCommentFromText("/**\n" +
+                "     * @should doo  \n" +
+                "     * @should yoo\n" +
+                "     * \n" +
+                "     */", null);
+        //  get doctag elements
+        assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText1.getTags()[0]).size(), is(1));
+
+        PsiDocComment docCommentFromText2 = elementFactory.createDocCommentFromText("/**\n" +
+                "     * @should doo zas \n" +
+                "     * @should yoo\n" +
+                "     * \n" +
+                "     */", null);
+
+        assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText2.getTags()[0]).size(), is(1));
     }
 }

@@ -60,65 +60,59 @@ public class BddUtil {
      * @param psiDocTag
      * @return
      * @should return psi element pairs for start element and end element in each line for each should tag
+     * @should not consider part of the problem whitespace/nl for not ending tags
      */
     public static List<DocOffsetPair> getElementPairsInDocTag(@NotNull PsiDocTag psiDocTag) {
-//        En el PsiDocTag
-//        Buscar el PsiElement (DOC_TAG_VALUE_TOKEN), si es el ultimo elemento crear bloque con el.
-// o sino hasta llegar al DOC_COMMENT_DATA o el proximo Whitespace que contenga un '\n' Despues de cada salto de linea
-//        Buscar el proximo DOC_COMMENT_DATA (nueva seccion con este) repetir proc
+//
+//        si es soloo un elemento, la forma es:
+//
+//PsiDocToken: DOC_TAG_NAME
+//PsiWHiteSpace
+//PsiElement * *
+//
+//si son dos o mas en una sola linea la forma es
+//
+//PsiDocToken: DOC_TAG_NAME
+//PsiWHiteSpace
+//PsiElement *
+//PsiWhiteSpace
+//PsiDocToken: DOC_COMMENT_DATA *
+//
+//si son mas de dos lineas a partir de la segunda solo se cogen los psiDOcToken del tipo DOC COMMENT_DATA
+//
+//PsiDocToken: DOC_TAG_NAME
+//PsiWHiteSpace
+//PsiElement 1
+//PsiWhiteSpace
+//PsiDocToken: DOC_COMMENT_DATA 1
+//PsiWhiteSpace
+//PsiDocToken: DOC_COMMENT_DATA 2 2
+//PsiDocToken: DOC_COMMENT_LEADING_ASTERISK
+//PsiDocToken: DOC_COMMENT_DATA 2 2
+
 
         ArrayList<DocOffsetPair> returnPairs = new ArrayList<DocOffsetPair>();
-        PsiElement[] elements = psiDocTag.getChildren();
-//        PsiElement curStart = null; // TODO ensure initialization
-        for (int i = 0; i < elements.length; i++) {
-            PsiElement element = elements[i];
-            if (element instanceof PsiDocTagValue) {
-                DocOffsetPair offsetPair = new DocOffsetPair(element, element);
-                returnPairs.add(offsetPair);
+        PsiElement[] dataElements = psiDocTag.getDataElements();
+
+        if (dataElements.length == 0) {
+            // TODO we should mark the @should as an error
+
+        } else if (dataElements.length == 1) {
+            DocOffsetPair offsetPair = new DocOffsetPair(dataElements[0], dataElements[0]);
+            returnPairs.add(offsetPair);
+        } else {
+            DocOffsetPair firstPair = new DocOffsetPair(dataElements[0], dataElements[1]);
+            returnPairs.add(firstPair);
+            for (int i = 2; i < dataElements.length; i++) {
+
+                PsiElement dataElement = dataElements[i];
+
+                if (dataElement.getText().trim().length() != 0) {
+                    DocOffsetPair furtherPairs = new DocOffsetPair(dataElement, dataElement);
+                    returnPairs.add(furtherPairs);
+                }
             }
         }
-
-//
-//            if (element instanceof PsiDocTagValue) {
-//                curStart = element;
-//                // TODO find the element right before a \n whitespace element or the last one
-//                // TODO create region until there
-//
-//            } else if (element instanceof PsiDocToken && ((PsiDocToken) element).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
-//
-//                // TODO create problem until the previous not whitespace
-//                PsiElement endElem = element;
-//
-//                do {
-//
-//                    endElem = endElem.getPrevSibling();
-//
-//                } while (!(endElem.getPrevSibling() instanceof PsiWhiteSpace));
-//
-//                ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(curStart, endElem,
-//                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
-//                result.add(problemDescriptor);
-//                continue;
-//
-//            }   else if (element instanceof PsiDocToken && ((PsiDocToken) element).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
-//
-//                // TODO create problem until the previous not whitespace
-//                PsiElement endElem = element;
-//                do {
-//                    assert endElem != null;
-//                    endElem = endElem.getPrevSibling();
-//
-//                } while (!(endElem.getPrevSibling() instanceof PsiWhiteSpace));
-////                        endElem = endElem.getPrevSibling();
-//
-//                ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(curStart, endElem,
-//                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
-//                result.add(problemDescriptor);
-//                continue;
-//            }
-//
-////                    }
-//        }
 
         return returnPairs;
     }

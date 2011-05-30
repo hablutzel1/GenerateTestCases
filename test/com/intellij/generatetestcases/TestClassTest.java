@@ -5,13 +5,9 @@ import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.test.TestUtil;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
-import com.intellij.openapi.module.Module;
 import com.intellij.psi.*;
-import com.intellij.psi.impl.PsiManagerImpl;
+import junit.framework.Assert;
 import org.junit.Test;
-
-import java.io.File;
-import java.util.Collection;
 
 import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNot.*;
@@ -57,40 +53,6 @@ public class TestClassTest extends BaseTests {
 
     }
 
-    /**
-     * fix: should support looking for classes in the default package
-     * TODO como probar una situacion inusual cuando se prueba el comporamiento de una operacion de una interfaz
-     *
-     * @verifies return a psiClass if this really exists, null otherwise
-     * @see TestClass#getBackingClass()
-     */
-    @Test
-    public void testGetBackingClass_shouldReturnAPsiClassIfThisReallyExistsNullOtherwise()
-            throws Exception {
-        PsiClass sutClass = createSutClass();
-        //  instantiate TestClassImpl
-        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
-        //  expect reallyExists return false
-        assertThat(testClass.reallyExists(), is(false));
-        assertThat(testClass.getBackingClass(), nullValue());
-        //  create a testclass from PsiClass with corresponding PsiClass.getName() + "Test" in classpatha
-        createTestClassForSut(myProject);
-        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
-        //  expect reallyExists return true
-        assertThat(testClass1.reallyExists(), is(true));
-        assertThat(testClass1.getBackingClass(), not(nullValue()));
-
-
-        PsiClass classInDefaultPackage = createClassFromTextInPackage(myProject, "  public interface Foo {\n" +
-                "}", "Foo", defaultSourcePackageRoot);
-        TestClass testClass2 = BDDCore.createTestClass(myProject, classInDefaultPackage);
-        assertThat(testClass2.getBackingClass(), nullValue());
-        PsiClass testClassInDefaultPackage = createClassFromTextInPackage(myProject, "  public class FooTest {\n" +
-                "}", "FooTest", defaultSourcePackageRoot);
-        assertThat(testClass2.getBackingClass(), not(nullValue()));
-        assertThat(testClass2.getBackingClass(), is(testClassInDefaultPackage));
-
-    }
 
     /**
      * @verifies create the new java test class in the same directory that the origin class if testRoot is null, in the specified test root if not null
@@ -118,7 +80,7 @@ public class TestClassTest extends BaseTests {
 
             //  get backing class for test, assert its source root equals to the sut
 
-            PsiClass testBackingClass = testClass.getBackingClass();
+            PsiClass testBackingClass = testClass.getBackingElement();
             PsiFile containingFile = testBackingClass.getContainingFile();
 
             PsiDirectory testClassContentSourceRoot = getContentSourceRoot((PsiJavaFile) containingFile);
@@ -145,7 +107,7 @@ public class TestClassTest extends BaseTests {
 
             //  get backing test method and assert its location
 
-            PsiClass testBackingClass = testClass.getBackingClass();
+            PsiClass testBackingClass = testClass.getBackingElement();
             PsiFile containingFile = testBackingClass.getContainingFile();
 
             PsiDirectory testClassContentSourceRoot = getContentSourceRoot((PsiJavaFile) containingFile);
@@ -179,7 +141,7 @@ public class TestClassTest extends BaseTests {
             //  actually create
             testClass.create(testSR);
 
-            PsiClass psiClass = testClass.getBackingClass();
+            PsiClass psiClass = testClass.getBackingElement();
 
             //  assert test file location
             PsiFile containingFile = psiClass.getContainingFile();
@@ -208,7 +170,7 @@ public class TestClassTest extends BaseTests {
         TestClass testClass = triggerCreateTestClass(defaultSutClass, null);
 
         //  verify sucess
-        assertClassesAreInTheSamePackage(defaultSutClass, testClass.getBackingClass());
+        assertClassesAreInTheSamePackage(defaultSutClass, testClass.getBackingElement());
 
         // allow to test classes not in any package
         //  create test in the default package
@@ -216,10 +178,10 @@ public class TestClassTest extends BaseTests {
         TestClass testClass1 = triggerCreateTestClass(psiClassWithNoPackage, null);
 
         //  verify sucess
-        assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingClass());
+        assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingElement());
 
 
-        testClass1.getBackingClass().delete();
+        testClass1.getBackingElement().delete();
 
         //  create source root
         PsiDirectory psiDirectory = TestUtil.createSourceRoot("test", myModule, myFilesToDelete, this.myPsiManager);
@@ -227,7 +189,7 @@ public class TestClassTest extends BaseTests {
         testClass1 = triggerCreateTestClass(psiClassWithNoPackage, psiDirectory);
 
         //  verify sucess
-        assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingClass());
+        assertClassesAreInTheSamePackage(psiClassWithNoPackage, testClass1.getBackingElement());
 
     }
 
@@ -240,5 +202,40 @@ public class TestClassTest extends BaseTests {
     private void assertClassesAreInTheSamePackage(PsiClass psiClass, PsiClass testBackingClass) {
         String packageName = ((PsiJavaFile) testBackingClass.getContainingFile()).getPackageName();
         assertThat(packageName, is(((PsiJavaFile) psiClass.getContainingFile()).getPackageName()));
+    }
+
+    /**
+     * fix: should support looking for classes in the default package
+     * TODO como probar una situacion inusual cuando se prueba el comporamiento de una operacion de una interfaz
+     *
+     * @verifies return a psiClass if this really exists, null otherwise
+     * @see TestClass#getBackingElement()
+     */
+    public void testGetBackingElement_shouldReturnAPsiClassIfThisReallyExistsNullOtherwise() throws Exception {
+
+        PsiClass sutClass = createSutClass();
+        //  instantiate TestClassImpl
+        TestClassImpl testClass = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
+        //  expect reallyExists return false
+        assertThat(testClass.reallyExists(), is(false));
+        assertThat(testClass.getBackingElement(), nullValue());
+        //  create a testclass from PsiClass with corresponding PsiClass.getName() + "Test" in classpatha
+        createTestClassForSut(myProject);
+        TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
+        //  expect reallyExists return true
+        assertThat(testClass1.reallyExists(), is(true));
+        assertThat(testClass1.getBackingElement(), not(nullValue()));
+
+
+        PsiClass classInDefaultPackage = createClassFromTextInPackage(myProject, "  public interface Foo {\n" +
+                "}", "Foo", defaultSourcePackageRoot);
+        TestClass testClass2 = BDDCore.createTestClass(myProject, classInDefaultPackage);
+        assertThat(testClass2.getBackingElement(), nullValue());
+        PsiClass testClassInDefaultPackage = createClassFromTextInPackage(myProject, "  public class FooTest {\n" +
+                "}", "FooTest", defaultSourcePackageRoot);
+        assertThat(testClass2.getBackingElement(), not(nullValue()));
+        assertThat(testClass2.getBackingElement(), is(testClassInDefaultPackage));
+
+
     }
 }

@@ -14,8 +14,8 @@ import com.intellij.psi.impl.source.PsiImportStatementImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.psi.javadoc.PsiDocToken;
-import com.intellij.testIntegration.JavaTestFrameworkDescriptor;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.JavaTestFramework;
+import com.intellij.testIntegration.TestFramework;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -204,12 +204,12 @@ public class BddUtil {
      * @param name
      * @return
      */
-    public static JavaTestFrameworkDescriptor findTestFrameworkDescriptorByName(String name) {
+    public static JavaTestFramework findTestFrameworkByName(String name) {
 
         //  get a test framework from platform extension
-        for (final TestFrameworkDescriptor descriptor : Extensions.getExtensions(TestFrameworkDescriptor.EXTENSION_NAME)) {
+        for (final TestFramework descriptor : Extensions.getExtensions(TestFramework.EXTENSION_NAME)) {
             if (descriptor.getName().equals(name)) {
-                return (JavaTestFrameworkDescriptor) descriptor;
+                return (JavaTestFramework) descriptor;
             }
         }
         //  return null if not found

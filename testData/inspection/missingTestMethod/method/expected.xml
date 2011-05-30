@@ -20,4 +20,12 @@
         <description>Missing test method for should annotation</description>
     </problem>
 
+
+    <!--TODO revisar porque esto no era requerido en intellij idea 9.0.4-->
+    <problem>
+        <file>XTest.java</file>
+        <line>1</line>
+        <description>Missing Test Class</description>
+    </problem>
+
 </problems>

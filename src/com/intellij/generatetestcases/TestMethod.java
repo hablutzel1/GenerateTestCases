@@ -6,14 +6,9 @@ import com.intellij.psi.PsiMethod;
 /**
  * User: Jaime Hablutzel
  */
-public interface TestMethod {
+public interface TestMethod extends TestMember{
 
     // TODO agregar operaciones que permitan conocer la ubicacion del tag javadoc
-
-
-
-    
-
 
     /**
      * Devuelve la descripcion correspondiente
@@ -43,7 +38,7 @@ public interface TestMethod {
      * @return
      * @should return a valid psiMethod if reallyExists returns true, false otherwise 
      */
-    PsiMethod getBackingMethod();
+    PsiMethod getBackingElement();
 
 
     /**
@@ -66,4 +61,13 @@ public interface TestMethod {
      * @should return true only if this test method has a backing psiMethod
      */
     boolean reallyExists();
+
+
+    /**
+     * Place editor in this generated test method
+     *
+     * @see PsiMethod#navigate(boolean)
+     */
+    void navigate();
+
 }

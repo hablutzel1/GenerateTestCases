@@ -1,14 +1,13 @@
 package com.intellij.generatetestcases;
 
-import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.*;
 
 import java.util.List;
 
 /**
  * User: Jaime Hablutzel
  */
-public interface TestClass {
+public interface TestClass  extends  TestMember{
 
 
     /**
@@ -54,7 +53,7 @@ public interface TestClass {
      * @return
      * @should return a psiClass if this really exists, null otherwise
      */
-    PsiClass getBackingClass();
+    PsiClass getBackingElement();
 
     /**
      * This method will return the sut that this test class has been created for
@@ -62,6 +61,10 @@ public interface TestClass {
      * @should return the sut class
      */
     PsiClass getClassUnderTest();
+
+
+
+
 
 
 }

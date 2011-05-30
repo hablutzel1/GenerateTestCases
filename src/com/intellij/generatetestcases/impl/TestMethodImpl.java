@@ -1,7 +1,6 @@
 package com.intellij.generatetestcases.impl;
 
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.*;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -13,6 +12,13 @@ import org.jetbrains.annotations.NotNull;
  * User: Jaime Hablutzel
  */
 public class TestMethodImpl implements TestMethod {
+
+
+    @Override
+    public TestFrameworkStrategy getTestFrameworkStrategy() {
+        return testFrameworkStrategy;
+    }
+
     private TestFrameworkStrategy testFrameworkStrategy;
 
     /**
@@ -40,11 +46,15 @@ public class TestMethodImpl implements TestMethod {
 
     private String description;
 
+    public TestClass getParent() {
+        return parent;
+    }
+
     private TestClass parent;
 
-    private PsiMethod backingMethod;
+//    private PsiMethod backingMethod;
     private Project project;
-    private PsiElementFactory elementFactory;
+//    private PsiElementFactory elementFactory;
 
     public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent, TestFrameworkStrategy frameworkStrategy) {
 
@@ -54,7 +64,7 @@ public class TestMethodImpl implements TestMethod {
         this.shouldTag = shouldTag;
         this.project = shouldTag.getProject();
 
-        elementFactory = JavaPsiFacade.getElementFactory(project);
+//        elementFactory = JavaPsiFacade.getElementFactory(project);
 
         //  obtener el metodo a partir del docTag
         resolveSutMethod(shouldTag);
@@ -68,9 +78,9 @@ public class TestMethodImpl implements TestMethod {
         // some determined class to guarantee that uniqueness of parents for test methods
         //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
         this.parent = parent;
-        if (parent.getBackingClass() != null) {
-            this.backingMethod = testFrameworkStrategy.findBackingTestMethod(parent.getBackingClass(), sutMethod, description);
-        }
+//        if (parent.getBackingElement() != null) {
+//            this.backingMethod = testFrameworkStrategy.findBackingTestMethod(parent.getBackingElement(), sutMethod, description);
+//        }
 
 
     }
@@ -105,13 +115,18 @@ public class TestMethodImpl implements TestMethod {
      */
     public boolean reallyExists() {
         PsiMethod method1 = null;
-        if (this.parent.getBackingClass() != null) {
-            method1 = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
+        if (this.parent.getBackingElement() != null) {
+            method1 = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingElement(), sutMethod, description);
         }
         PsiMethod method = method1;
 
         return (null != method) ? true : false;
 
+    }
+
+    @Override
+    public void navigate() {
+        this.getBackingElement().navigate(true);
     }
 
     public void create() {
@@ -128,8 +143,8 @@ public class TestMethodImpl implements TestMethod {
         }
 
 
-        PsiMethod realTestMethod = testFrameworkStrategy.createBackingTestMethod(parent.getBackingClass(), sutMethod, description);
-        this.backingMethod = realTestMethod;
+        PsiMethod realTestMethod = testFrameworkStrategy.createBackingTestMethod(parent.getBackingElement(), sutMethod, description);
+//        this.backingMethod = realTestMethod;
 
         CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(project);
 
@@ -153,10 +168,10 @@ public class TestMethodImpl implements TestMethod {
         return shouldTag;
     }
 
-    public PsiMethod getBackingMethod() {
+    public PsiMethod getBackingElement() {
         PsiMethod method = null;
-        if (this.parent.getBackingClass() != null) {
-            method = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingClass(), sutMethod, description);
+        if (this.parent.getBackingElement() != null) {
+            method = testFrameworkStrategy.findBackingTestMethod(this.parent.getBackingElement(), sutMethod, description);
         }
         return method;
     }

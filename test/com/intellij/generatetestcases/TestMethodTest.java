@@ -5,9 +5,9 @@ import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
+import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -78,34 +78,7 @@ public class TestMethodTest extends BaseTests {
 
     }
 
-    /**
-     * @verifies return a valid psiMethod if reallyExists returns true, false otherwise
-     * @see TestMethod#getBackingMethod()
-     */
-    @Test
-    public void testGetBackingMethod_shouldReturnAValidPsiMethodIfReallyExistsReturnsTrueFalseOtherwise()
-            throws Exception {
 
-
-        PsiClass psiClass = createSutClass();
-        createTestClassForSut(myProject);
-
-        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
-        List<TestMethod> methods = testClass.getAllMethods();
-
-        //  create or get a test method that really exists
-        //  assert that reallyExists for the method return true and that the call to getBackingMethod return the right method
-        TestMethod tm = findTestMethodInCollection(methods, "fetch user with given uuid", "getUserByUuid");
-        assertThat(tm.getBackingMethod().getName(), is("getUserByUuid_shouldFetchUserWithGivenUuid"));
-        assertThat(tm.reallyExists(), is(true));
-
-        //  create or get a test method that doesn't exists
-        tm = findTestMethodInCollection(methods, "find object given valid uuid", "getUserByUuid");
-
-        //  assert that reallyExists for the method return false and that the call to getBackingMethod return false
-        assertThat(tm.getBackingMethod(), nullValue());
-        assertThat(tm.reallyExists(), is(false));
-    }
 
     public static TestMethod findTestMethodInCollection(List<TestMethod> methods, String shouldDescription, String sutMethodName) {
         TestMethod tm = null;
@@ -133,7 +106,7 @@ public class TestMethodTest extends BaseTests {
         List<TestMethod> methods = testClass.getAllMethods();
 
         //  create or get a test method that really exists
-        //  assert that reallyExists for the method return true and that the call to getBackingMethod return the right method
+        //  assert that reallyExists for the method return true and that the call to getBackingElement return the right method
         TestMethod tm = findTestMethodInCollection(methods, "fetch user with given uuid", "getUserByUuid");
         assertThat(tm.reallyExists(), is(true));
 
@@ -173,11 +146,11 @@ public class TestMethodTest extends BaseTests {
         //  verify it got initialized and its backing method exists
 
         assertThat(tm.reallyExists(), is(true));
-        assertThat(tm.getBackingMethod(), is(not(nullValue())));
+        assertThat(tm.getBackingElement(), is(not(nullValue())));
 
         //  assert the backing test method is the right one
 
-        assertThat(tm.getBackingMethod().getName(), is("getUserByUuid_shouldFindObjectGivenValidUuid"));
+        assertThat(tm.getBackingElement().getName(), is("getUserByUuid_shouldFindObjectGivenValidUuid"));
     }
 
     /**
@@ -203,14 +176,14 @@ public class TestMethodTest extends BaseTests {
 
         //  verify test class is unitialized and backingClass is null
 
-        assertThat(testClass.getBackingClass(), is(nullValue()));
+        assertThat(testClass.getBackingElement(), is(nullValue()));
         assertThat(testClass.reallyExists(), is(false));
 
         //  create it
         testMethod.create();
 
         // get the parent test class backing psi class,
-        PsiClass backingClass = testClass.getBackingClass();
+        PsiClass backingClass = testClass.getBackingElement();
 
         //  assert location is the same that sut class
         PsiDirectory sutContentSourceRoot = getContentSourceRoot((PsiJavaFile) backingClass.getContainingFile());
@@ -245,4 +218,29 @@ public class TestMethodTest extends BaseTests {
     }
 
 
+    /**
+     * @verifies return a valid psiMethod if reallyExists returns true, false otherwise
+     * @see TestMethod#getBackingElement()
+     */
+    public void testGetBackingElement_shouldReturnAValidPsiMethodIfReallyExistsReturnsTrueFalseOtherwise() throws Exception {
+        PsiClass psiClass = createSutClass();
+        createTestClassForSut(myProject);
+
+        TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
+        List<TestMethod> methods = testClass.getAllMethods();
+
+        //  create or get a test method that really exists
+        //  assert that reallyExists for the method return true and that the call to getBackingElement return the right method
+        TestMethod tm = findTestMethodInCollection(methods, "fetch user with given uuid", "getUserByUuid");
+        assertThat(tm.getBackingElement().getName(), is("getUserByUuid_shouldFetchUserWithGivenUuid"));
+        assertThat(tm.reallyExists(), is(true));
+
+        //  create or get a test method that doesn't exists
+        tm = findTestMethodInCollection(methods, "find object given valid uuid", "getUserByUuid");
+
+        //  assert that reallyExists for the method return false and that the call to getBackingElement return false
+        assertThat(tm.getBackingElement(), nullValue());
+        assertThat(tm.reallyExists(), is(false));
+
+    }
 }

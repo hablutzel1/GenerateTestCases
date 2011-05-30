@@ -5,7 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFramework;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
@@ -41,7 +41,7 @@ public interface TestFrameworkStrategy {
     @Nullable PsiMethod findBackingTestMethod(@NotNull PsiClass testClass, @NotNull PsiMethod sutMethod, @NotNull String testDescription);
 
     /**
-     * This method can delegate to com.intellij.testIntegration.TestFrameworkDescriptor#isLibraryAttached(com.intellij.openapi.module.Module)
+     * This method can delegate to com.intellij.testIntegration.TestFramework#isLibraryAttached(com.intellij.openapi.module.Module)
      * or it can make by its own the required verification to determine if the library for the module is available,
      *
      * This operation will be helpful to clients to determine if they should add the required library, before beginning to

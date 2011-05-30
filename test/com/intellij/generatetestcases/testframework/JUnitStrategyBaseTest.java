@@ -8,8 +8,6 @@ import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.tree.java.PsiExpressionStatementImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
-import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -56,13 +54,13 @@ public class JUnitStrategyBaseTest extends BaseTests {
         //  actually create
         testMethod.create();
 
-        PsiMethod backingMethod = testMethod.getBackingMethod();
+        PsiMethod backingMethod = testMethod.getBackingElement();
         verifyStructureForShouldAnnotation(backingMethod);
 
 
         TestMethod testMethodWithGenerics = findTestMethodInCollection(allTestMethods, "do nothing", "getHandlersForType");
         testMethodWithGenerics.create();
-        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingMethod();
+        PsiMethod methodWithGenericsBackingMethod = testMethodWithGenerics.getBackingElement();
 
         PsiDocTag seeWithGenerics = findDocTagByName(methodWithGenericsBackingMethod, "see");
 
@@ -278,7 +276,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
         testMethod.create();
         TestClass testClass = testClass1;
 
-        PsiClass testBackingClass = testClass.getBackingClass();
+        PsiClass testBackingClass = testClass.getBackingElement();
         return testBackingClass;
     }
 
@@ -313,7 +311,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
         //  actually create
         testMethod.create();
 
-        PsiMethod backingMethod = testMethod.getBackingMethod();
+        PsiMethod backingMethod = testMethod.getBackingElement();
            //  verify operation completed succesfully
         verifyStructureForShouldAnnotation(backingMethod);
 

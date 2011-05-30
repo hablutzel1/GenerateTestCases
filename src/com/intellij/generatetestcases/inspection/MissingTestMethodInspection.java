@@ -6,9 +6,11 @@ import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.quickfix.*;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.generatetestcases.util.Constants;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiAnonymousClass;
@@ -21,6 +23,7 @@ import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.tree.java.IJavaDocElementType;
+import com.intellij.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
@@ -33,6 +36,9 @@ import java.util.List;
  * without a test method created
  */
 public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
+
+      private static final Logger LOG = Logger.getInstance("#com.intellij.generatetestcases.inspection.MissingTestMethodInspection");
+
     @Nls
     @NotNull
     @Override
@@ -116,9 +122,34 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
     private void highlightShouldTags(InspectionManager manager, boolean isOnTheFly, List<ProblemDescriptor> result, TestMethod method) {
         PsiDocTag backingTag = ((TestMethodImpl) method).getBackingTag();
         List<BddUtil.DocOffsetPair> elementPairsInDocTag = BddUtil.getElementPairsInDocTag(backingTag);
+        final CreateTestMethodFix createTestMethodFix = new CreateTestMethodFix(method);
+
         for (BddUtil.DocOffsetPair docOffsetPair : elementPairsInDocTag) {
-             ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(docOffsetPair.getStart(), docOffsetPair.getEnd(),
-                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, LocalQuickFix.EMPTY_ARRAY);
+
+            LocalQuickFix localQuickFix = new LocalQuickFix() {
+                @NotNull
+                public String getName() {
+                    return createTestMethodFix.getText();
+                }
+
+                public void applyFix(@NotNull Project project, @NotNull ProblemDescriptor descriptor) {
+                    final PsiElement psiElement = descriptor.getPsiElement();
+                    try {
+                        LOG.assertTrue(psiElement.isValid());
+                        createTestMethodFix.invoke();
+                    } catch (IncorrectOperationException e) {
+                        LOG.error(e);
+                    }
+                }
+
+                @NotNull
+                public String getFamilyName() {
+                    return createTestMethodFix.getFamilyName();
+                }
+            };
+
+            ProblemDescriptor problemDescriptor = manager.createProblemDescriptor(docOffsetPair.getStart(), docOffsetPair.getEnd(),
+                        "Missing test method for should annotation", ProblemHighlightType.GENERIC_ERROR_OR_WARNING, isOnTheFly, localQuickFix==null?null:new LocalQuickFix[]{localQuickFix});
                 result.add(problemDescriptor);
         }
     }

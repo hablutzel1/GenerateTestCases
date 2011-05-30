@@ -41,7 +41,7 @@ public class BaseTests extends PsiTestCase {
 //        File mockJdkCEPath = new File(getPluginHomePath(), "java/mockJDK");
 //        return createMockJdk(mockJdkCEPath.getPath(), "java 1.4",
 //                ApplicationManager.getApplication().getComponent(JavaSdk.class));
-        return JavaSdkImpl.getMockJdk("1.4");
+        return JavaSdkImpl.getMockJdk14();
     }
 
 
@@ -205,7 +205,7 @@ public class BaseTests extends PsiTestCase {
     protected boolean existsReallyInitializedTestMethodInCollection(List<TestMethod> allTestMethods, String methodName) {
         boolean exists = false;
         for (TestMethod testMethod : allTestMethods) {
-            if (testMethod.getBackingMethod() != null && testMethod.getBackingMethod().getName().equals(methodName)) {
+            if (testMethod.getBackingElement() != null && testMethod.getBackingElement().getName().equals(methodName)) {
                 if (testMethod.reallyExists() == true) {
                     exists = true;
                 }

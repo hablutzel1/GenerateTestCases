@@ -76,7 +76,7 @@ public class GenerateTestMethods extends AnAction {
             if (StringUtils.isEmpty(testFrameworkProperty)) { //  it haven't been defined yet
 
                 ConfigurableGroup[] group = new ConfigurableGroup[]{
-                        new ProjectConfigurablesGroup(project, false) {
+                        new ProjectConfigurablesGroup(project) {
 
                             @Override
                             public Configurable[] getConfigurables() {
@@ -137,7 +137,7 @@ public class GenerateTestMethods extends AnAction {
                 if (!isAvailable) {
                     //  display alert, look for something similiar, not obstrusive :D
                     // TODO improve TestFrameworkStrategy interface to include the descriptor
-                    final FixTestLibraryDialog d = new FixTestLibraryDialog(project, module, ((JUnitStrategyBase) tfs).getTestFrameworkDescriptor());
+                    final FixTestLibraryDialog d = new FixTestLibraryDialog(project, module, ((JUnitStrategyBase) tfs).getTestFramework());
                     d.show();
                     if (!d.isOK()) return;
                 }
@@ -243,7 +243,7 @@ public class GenerateTestMethods extends AnAction {
                     //  wrap this with error management
                     try {
 
-                        action = LocalHistory.startAction(project, commandName);
+                        action = LocalHistory.getInstance().startAction( commandName);
                         if (finalCreateParent) {
                             testClass.create(finalDestinationRoot);
                         }
@@ -255,7 +255,9 @@ public class GenerateTestMethods extends AnAction {
                             }
                         }
                         //  if something has been created jump to the last created test method, this is 'lastTestMethod'
-                        lastTestMethod.getBackingMethod().navigate(true);
+//                        if (lastTestMethod != null) {
+                            lastTestMethod.navigate();
+//                        }
                     } finally {
                         action.finish();
                     }

@@ -26,7 +26,12 @@ public class TestClassImpl implements TestClass {
     List<TestMethod> testMethods;
     private PsiClass sutClass;
     private static final String TEST_CLASS_SUFFIX = "Test";
-    private Project project;
+
+//    public TestFrameworkStrategy getFrameworkStrategy() {
+//        return frameworkStrategy;
+//    }
+
+    //    private Project project;
     private TestFrameworkStrategy frameworkStrategy;
 
     public TestClassImpl(PsiClass psiClass, TestFrameworkStrategy frameworkStrategy) {
@@ -36,7 +41,7 @@ public class TestClassImpl implements TestClass {
         this.frameworkStrategy = frameworkStrategy;
 
         // init a reference to the current project
-        project = sutClass.getProject();
+//        project = sutClass.getProject();
 
 
         findAndInitializeAllTestMethods(psiClass);
@@ -98,15 +103,17 @@ public class TestClassImpl implements TestClass {
 
     }
 
-
-
-
-    public PsiClass getBackingClass() {
+    public PsiClass getBackingElement() {
         return frameworkStrategy.findBackingPsiClass(sutClass);
     }
 
 
     public PsiClass getClassUnderTest() {
         return this.sutClass;
+    }
+
+    @Override
+    public TestFrameworkStrategy getTestFrameworkStrategy() {
+        return frameworkStrategy;
     }
 }

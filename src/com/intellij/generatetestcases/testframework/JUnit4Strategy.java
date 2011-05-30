@@ -7,7 +7,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFramework;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -32,14 +32,14 @@ public class JUnit4Strategy extends JUnitStrategyBase {
      */
     @Override
     @NotNull
-    protected String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
+    public String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
         return BddUtil.generateTestMethodNameForJUNIT4(sutMethodName, description);
     }
 
 
     @Override
-    public TestFrameworkDescriptor getTestFrameworkDescriptor() {
-        return  BddUtil.findTestFrameworkDescriptorByName("JUnit4");
+    public TestFramework getTestFramework() {
+        return  BddUtil.findTestFrameworkByName("JUnit4");
     }
 
     /**
@@ -56,7 +56,7 @@ public class JUnit4Strategy extends JUnitStrategyBase {
 
     @Override
     public boolean isTestFrameworkLibraryAvailable(Module module) {
-        return getTestFrameworkDescriptor().isLibraryAttached(module);
+        return getTestFramework().isLibraryAttached(module);
     }
 
     @Override

@@ -5,7 +5,7 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFramework;
 import org.eclipse.jdt.internal.core.search.JavaSearchScope;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,18 +25,18 @@ public class JUnit3Strategy extends JUnitStrategyBase {
 
     @NotNull
     @Override
-    protected String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
+    public String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
         return BddUtil.generateJUNIT3MethodName(sutMethodName, description);
     }
 
     @Override
-    public TestFrameworkDescriptor getTestFrameworkDescriptor() {
-        return BddUtil.findTestFrameworkDescriptorByName("JUnit3");
+    public TestFramework getTestFramework() {
+        return BddUtil.findTestFrameworkByName("JUnit3");
     }
 
 
     public boolean isTestFrameworkLibraryAvailable(Module module) {
-        return getTestFrameworkDescriptor().isLibraryAttached(module);
+        return getTestFramework().isLibraryAttached(module);
     }
 
 //    @Override

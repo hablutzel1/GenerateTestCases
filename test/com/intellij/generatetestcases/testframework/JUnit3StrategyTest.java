@@ -7,9 +7,7 @@ import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiClassType;
-import com.intellij.psi.PsiReferenceList;
 import com.intellij.psi.impl.source.PsiClassReferenceType;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -47,7 +45,7 @@ public class JUnit3StrategyTest extends BaseTests {
         testMethod.create();
 
         //  assert the right imports exist
-        PsiClass psiClass = testMethod.getBackingMethod().getContainingClass();
+        PsiClass psiClass = testMethod.getBackingElement().getContainingClass();
         assertThat(BddUtil.findImportsInClass(psiClass, "junit.framework.Assert").size(), is(1));
 
 

@@ -6,7 +6,7 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFramework;
 import com.intellij.ui.IdeBorderFactory;
 
 import javax.swing.*;
@@ -27,13 +27,13 @@ public class FixTestLibraryDialog extends DialogWrapper {
     Module module;
     JLabel myAddLibraryLabel;
 //    JButton myAddLibraryButton;
-    TestFrameworkDescriptor myTestFrameworkDescriptor;
+    TestFramework myTestFramework;
 
-    protected FixTestLibraryDialog(Project project, Module targetModule, TestFrameworkDescriptor testFrameworkDescriptor) {
+    protected FixTestLibraryDialog(Project project, Module targetModule, TestFramework TestFramework) {
         super(project, true);
         this.project = project;
         this.module = targetModule;
-        this.myTestFrameworkDescriptor = testFrameworkDescriptor;
+        this.myTestFramework = TestFramework;
         initControls();
         setTitle("Required test library not available in module...");
         init();
@@ -57,7 +57,7 @@ public class FixTestLibraryDialog extends DialogWrapper {
     protected void doOKAction() {
         ApplicationManager.getApplication().runWriteAction(new Runnable() {
             public void run() {
-                OrderEntryFix.addJarToRoots(myTestFrameworkDescriptor.getLibraryPath(), module, null);
+                OrderEntryFix.addJarToRoots(myTestFramework.getLibraryPath(), module, null);
             }
         });
         super.doOKAction();

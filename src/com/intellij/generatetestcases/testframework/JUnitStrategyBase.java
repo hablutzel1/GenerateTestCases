@@ -11,7 +11,7 @@ import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.util.PsiUtil;
-import com.intellij.testIntegration.TestFrameworkDescriptor;
+import com.intellij.testIntegration.TestFramework;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +46,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
     }
 
     @NotNull
-    protected abstract String getExpectedNameForThisTestMethod(@NotNull String sutMethodName, @NotNull String description);
+    public abstract String getExpectedNameForThisTestMethod(@NotNull String sutMethodName, @NotNull String description);
 
 
     /**
@@ -201,7 +201,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
      *
      * @return
      */
-    public abstract TestFrameworkDescriptor getTestFrameworkDescriptor();
+    public abstract TestFramework getTestFramework();
 
 
     @Override
@@ -219,7 +219,14 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
         return JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
     }
 
-    private String getCandidateClassName(PsiClass sutClass) {
+    /**
+     * Meant to be overrided for test classses don't doesn't follow the 'Test' suffix
+     * convention in its name
+     *
+     * @param sutClass
+     * @return
+     */
+    public String getCandidateClassName(PsiClass sutClass) {
         //  build the test class name
         //  get the sut class name
         String s = sutClass.getName();

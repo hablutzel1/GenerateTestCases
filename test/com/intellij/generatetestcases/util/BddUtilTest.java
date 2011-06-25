@@ -57,50 +57,7 @@ public class BddUtilTest extends IdeaTestCase {
 //        FileUtil.copyDir(currentTestRoot, new File(getProject().getBaseDir().getPath()));
 //    }
 
-    /**
-     * @verifies create a appropiate name for the test method
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
-     */
-    @Test
-    public void testGenerateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod()
-            throws Exception {
 
-        String methodName = "generateTestMethodName";
-        String description = "create a appropiate name for the test method";
-        String testMethodName = BddUtil.generateTestMethodNameForJUNIT4(methodName, description);
-        assertEquals("generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod", testMethodName);
-
-    }
-
-    /**
-     * @verifies fail if wrong args
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
-     */
-    @Test
-    public void testGenerateTestMethodName_shouldFailIfWrongArgs() throws Exception {
-
-        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
-            public Class getExpectedException() {
-                return IllegalArgumentException.class;
-            }
-
-            public void doInttemplate() {
-                BddUtil.generateTestMethodNameForJUNIT4("", "");
-            }
-        });
-
-        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
-            public Class getExpectedException() {
-                return IllegalArgumentException.class;
-            }
-
-            public void doInttemplate() {
-                BddUtil.generateTestMethodNameForJUNIT4(null, null);
-            }
-        });
-
-
-    }
 
     /**
      * @verifies return psi element pairs for start element and end element in each line for each should tag
@@ -178,5 +135,47 @@ public class BddUtilTest extends IdeaTestCase {
                 "     */", null);
 
         assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText2.getTags()[0]).size(), is(1));
+    }
+
+    /**
+     * @verifies create a appropiate name for the test method
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
+     */
+    public void testGenerateTestMethodNameForJUNIT4_shouldCreateAAppropiateNameForTheTestMethod() throws Exception {
+
+        String methodName = "generateTestMethodName";
+        String description = "create a appropiate name for the test method";
+        String testMethodName = BddUtil.generateTestMethodNameForJUNIT4(methodName, description);
+        assertEquals("generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod", testMethodName);
+
+    }
+
+    /**
+     * @verifies fail if wrong args
+     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
+     */
+    public void testGenerateTestMethodNameForJUNIT4_shouldFailIfWrongArgs() throws Exception {
+
+        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
+            public Class getExpectedException() {
+                return IllegalArgumentException.class;
+            }
+
+            public void doInttemplate() {
+                BddUtil.generateTestMethodNameForJUNIT4("", "");
+            }
+        });
+
+        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
+            public Class getExpectedException() {
+                return IllegalArgumentException.class;
+            }
+
+            public void doInttemplate() {
+                BddUtil.generateTestMethodNameForJUNIT4(null, null);
+            }
+        });
+
+
     }
 }

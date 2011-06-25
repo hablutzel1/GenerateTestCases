@@ -29,6 +29,7 @@ public class BDDCore {
      * @return
      * @should create a new test class with test methods unitialized
      * @should return a test class that already exists for a sut class with some test methods initialized
+     * @should ignore should tags without a description when creating bdd test methods
      */
     public static TestClass createTestClass(Project project, PsiClass psiClass) {
         return createTestClass(project, psiClass, new JUnit4Strategy(project));

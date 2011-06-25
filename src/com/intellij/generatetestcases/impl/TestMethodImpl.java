@@ -2,6 +2,7 @@ package com.intellij.generatetestcases.impl;
 
 import com.intellij.generatetestcases.*;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
+import com.intellij.generatetestcases.util.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
@@ -52,9 +53,7 @@ public class TestMethodImpl implements TestMethod {
 
     private TestClass parent;
 
-//    private PsiMethod backingMethod;
     private Project project;
-//    private PsiElementFactory elementFactory;
 
     public TestMethodImpl(@NotNull PsiDocTag shouldTag, @NotNull TestClass parent, TestFrameworkStrategy frameworkStrategy) {
 
@@ -64,12 +63,11 @@ public class TestMethodImpl implements TestMethod {
         this.shouldTag = shouldTag;
         this.project = shouldTag.getProject();
 
-//        elementFactory = JavaPsiFacade.getElementFactory(project);
 
         //  obtener el metodo a partir del docTag
         resolveSutMethod(shouldTag);
         //  initialize the description
-        initShouldTagDescription(shouldTag);
+        this.description = BddUtil.getShouldTagDescription(shouldTag);
 
         //  bind the current test parent...
         // TODO get this using the shouldTag, or investigate it better
@@ -78,11 +76,6 @@ public class TestMethodImpl implements TestMethod {
         // some determined class to guarantee that uniqueness of parents for test methods
         //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
         this.parent = parent;
-//        if (parent.getBackingElement() != null) {
-//            this.backingMethod = testFrameworkStrategy.findBackingTestMethod(parent.getBackingElement(), sutMethod, description);
-//        }
-
-
     }
 
 
@@ -91,22 +84,6 @@ public class TestMethodImpl implements TestMethod {
         this.sutMethod = method;
     }
 
-    private void initShouldTagDescription(PsiDocTag shouldTag) {
-        final StringBuilder description = new StringBuilder();
-
-        PsiElement[] dataElements = shouldTag.getDataElements();
-        boolean isFirst = true;
-        for (PsiElement dataElement : dataElements) {
-            description.append(dataElement.getText());
-            // TODO get the description taking into account the whitespaces
-            if (isFirst) {
-                description.append(" ");
-            }
-            isFirst = false;
-        }
-
-        this.description = description.toString().trim();
-    }
 
     /**
      *

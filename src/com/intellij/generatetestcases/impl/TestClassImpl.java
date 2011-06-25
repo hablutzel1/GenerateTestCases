@@ -70,8 +70,13 @@ public class TestClassImpl implements TestClass {
             PsiDocTag[] tags = comment.getTags();
             //   iterar sobre los comentarios del javadoc
             for (PsiDocTag tag : tags) {
+
+
                 //  comprobar que el tag sea del tipo should
-                if (tag.getName().equals(BDD_TAG)) {
+                if (tag.getName().equals(BDD_TAG) && BddUtil.getShouldTagDescription(tag).length() > 0) {
+//                    String shouldTagDescription =
+                    // TODO change it to receive a string instead of the tag, or to test if the tag
+                    // have empty description
                     TestMethod tm = new TestMethodImpl(tag, this, this.frameworkStrategy);
                     array.add(tm);
                 }

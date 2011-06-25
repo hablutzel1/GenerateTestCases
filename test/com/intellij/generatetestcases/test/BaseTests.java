@@ -86,7 +86,8 @@ public class BaseTests extends PsiTestCase {
     protected void addJunit4LibraryToMockProject() {
         //  add junit to classpath
         //  add home path
-        String path = TestUtil.getPluginHomePath();
+        String path = TestUtil
+                .getPluginHomePath();
         String jarName = "junit-4.7.jar";
         String junitLibraryPath = path + File.separatorChar + "testData" + File.separatorChar + "lib" + File.separatorChar;
         PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);

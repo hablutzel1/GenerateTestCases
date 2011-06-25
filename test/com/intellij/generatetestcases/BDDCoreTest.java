@@ -4,6 +4,7 @@ package com.intellij.generatetestcases;
 import com.intellij.openapi.project.Project;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.psi.PsiClass;
+import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -100,4 +101,38 @@ public class BDDCoreTest extends BaseTests {
     }
 
 
+    /**
+     * @verifies ignore should tags without a description when creating bdd test methods
+     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
+     */
+    public void testCreateTestClass_shouldIgnoreShouldTagsWithoutADescriptionWhenCreatingBddTestMethods() throws Exception {
+
+
+        String text = "package com.example;  public interface Foo  {\n" +
+                "\n" +
+                "\t/**\n" +
+                "\t * Get user by the given uuid.\n" +
+                "\t * \n" +
+                "\t * @param uuid\n" +
+                "\t * @return\n" +
+                "\t * @throws APIException\n" +
+                "\t * @should \n" +
+                "\t * @should\n" +
+                "\t */\n" +
+                "\tpublic String getUserByUuid(String uuid);\n" +
+                "\n" +
+                "}";
+
+        final String className = "Foo";
+
+        PsiClass classFromTextInPackage = createClassFromTextInPackage(myProject, text, className, comExamplePackage);
+
+        Project project = getProject();
+
+
+        TestClass testClass = BDDCore.createTestClass(project, classFromTextInPackage);
+
+        assertThat(testClass.getAllMethods().size(), is(0));
+
+    }
 }

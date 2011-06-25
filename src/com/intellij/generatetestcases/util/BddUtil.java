@@ -28,6 +28,31 @@ import java.util.List;
  */
 public class BddUtil {
 
+
+    /**
+     *
+     * @param shouldTag
+     * @return
+     * @should return the full description for a should tag backed by a PsiDocTag
+     */
+    public static String getShouldTagDescription(PsiDocTag shouldTag) {
+        final StringBuilder description = new StringBuilder();
+
+        PsiElement[] dataElements = shouldTag.getDataElements();
+        boolean isFirst = true;
+        for (PsiElement dataElement : dataElements) {
+            description.append(dataElement.getText());
+            // TODO get the description taking into account the whitespaces
+            if (isFirst) {
+                description.append(" ");
+            }
+            isFirst = false;
+        }
+
+        return description.toString().trim();
+
+    }
+
     public static class DocOffsetPair {
 
         public DocOffsetPair(PsiElement start, PsiElement end) {
@@ -57,6 +82,10 @@ public class BddUtil {
 
 
     /**
+     * For a should tag it will return a collection of pairs that correspond
+     * to the first and last element of each line of <code>@should</code> description.
+     * <br />
+     *
      * @param psiDocTag
      * @return
      * @should return psi element pairs for start element and end element in each line for each should tag

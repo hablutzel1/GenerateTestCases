@@ -1,10 +1,9 @@
 <idea-plugin version="2">
     <name>GenerateTestCases</name>
-    <description>GenerateTestCases plugin</description>
+    <description>Plugin to generate unit test methods with meaningful names based in described behaviours with @should tags</description>
     <version>1.0.2</version>
     <vendor>OpenMRS</vendor>
-    <idea-version since-build="8000" until-build=""/>
-
+    <idea-version since-build="103.255" until-build="103.255" />
     <application-components>
       
     </application-components>
@@ -24,9 +23,12 @@
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
+        <!--for settings-->
         <projectConfigurable id="generatetestcases"
                                  implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
+        <!--for inspections of missing test methods -->
         <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
+        <!--for ctrl + mouse hover over @should annotations-->
         <gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod" />
     </extensions>
 

@@ -4,7 +4,6 @@ package com.intellij.generatetestcases;
 import com.intellij.openapi.project.Project;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.psi.PsiClass;
-import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -75,7 +74,7 @@ public class BDDCoreTest extends BaseTests {
         Project project = getProject();
         PsiClass psiClass = createSutClass();
         //  create class there
-        createTestClassForSut(project);
+        createTestClassForSut();
 
         TestClass testClass = BDDCore.createTestClass(project, psiClass);
 

@@ -27,6 +27,7 @@
         <projectConfigurable id="generatetestcases"
                                  implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
         <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
+        <gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod" />
     </extensions>
 
 </idea-plugin>

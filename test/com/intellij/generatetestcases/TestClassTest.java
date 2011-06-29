@@ -6,7 +6,6 @@ import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.test.TestUtil;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.psi.*;
-import junit.framework.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.*;
@@ -42,7 +41,7 @@ public class TestClassTest extends BaseTests {
 
         //  create a testclass from PsiClass with corresponding PsiClass.getName() + "Test" in classpatha
 
-        createTestClassForSut(myProject);
+        createTestClassForSut();
 
 
         TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
@@ -220,7 +219,7 @@ public class TestClassTest extends BaseTests {
         assertThat(testClass.reallyExists(), is(false));
         assertThat(testClass.getBackingElement(), nullValue());
         //  create a testclass from PsiClass with corresponding PsiClass.getName() + "Test" in classpatha
-        createTestClassForSut(myProject);
+        createTestClassForSut();
         TestClassImpl testClass1 = new TestClassImpl(sutClass, new JUnit4Strategy(myProject));
         //  expect reallyExists return true
         assertThat(testClass1.reallyExists(), is(true));

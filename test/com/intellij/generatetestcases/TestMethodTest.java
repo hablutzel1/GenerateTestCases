@@ -7,7 +7,6 @@ import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;
-import junit.framework.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -100,7 +99,7 @@ public class TestMethodTest extends BaseTests {
             throws Exception {
 
         PsiClass psiClass = createSutClass();
-        createTestClassForSut(myProject);
+        createTestClassForSut();
 
         TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
         List<TestMethod> methods = testClass.getAllMethods();
@@ -127,7 +126,7 @@ public class TestMethodTest extends BaseTests {
         //  create a psi sut
         PsiClass psiClass = createSutClass();
         //  create a psi test class
-        createTestClassForSut(myProject);
+        createTestClassForSut();
 
         //  create TestClass
         TestClass testClass = BDDCore.createTestClass(myProject, psiClass);
@@ -224,7 +223,7 @@ public class TestMethodTest extends BaseTests {
      */
     public void testGetBackingElement_shouldReturnAValidPsiMethodIfReallyExistsReturnsTrueFalseOtherwise() throws Exception {
         PsiClass psiClass = createSutClass();
-        createTestClassForSut(myProject);
+        createTestClassForSut();
 
         TestClassImpl testClass = new TestClassImpl(psiClass, new JUnit4Strategy(myProject));
         List<TestMethod> methods = testClass.getAllMethods();

@@ -136,7 +136,7 @@ public class BaseTests extends PsiTestCase {
         return createClassFromTextInPackage(myProject, text, className, comExamplePackage);
     }
 
-    protected void createTestClassForSut(Project project) {
+    protected PsiClass createTestClassForSut() {
         //  create test class
         String testClass = "package com.example; import org.junit.Assert;\n" +
                 "import org.junit.Test;\n" +
@@ -165,7 +165,7 @@ public class BaseTests extends PsiTestCase {
 
         //  create test class in the same package
         final String className = "FooTest";
-        createClassFromTextInPackage(project, testClass, className, comExamplePackage);
+        return createClassFromTextInPackage(myProject, testClass, className, comExamplePackage);
     }
 
     protected PsiClass createClassFromTextInPackage(final Project project, final String text, final String className, final PsiDirectory inPackage) {

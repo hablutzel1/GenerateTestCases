@@ -40,7 +40,6 @@ public class GotoTestMethod implements GotoDeclarationHandler{
      * @should return null if the (at)should tag doesn't have a corresponding created test method
      * @should return null if the incoming element is whatever but a should tag
      */
-    @Override
     public PsiElement getGotoDeclarationTarget(PsiElement sourceElement) {
 
         //  filter for @should tags only
@@ -87,4 +86,12 @@ public class GotoTestMethod implements GotoDeclarationHandler{
 
     }
 
+    @Override
+    public PsiElement[] getGotoDeclarationTargets(PsiElement sourceElement) {
+        PsiElement gotoDeclarationTarget = getGotoDeclarationTarget(sourceElement);
+        if (gotoDeclarationTarget == null) {
+            return null;
+        }
+        return new PsiElement[]{gotoDeclarationTarget};
+    }
 }

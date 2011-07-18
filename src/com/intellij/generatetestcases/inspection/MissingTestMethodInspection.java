@@ -18,6 +18,7 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
+import com.intellij.psi.impl.source.jsp.jspJava.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.psi.javadoc.PsiDocToken;
@@ -72,11 +73,14 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
      * @return
      * @should create problem for classes without backing class
      * @should create problem for should annotations without test methods
+     * @should ignore unsupported psiClasses
+     *
      */
     @Override
     public ProblemDescriptor[] checkClass(@NotNull PsiClass aClass, @NotNull InspectionManager manager, boolean isOnTheFly) {
 
-        if (aClass instanceof PsiAnonymousClass) {
+        // ignoring unsupported classes
+        if (aClass instanceof PsiAnonymousClass || aClass instanceof JspClass) {
             return null;
         }
 

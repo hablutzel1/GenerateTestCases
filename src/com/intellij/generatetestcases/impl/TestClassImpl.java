@@ -5,6 +5,7 @@ import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.jsp.jspJava.*;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.generatetestcases.TestClass;
@@ -35,6 +36,12 @@ public class TestClassImpl implements TestClass {
     private TestFrameworkStrategy frameworkStrategy;
 
     public TestClassImpl(PsiClass psiClass, TestFrameworkStrategy frameworkStrategy) {
+
+        //  check for unsupported classes
+        if (psiClass instanceof JspClass) {
+            throw new IllegalArgumentException("Unsupported class: " + psiClass.getClass().getName());
+        }
+
         //  popular TestClass con TestMethods
         this.sutClass = psiClass;
 

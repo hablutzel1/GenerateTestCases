@@ -1,9 +1,12 @@
 package com.intellij.generatetestcases;
 
 
+import com.intellij.generatetestcases.test.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.psi.PsiClass;
+import com.intellij.psi.impl.source.jsp.jspJava.*;
+import junit.framework.Assert;
+import org.jmock.*;
 import org.junit.Test;
 
 import java.util.List;
@@ -17,7 +20,7 @@ import static org.junit.Assert.*;
 public class BDDCoreTest extends BaseTests {
 
 
-    public  <T> T zas(Class<T> foo){
+    public <T> T zas(Class<T> foo) {
 
         return null;
     }
@@ -25,7 +28,7 @@ public class BDDCoreTest extends BaseTests {
 
     /**
      * @verifies create a new test class with test methods unitialized
-     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project,com.intellij.psi.PsiClass)
+     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
      */
 //	@Test
     public void testCreateTestClass_shouldCreateANewTestClassWithTestMethodsUnitialized()
@@ -64,7 +67,7 @@ public class BDDCoreTest extends BaseTests {
 
     /**
      * @verifies return a test class that already exists for a sut class with some test methods initialized
-     * @see com.intellij.generatetestcases.BDDCore#createTestClass(com.intellij.openapi.project.Project,com.intellij.psi.PsiClass)
+     * @see com.intellij.generatetestcases.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
      */
     @Test
     public void testCreateTestClass_shouldReturnATestClassThatAlreadyExistsForASutClassWithSomeTestMethodsInitialized()
@@ -134,4 +137,37 @@ public class BDDCoreTest extends BaseTests {
         assertThat(testClass.getAllMethods().size(), is(0));
 
     }
+
+    /**
+     * @verifies throw exception if there is a try to create a test class with an unsupported PsiClass
+     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
+     */
+    public void testCreateTestClass_shouldThrowExceptionIfThereIsATryToCreateATestClassWithAnUnsupportedPsiClass() throws Exception {
+
+        // TODO try to create with a Jsp Psi Class
+        Mockery context = new Mockery(); // should be instance variable
+        final JspClass mock = context.mock(JspClass.class);
+        context.checking(new Expectations() {
+            {
+                // jmock without expectations
+            }
+        });
+        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate<IllegalArgumentException>() {
+            @Override
+            public Class<IllegalArgumentException> getExpectedException() {
+                return IllegalArgumentException.class;
+            }
+
+            @Override
+            public void doInttemplate() {
+        BDDCore.createTestClass(myProject, mock);
+            }
+        });
+
+
+        context.assertIsSatisfied();
+
+    }
+
+
 }

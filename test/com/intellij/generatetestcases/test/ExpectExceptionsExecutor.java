@@ -33,7 +33,7 @@ public class ExpectExceptionsExecutor {
             Throwable throwable = e1.getTargetException();
             if (!aClass.isAssignableFrom(throwable.getClass())) {
                 //  assert false
-                fail("Exception isn't the one expected");
+                fail("Exception isn't the one expected, expected was: " + aClass.getName() + ", received is: " + e1.getClass().getName() + ", with this stacktrace: " + e1.getMessage());
             } else {
                 assertTrue("Exception captured ", true);
                 return;

@@ -30,6 +30,7 @@
         <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
         <!--for ctrl + mouse hover over @should annotations-->
         <gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod" />
+        <javadocTagInfo implementation="com.intellij.generatetestcases.javadoc.ShouldTagInfo"  />
     </extensions>
 
 </idea-plugin>

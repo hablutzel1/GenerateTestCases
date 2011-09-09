@@ -51,6 +51,8 @@ public class GenerateTestMethods extends AnAction {
     }
 
     /**
+     * It allows the user to create a test in the directory he chooses (test or production)
+     *
      * @param e
      * @should process inmediately upper class if caret is at anonymous class
      */
@@ -202,7 +204,9 @@ public class GenerateTestMethods extends AnAction {
                     for (VirtualFile sourceRoot : sourceRoots) {
                         if (sourceRoot.isDirectory()) {
                             PsiDirectory directory = manager.findDirectory(sourceRoot);
-                            allTestRoots.add(directory);
+                            if (directory != null) { // only source roots that really exists right now
+                                allTestRoots.add(directory);
+                            }
                         }
                     }
 
@@ -243,7 +247,7 @@ public class GenerateTestMethods extends AnAction {
                     //  wrap this with error management
                     try {
 
-                        action = LocalHistory.getInstance().startAction( commandName);
+                        action = LocalHistory.getInstance().startAction(commandName);
                         if (finalCreateParent) {
                             testClass.create(finalDestinationRoot);
                         }
@@ -256,7 +260,7 @@ public class GenerateTestMethods extends AnAction {
                         }
                         //  if something has been created jump to the last created test method, this is 'lastTestMethod'
 //                        if (lastTestMethod != null) {
-                            lastTestMethod.navigate();
+                        lastTestMethod.navigate();
 //                        }
                     } finally {
                         action.finish();

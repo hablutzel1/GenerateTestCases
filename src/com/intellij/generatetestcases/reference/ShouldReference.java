@@ -5,6 +5,7 @@ import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestFrameworkNotConfigured;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.util.*;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
@@ -49,8 +50,18 @@ public class ShouldReference implements PsiReference {
     @Override
     public TextRange getRangeInElement() {
 
+        List<BddUtil.DocOffsetPair> elementPairsInDocTag = BddUtil.getElementPairsInDocTag(psiDocTag);
 
-        return new TextRange(0, psiDocTag.getTextLength());
+        PsiElement start = elementPairsInDocTag.get(0).getStart();
+
+        PsiElement lastEl = elementPairsInDocTag.get(elementPairsInDocTag.size()-1).getEnd();
+
+        int fullStart = start.getTextRange().getStartOffset();
+        int fullEnd = lastEl.getTextRange().getEndOffset();
+        int referenceStart = psiDocTag.getTextRange().getStartOffset();
+
+
+        return new TextRange(fullStart-referenceStart, fullEnd - referenceStart);
     }
 
     @Override
@@ -94,6 +105,8 @@ public class ShouldReference implements PsiReference {
     @Override
     public PsiElement handleElementRename(String newElementName) throws IncorrectOperationException {
         // TODO rename PsiDocTag and test method
+        // consider PsiPolyVariantReference
+        // consider BindablePsiReference for fixing refactoring
         return null;
     }
 

@@ -2,10 +2,10 @@
     <name>GenerateTestCases</name>
     <description><![CDATA[<p>Plugin to generate unit test methods with meaningful names based in described behaviours with @should tags in interface methods javadoc</p>
 		 <p>To see how to use it: <a href="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/">http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/</a> or <a href="http://plugins.intellij.net/plugin/?idea&id=5847">http://plugins.intellij.net/plugin/?idea&id=5847</a></p>]]>
-  </description>
+    </description>
 
-  <change-notes>
-     <![CDATA[
+    <change-notes>
+        <![CDATA[
        <p>1.0.5</p>
        <ul>
           <li>Fixed bug when custom source root has been configured# but not created yet</li>
@@ -15,11 +15,12 @@
           <li>Added CTRL+Click functionality to jump to test cases</li>
        </ul>
      ]]>
-  </change-notes>
+    </change-notes>
 
-  <vendor url="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/"
-  			email="hablutzel1@gmail.com"
-  			logo="/images/junitopenmrs.gif">OpenMRS</vendor>
+    <vendor url="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/"
+            email="hablutzel1@gmail.com"
+            logo="/images/junitopenmrs.gif">OpenMRS
+    </vendor>
 
     <version>1.0.5</version>
 
@@ -48,9 +49,19 @@
                              implementation="com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable"/>
         <!--for inspections of missing test methods -->
         <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
-        <!--for ctrl + mouse hover over @should annotations-->
-        <gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod"/>
+
+        <!--for ctrl + mouse hover over @should annotations, replaced by ShouldReference -->
+        <!--<gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod"/>-->
+
+        <!--for adding support for @should tag-->
         <javadocTagInfo implementation="com.intellij.generatetestcases.javadoc.ShouldTagInfo"/>
+
+        <!--for references with renaming support of PsiDocTag-->
+        <psi.referenceContributor implementation="com.intellij.generatetestcases.util.ReferenceContributor"/>
+        <!--<referenceProviderType key="Should references"-->
+                               <!--implementationClass="com.intellij.generatetestcases.reference.ReferenceProvider"/>-->
+
+
     </extensions>
 
 </idea-plugin>

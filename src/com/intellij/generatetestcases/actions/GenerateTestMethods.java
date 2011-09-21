@@ -21,15 +21,19 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.Result;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.Configurable;
+import com.intellij.openapi.options.ConfigurableEP;
 import com.intellij.openapi.options.ConfigurableGroup;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.options.ex.ProjectConfigurablesGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
+import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.apache.commons.lang.StringUtils;
@@ -77,33 +81,43 @@ public class GenerateTestMethods extends AnAction {
 
             if (StringUtils.isEmpty(testFrameworkProperty)) { //  it haven't been defined yet
 
-                ConfigurableGroup[] group = new ConfigurableGroup[]{
-                        new ProjectConfigurablesGroup(project) {
+//                ConfigurableGroup[] group = new ConfigurableGroup[]{
+//                        new ProjectConfigurablesGroup(project) {
+//
+//                            @Override
+//                            public Configurable[] getConfigurables() {
+//                                final ConfigurableEP[] extensions = project.getExtensions(Configurable.PROJECT_CONFIGURABLES);
+                ConfigurableEP[] extensions = project.getExtensions(ExtensionPointName.<ConfigurableEP>create("com.intellij.projectConfigurable"));
 
-                            @Override
-                            public Configurable[] getConfigurables() {
-                                final Configurable[] extensions = project.getExtensions(Configurable.PROJECT_CONFIGURABLES);
-                                List<Configurable> list = new ArrayList<Configurable>();
-                                for (Configurable component : extensions) {
-                                    if (component instanceof GenerateTestCasesConfigurable) {
-                                        list.add(component);
-                                    }
-                                }
-                                return list.toArray(new Configurable[0]);
-                            }
-                        },
+                List<Configurable> list = new ArrayList<Configurable>();
+                for (ConfigurableEP component : extensions) {
+                    Configurable configurable = component.createConfigurable();
+                    if (configurable instanceof GenerateTestCasesConfigurable) {
+//                                        list.add(component);
+                        ShowSettingsUtil.getInstance().editConfigurable(project, configurable);
 
-                };
+//                        ShowSettingsUtil.getInstance().showSettingsDialog(project, configurable);
+                        break;
+                    }
+
+                }
+//                                return list.toArray(new Configurable[0]);
+//                            }
+//                        },
+//
+//                };
 
                 //  allow to define it as default
-                ShowSettingsUtil.getInstance().showSettingsDialog(project, group);
+//                ShowSettingsUtil.getInstance().showSettingsDialog(project, group);
 
                 //  verify if something has been selected, if not just skip
                 //  overwrite s variable
                 testFrameworkProperty = casesSettings.getTestFramework();
                 if (StringUtils.isEmpty(testFrameworkProperty)) {
 
-                    // TODO show dialog displaying that there is no framework selection
+                    //  show dialog displaying that there is no framework selection
+                      Messages.showMessageDialog(GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected.desc"),GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected") ,
+                              Messages.getWarningIcon());
 
                     return;
                 }

@@ -58,7 +58,6 @@ public class BddUtilTest extends IdeaTestCase {
 //    }
 
 
-
     /**
      * @verifies return psi element pairs for start element and end element in each line for each should tag
      * @see BddUtil#getElementPairsInDocTag(com.intellij.psi.javadoc.PsiDocTag)
@@ -82,6 +81,12 @@ public class BddUtilTest extends IdeaTestCase {
                 "     * asgasdg asdfgasd\n" +
                 "     */", 0, new int[][]{{0, 2, 4}, {1, 7, 7}, {2, 10, 10}}, myProject);
 
+        // case 4
+        assertForOneShouldTag("/**\n" +
+                "     * @should foo\n" +
+                "     * yoo\n" +
+                "     */", 0, new int[][]{{0, 2, 2}, {1, 5, 5}}, myProject);
+
         // matches pair caught for 'yoo' description
         assertForOneShouldTag("/**\n" +
                 "     * @should doo  \n" +
@@ -89,6 +94,16 @@ public class BddUtilTest extends IdeaTestCase {
                 "     * \n" +
                 "     */"
                 , 1, new int[][]{{0, 2, 2}}, myProject);
+
+
+           // return only one pair for doo, ignore trailing space at the next line
+        assertForOneShouldTag("/**\n" +
+                "     * @should doo  \n" +
+                "     * @should yoo\n" +
+                "     * \n" +
+                "     */"
+                , 0, new int[][]{{0, 2, 2}}, myProject);
+
 
     }
 
@@ -100,14 +115,15 @@ public class BddUtilTest extends IdeaTestCase {
      */
     private void assertForOneShouldTag(String docCommentText, int shouldTagIndex, int[][] matchings, Project project) {
         PsiElementFactory elementFactory = JavaPsiFacade.getElementFactory(project);
-        PsiDocComment case1DocComment = elementFactory.createDocCommentFromText(docCommentText, null);
-        PsiDocTag[] docCommentTags = case1DocComment.getTags();
-        PsiDocTag case1FirstTag = docCommentTags[shouldTagIndex];
+        PsiDocComment docComment = elementFactory.createDocCommentFromText(docCommentText);
+        PsiDocTag[] docCommentTags = docComment.getTags();
+        PsiDocTag psiDocTagUnderTest = docCommentTags[shouldTagIndex];
         //  get doctag elements
-        List<BddUtil.DocOffsetPair> case1Matches = BddUtil.getElementPairsInDocTag(case1FirstTag);
+        List<BddUtil.DocOffsetPair> offsetPairsMatches = BddUtil.getElementPairsInDocTag(psiDocTagUnderTest);
+        assertThat(offsetPairsMatches.size(), is(matchings.length));
         for (int[] matching : matchings) {
-            assertThat(case1Matches.get(matching[0]).getStart(), is(case1FirstTag.getChildren()[matching[1]]));
-            assertThat(case1Matches.get(matching[0]).getEnd(), is(case1FirstTag.getChildren()[matching[2]]));
+            assertThat(offsetPairsMatches.get(matching[0]).getStart(), is(psiDocTagUnderTest.getChildren()[matching[1]]));
+            assertThat(offsetPairsMatches.get(matching[0]).getEnd(), is(psiDocTagUnderTest.getChildren()[matching[2]]));
         }
     }
 
@@ -124,7 +140,7 @@ public class BddUtilTest extends IdeaTestCase {
                 "     * @should doo  \n" +
                 "     * @should yoo\n" +
                 "     * \n" +
-                "     */", null);
+                "     */");
         //  get doctag elements
         assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText1.getTags()[0]).size(), is(1));
 
@@ -132,7 +148,7 @@ public class BddUtilTest extends IdeaTestCase {
                 "     * @should doo zas \n" +
                 "     * @should yoo\n" +
                 "     * \n" +
-                "     */", null);
+                "     */");
 
         assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText2.getTags()[0]).size(), is(1));
     }

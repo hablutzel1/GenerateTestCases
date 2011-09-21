@@ -23,6 +23,12 @@ public class GenerateTestCasesSettings implements PersistentStateComponent<Gener
         testFramework = "";
     }
 
+    /**
+     * Return an instance of GenerateTestCasesSettings which holds plugin preferences as testFramework
+     *
+     * @param project
+     * @return
+     */
     public static GenerateTestCasesSettings getInstance(Project project) {
         return project.getComponent(GenerateTestCasesSettings.class);
     }

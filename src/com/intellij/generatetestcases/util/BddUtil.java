@@ -11,9 +11,12 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
+import com.intellij.psi.impl.source.javadoc.PsiDocTagImpl;
+import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.psi.javadoc.PsiDocToken;
+import com.intellij.psi.tree.java.IJavaDocElementType;
 import com.intellij.testIntegration.JavaTestFramework;
 import com.intellij.testIntegration.TestFramework;
 import org.apache.commons.lang.StringUtils;
@@ -30,7 +33,6 @@ public class BddUtil {
 
 
     /**
-     *
      * @param shouldTag
      * @return
      * @should return the full description for a should tag backed by a PsiDocTag
@@ -85,6 +87,8 @@ public class BddUtil {
      * For a should tag it will return a collection of pairs that correspond
      * to the first and last element of each line of <code>@should</code> description.
      * <br />
+     * <p/>
+     * This method will help the inspection method to only highlight the text and not the asterisks in javadoc when the description is over multiple lines
      *
      * @param psiDocTag
      * @return
@@ -130,8 +134,56 @@ public class BddUtil {
             DocOffsetPair offsetPair = new DocOffsetPair(dataElements[0], dataElements[0]);
             returnPairs.add(offsetPair);
         } else {
-            DocOffsetPair firstPair = new DocOffsetPair(dataElements[0], dataElements[1]);
-            returnPairs.add(firstPair);
+
+            boolean inOneLine = true;
+
+//            int valueTokenPos = -1;
+//            int firstAsteriskPos = -1;
+////            int firstDataPos = -1;
+            PsiElement[] children = psiDocTag.getChildren();
+            for (int i = 0; i < children.length; i++) {
+                PsiElement child = children[i];
+                if (child instanceof PsiDocTagValue) {
+                    if (children.length > i + 2 && ((PsiDocTokenImpl) children[i + 2]).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+                        inOneLine = false;
+                    }
+                }
+                //else if (child instanceof PsiDocTokenImpl) {
+//                    if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+//                        firstAsteriskPos = i;
+//                    } else if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_DATA")) {
+//                        if (valueTokenPos != -1 && firstAsteriskPos != -1 && valueTokenPos < firstAsteriskPos) { // there are asterisk after the first value token and before the data
+//                            inOneLine = false;
+//                        }
+//                    }
+//                }
+//
+            }
+//            for (PsiElement child : children) {
+//                if (child instanceof PsiDocTokenImpl) {
+//                    if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+//                        inOneLine = false;
+//                    }
+//                }
+//
+//            }
+//        }
+
+            if (inOneLine) {
+                DocOffsetPair firstPair = new DocOffsetPair(dataElements[0], dataElements[1]);
+                returnPairs.add(firstPair);
+            } else {
+                DocOffsetPair firstPair = new DocOffsetPair(dataElements[0], dataElements[0]);
+                returnPairs.add(firstPair);
+
+                if (!StringUtils.isBlank(dataElements[1].getText())) {
+                    DocOffsetPair secondPair = new DocOffsetPair(dataElements[1], dataElements[1]);
+                    returnPairs.add(secondPair);
+                }
+
+            }
+
+
             for (int i = 2; i < dataElements.length; i++) {
 
                 PsiElement dataElement = dataElements[i];
@@ -267,6 +319,16 @@ public class BddUtil {
         }
     }
 
+
+    /**
+     * Should return a framework strategy based on a String
+     *
+     * FIXME TODO search usages, and remove
+     *
+     * @param project
+     * @param s
+     * @return
+     */
     public static TestFrameworkStrategy getStrategyForFramework(Project project, String s) {
         TestFrameworkStrategy tfs;
         if (s.equals("JUNIT3")) {
@@ -274,6 +336,7 @@ public class BddUtil {
         } else {
             tfs = new JUnit4Strategy(project);
         }
+
         return tfs;
     }
 }

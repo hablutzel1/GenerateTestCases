@@ -16,7 +16,7 @@ import org.jetbrains.annotations.*;
  */
 public class CreateTestMethodFix implements IntentionAction {
 
-    private static final Logger LOG = Logger.getInstance("#com.intellij.generatetestcases.quickfix.CreateTestMethodFixcom.intellij.generatetestcases.quickfix.CreateTestMethod");
+    private static final Logger LOG = Logger.getInstance("#com.intellij.generatetestcases.quickfix.CreateTestMethodFix");
 
 
     public TestMethod getTestMethod() {

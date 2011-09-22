@@ -56,11 +56,16 @@
         <!--for adding support for @should tag-->
         <javadocTagInfo implementation="com.intellij.generatetestcases.javadoc.ShouldTagInfo"/>
 
+        <!--*****************************************************-->
         <!--for references with renaming support of PsiDocTag-->
+        <!--*******************************************************-->
+
         <psi.referenceContributor implementation="com.intellij.generatetestcases.util.ReferenceContributor"/>
         <!--<referenceProviderType key="Should references"-->
                                <!--implementationClass="com.intellij.generatetestcases.reference.ReferenceProvider"/>-->
-        <nameSuggestionProvider implementation="com.intellij.generatetestcases.reference.ShouldDescriptionNameSuggestionProvider" />
+        <!-- dpending on a PsiElement type it suggest names (including the principal one) in the rename dialog-->
+        <!--<nameSuggestionProvider implementation="com.intellij.generatetestcases.reference.ShouldDescriptionNameSuggestionProvider" />-->
+        <renamePsiElementProcessor implementation="com.intellij.generatetestcases.reference.MyRenameProccessor" order="first" />
 
 
     </extensions>

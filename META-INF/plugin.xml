@@ -60,6 +60,7 @@
         <psi.referenceContributor implementation="com.intellij.generatetestcases.util.ReferenceContributor"/>
         <!--<referenceProviderType key="Should references"-->
                                <!--implementationClass="com.intellij.generatetestcases.reference.ReferenceProvider"/>-->
+        <nameSuggestionProvider implementation="com.intellij.generatetestcases.reference.ShouldDescriptionNameSuggestionProvider" />
 
 
     </extensions>

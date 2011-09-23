@@ -1,9 +1,15 @@
 package com.intellij.generatetestcases.reference.rename;
 
-import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.generatetestcases.*;
+import com.intellij.generatetestcases.impl.*;
+import com.intellij.generatetestcases.testframework.*;
+import com.intellij.generatetestcases.util.*;
+import com.intellij.generatetestcases.util.Constants;
+import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiElement;
+import com.intellij.psi.*;
+import com.intellij.psi.impl.source.*;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.refactoring.rename.RenameDialog;
 import com.intellij.refactoring.rename.RenameProcessor;
@@ -14,17 +20,19 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import java.util.Map;
+import java.util.*;
 
 
 public class ShouldTagRenameDialog extends RenameDialog {
 
 
     private PsiDocTag shouldDocTag;
+    private final PsiElement testMethod;
 
-    public ShouldTagRenameDialog(@NotNull Project project, @NotNull PsiElement psiElement, @Nullable PsiElement nameSuggestionContext, Editor editor, PsiDocTag shouldDocTag) {
+    public ShouldTagRenameDialog(@NotNull Project project, @NotNull PsiElement psiElement, @Nullable PsiElement nameSuggestionContext, Editor editor, @NotNull PsiDocTag shouldDocTag) {
         super(project, psiElement, nameSuggestionContext, editor);
         this.shouldDocTag = shouldDocTag;
+        this.testMethod = psiElement;
     }
 
     @Override
@@ -33,38 +41,56 @@ public class ShouldTagRenameDialog extends RenameDialog {
         return !StringUtils.isEmpty(getNewName());
     }
 
+    private final Logger logger = Logger.getInstance(getClass());
 
-    public void performRename(final String newName) {
+    protected void doAction() {
 
         // TODO check if test method actually exists
+        //  obtener clase actual
+        PsiClass parentEligibleForTestingPsiClass = BddUtil.getParentEligibleForTestingPsiClass(shouldDocTag);
 
-    // TODO obtener clase actual
-    // TODO construir TestClass,  buscar tag
+        TestClass testClass = null;
+        try {
 
-        // TODO renombrar metodo si existe si no solo renombrar descripcion
+            testClass = BDDCore.createTestClass(parentEligibleForTestingPsiClass);
+        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+            logger.warn("Test Framework isn't configured");
+        }
+
+        String newTestMethodName = null;
+
+        //  renombrar metodo si existe si no solo renombrar descripcion
+        if (testClass != null) {
+            List<TestMethod> allMethods = testClass.getAllMethods();
+            for (TestMethod allMethod : allMethods) {
+                PsiDocTag backingTag = ((TestMethodImpl) allMethod).getBackingTag();
+                if (backingTag.equals(shouldDocTag)) {
+                    if (allMethod.reallyExists()) {
+                        TestFrameworkStrategy testFrameworkStrategy = testClass.getTestFrameworkStrategy();
+
+                        newTestMethodName = ((JUnitStrategyBase) testFrameworkStrategy).getExpectedNameForThisTestMethod(allMethod.getSutMethod().getName(), getNewName());
+
+                        break;
+                    }
+                }
+            }
+        }
+        // TODO rename description
+
+        if (newTestMethodName != null) {
+            performRename(newTestMethodName);
+
+            // TODO rename @verifies in test method
+            PsiDocTag[] tags = ((PsiMethodImpl) testMethod).getDocComment().getTags();
+            for (PsiDocTag tag : tags) {
+                if (tag.getName().equals(Constants.VERIFIES_DOC_TAG)) {
+                    int yoo = 3;
+
+                }
+            }
 
 
-
-//        final RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(myPsiElement);
-//        elementProcessor.setToSearchInComments(myPsiElement, isSearchInComments());
-//        if (myCbSearchTextOccurences.isEnabled()) {
-//            elementProcessor.setToSearchForTextOccurrences(myPsiElement, isSearchInNonJavaFiles());
-//        }
-//        if (mySuggestedNameInfo != null) {
-//            mySuggestedNameInfo.nameChoosen(newName);
-//        }
-//
-//        final RenameProcessor processor = new RenameProcessor(getProject(), myPsiElement, newName, isSearchInComments(),
-//                isSearchInNonJavaFiles());
-//
-//        for (Map.Entry<AutomaticRenamerFactory, JCheckBox> e : myAutomaticRenamers.entrySet()) {
-//            e.getKey().setEnabled(e.getValue().isSelected());
-//            if (e.getValue().isSelected()) {
-//                processor.addRenamerFactory(e.getKey());
-//            }
-//        }
-//
-//        invokeRefactoring(processor);
+        }
     }
 
 

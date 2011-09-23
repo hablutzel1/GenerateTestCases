@@ -1,13 +1,12 @@
 package com.intellij.generatetestcases.javadoc;
 
-import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.generatetestcases.util.*;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtil;
 import com.intellij.psi.javadoc.JavadocTagInfo;
 import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.util.ArrayUtil;
-import org.jetbrains.annotations.NonNls;
 
 /**
  * Provee de soporte al IDe para reconocer nativamente el should tag
@@ -23,7 +22,7 @@ public class ShouldTagInfo implements JavadocTagInfo {
     private final LanguageLevel myLanguageLevel;
 
     public ShouldTagInfo() {
-        myName = BddUtil.BDD_TAG;
+        myName = Constants.BDD_TAG;
         myContext = PsiMethod.class;
         myInline = false;
         myLanguageLevel = LanguageLevel.JDK_1_3;

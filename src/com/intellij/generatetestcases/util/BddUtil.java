@@ -1,9 +1,5 @@
 package com.intellij.generatetestcases.util;
 
-import com.intellij.codeInspection.LocalQuickFix;
-import com.intellij.codeInspection.ProblemDescriptor;
-import com.intellij.codeInspection.ProblemHighlightType;
-import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.testframework.JUnit3Strategy;
 import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
@@ -11,18 +7,14 @@ import com.intellij.openapi.extensions.Extensions;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
-import com.intellij.psi.impl.source.javadoc.PsiDocTagImpl;
 import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
-import com.intellij.psi.javadoc.PsiDocToken;
-import com.intellij.psi.tree.java.IJavaDocElementType;
 import com.intellij.testIntegration.JavaTestFramework;
 import com.intellij.testIntegration.TestFramework;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,8 +23,6 @@ import java.util.List;
  */
 public class BddUtil {
 
-
-    public static final String BDD_TAG = "should";
 
     /**
      * It will return the trimmed description associated to a PsiDocTag
@@ -65,7 +55,7 @@ public class BddUtil {
      * @return
      */
     public static boolean isValidShouldTag(PsiDocTag tag) {
-        return tag.getName().equals(BDD_TAG) && getShouldTagDescription(tag).length() > 0;
+        return tag.getName().equals(Constants.BDD_TAG) && getShouldTagDescription(tag).length() > 0;
     }
 
     /**
@@ -87,6 +77,29 @@ public class BddUtil {
             }
         } while (null != (startPsiElement = startPsiElement.getParent()));
         return shouldDocTag;
+    }
+
+    public static PsiClass getParentEligibleForTestingPsiClass(PsiElement element) {
+        PsiClass parentPsiClass = null;
+
+        while (element != null) {
+            if (element instanceof PsiFile) {
+                if (!(element instanceof PsiClassOwner)) {
+                    parentPsiClass = null;
+                    break;
+                }
+                final PsiClass[] classes = ((PsiClassOwner) element).getClasses();
+                parentPsiClass = (classes.length == 1 ? classes[0] : null);
+                break;
+            }
+            if (element instanceof PsiClass && !(element instanceof PsiAnonymousClass)) {
+                parentPsiClass = (PsiClass) element;
+                break;
+
+            }
+            element = element.getParent();
+        }
+        return parentPsiClass;
     }
 
     public static class DocOffsetPair {

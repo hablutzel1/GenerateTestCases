@@ -26,14 +26,11 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtil;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurableEP;
-import com.intellij.openapi.options.ConfigurableGroup;
 import com.intellij.openapi.options.ShowSettingsUtil;
-import com.intellij.openapi.options.ex.ProjectConfigurablesGroup;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.openapi.vcs.VcsBundle;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import org.apache.commons.lang.StringUtils;
@@ -116,8 +113,8 @@ public class GenerateTestMethods extends AnAction {
                 if (StringUtils.isEmpty(testFrameworkProperty)) {
 
                     //  show dialog displaying that there is no framework selection
-                      Messages.showMessageDialog(GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected.desc"),GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected") ,
-                              Messages.getWarningIcon());
+                    Messages.showMessageDialog(GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected.desc"), GenerateTestCasesBundle.message("plugin.GenerateTestCases.framework.notselected"),
+                            Messages.getWarningIcon());
 
                     return;
                 }
@@ -319,20 +316,10 @@ public class GenerateTestMethods extends AnAction {
         int offset = editor.getCaretModel().getOffset();
         PsiElement element = file.findElementAt(offset);
 
-        while (element != null) {
-            if (element instanceof PsiFile) {
-                if (!(element instanceof PsiClassOwner)) return null;
-                final PsiClass[] classes = ((PsiClassOwner) element).getClasses();
-                return classes.length == 1 ? classes[0] : null;
-            }
-            if (element instanceof PsiClass && !(element instanceof PsiAnonymousClass)) {
-                return (PsiClass) element;
+        PsiClass parentPsiClass = BddUtil.getParentEligibleForTestingPsiClass(element);
 
-            }
-            element = element.getParent();
-        }
-
-        return null;
+        return parentPsiClass;
 
     }
+
 }

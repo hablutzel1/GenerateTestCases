@@ -1,7 +1,6 @@
 package com.intellij.generatetestcases.testframework;
 
-import com.intellij.generatetestcases.impl.TestClassImpl;
-import com.intellij.generatetestcases.util.BddUtil;
+import com.intellij.generatetestcases.util.*;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -97,10 +96,10 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
 
         String commentText = "/**\n" +
 
-                "* @verifies " + testDescription + "\n" +
+                "* @" + Constants.VERIFIES_DOC_TAG + " " + testDescription + "\n" +
                 "*/";
 
-        PsiDocTag docTag = elementFactory.createDocTagFromText("@see  " + methodQualifiedName, null);
+        PsiDocTag docTag = elementFactory.createDocTagFromText("@see  " + methodQualifiedName);
 
         PsiComment psiComment = elementFactory.createCommentFromText(commentText, null);
         psiComment.add(docTag);

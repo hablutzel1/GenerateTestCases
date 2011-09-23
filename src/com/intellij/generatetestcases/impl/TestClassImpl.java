@@ -3,13 +3,11 @@ package com.intellij.generatetestcases.impl;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.jsp.jspJava.*;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.generatetestcases.TestClass;
-import com.intellij.psi.search.GlobalSearchScope;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +19,6 @@ import java.util.List;
  * Time: 08:57:26 AM
  */
 public class TestClassImpl implements TestClass {
-
-    private static final String BDD_TAG = "should";
 
     List<TestMethod> testMethods;
     private PsiClass sutClass;
@@ -80,8 +76,7 @@ public class TestClassImpl implements TestClass {
 
 
                 //  comprobar que el tag sea del tipo should
-                if (tag.getName().equals(BDD_TAG) && BddUtil.getShouldTagDescription(tag).length() > 0) {
-//                    String shouldTagDescription =
+                if (BddUtil.isValidShouldTag(tag)) {
                     // TODO change it to receive a string instead of the tag, or to test if the tag
                     // have empty description
                     TestMethod tm = new TestMethodImpl(tag, this, this.frameworkStrategy);

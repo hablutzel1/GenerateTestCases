@@ -1,5 +1,6 @@
 package com.intellij.generatetestcases.javadoc;
 
+import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.pom.java.LanguageLevel;
 import com.intellij.psi.*;
 import com.intellij.psi.util.PsiUtil;
@@ -10,6 +11,7 @@ import org.jetbrains.annotations.NonNls;
 
 /**
  * Provee de soporte al IDe para reconocer nativamente el should tag
+ * TODO consider the possibility to use its methods (getReference, ...) to provide renaming and referencing support
  *
  * @author jaime
  */
@@ -21,7 +23,7 @@ public class ShouldTagInfo implements JavadocTagInfo {
     private final LanguageLevel myLanguageLevel;
 
     public ShouldTagInfo() {
-        myName = "should";
+        myName = BddUtil.BDD_TAG;
         myContext = PsiMethod.class;
         myInline = false;
         myLanguageLevel = LanguageLevel.JDK_1_3;
@@ -32,11 +34,7 @@ public class ShouldTagInfo implements JavadocTagInfo {
     }
 
     public boolean isValidInContext(PsiElement element) {
-        if (PsiUtil.getLanguageLevel(element).compareTo(myLanguageLevel) < 0) {
-            return false;
-        }
-
-        return myContext.isInstance(element);
+        return PsiUtil.getLanguageLevel(element).compareTo(myLanguageLevel) >= 0 && myContext.isInstance(element);
     }
 
     public Object[] getPossibleValues(PsiElement context, PsiElement place, String prefix) {
@@ -48,6 +46,8 @@ public class ShouldTagInfo implements JavadocTagInfo {
     }
 
     public PsiReference getReference(PsiDocTagValue value) {
+
+        // it seems that this provide similar reference support to com.intellij.generatetestcases.reference.TestMethodReferenceProvider
         return null;
     }
 

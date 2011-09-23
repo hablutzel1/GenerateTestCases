@@ -8,7 +8,7 @@ import com.intellij.util.ProcessingContext;
 import org.jetbrains.annotations.NotNull;
 
 
-public class ReferenceProvider extends PsiReferenceProvider{
+public class TestMethodReferenceProvider extends PsiReferenceProvider{
 
     @Override
     public boolean acceptsTarget(@NotNull PsiElement target) {
@@ -22,6 +22,9 @@ public class ReferenceProvider extends PsiReferenceProvider{
         // TODO create ShouldReferences
         // TODO it doesn't get called as often as the methods in ShouldReference so it would be convenient if some static
         // information could be passed to it or created in its constructor
+
+        // TODO it should only create references for @should PsiDocTags
+
         ShouldReference shouldReference = new ShouldReference((PsiDocTag) element);
         return new PsiReference[] {shouldReference};
     }

@@ -75,6 +75,9 @@ public class TestMethodImpl implements TestMethod {
         // it would be needed to implement a registry where we could look for instances for
         // some determined class to guarantee that uniqueness of parents for test methods
         //this.parent = ((PsiMethod)shouldTag.getParent().getParent()).getContainingClass();
+
+        // FIXME parent is being used to get the backing class, maybe delete this dependency??
+
         this.parent = parent;
     }
 
@@ -129,7 +132,7 @@ public class TestMethodImpl implements TestMethod {
 
     }
 
-    private boolean existsInSut;
+//    private boolean existsInSut;
 
 
     public String getDescription() {

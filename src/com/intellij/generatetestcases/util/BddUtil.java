@@ -32,7 +32,10 @@ import java.util.List;
 public class BddUtil {
 
 
+    public static final String BDD_TAG = "should";
+
     /**
+     * It will return the trimmed description associated to a PsiDocTag
      * @param shouldTag
      * @return
      * @should return the full description for a should tag backed by a PsiDocTag
@@ -53,6 +56,37 @@ public class BddUtil {
 
         return description.toString().trim();
 
+    }
+
+    /**
+     * This method test that a PsiDocTag has the name "should" and that its description isn't empty
+     *
+     * @param tag
+     * @return
+     */
+    public static boolean isValidShouldTag(PsiDocTag tag) {
+        return tag.getName().equals(BDD_TAG) && getShouldTagDescription(tag).length() > 0;
+    }
+
+    /**
+     * Given a PsiElement it will return a PsiDocTag if it exists up in its hierarchy
+     * @param supposedPsiDocTagChild
+     * @return
+     */
+    public static PsiDocTag getPsiDocTagParent(PsiElement supposedPsiDocTagChild) {
+        PsiElement startPsiElement = supposedPsiDocTagChild;
+
+        PsiDocTag shouldDocTag = null;
+        // TODO simplify to not iterate over the parents for completely uncompatible Psi hierarchy trees, only for PsiDocTag childs
+        do {
+
+            if (startPsiElement instanceof PsiDocTag) {
+                if (isValidShouldTag((PsiDocTag) startPsiElement)) {
+                    shouldDocTag = (PsiDocTag) startPsiElement;
+                }
+            }
+        } while (null != (startPsiElement = startPsiElement.getParent()));
+        return shouldDocTag;
     }
 
     public static class DocOffsetPair {

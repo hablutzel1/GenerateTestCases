@@ -1,7 +1,10 @@
 package com.intellij.generatetestcases.reference;
 
+import com.intellij.generatetestcases.reference.rename.ShouldTagRenameDialog;
+import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.SuggestedNameInfo;
+import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.refactoring.rename.NameSuggestionProvider;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,10 +18,16 @@ public class ShouldDescriptionNameSuggestionProvider implements NameSuggestionPr
 
     @Override
     public SuggestedNameInfo getSuggestedNames(PsiElement element, @Nullable PsiElement nameSuggestionContext, Set<String> result) {
-        result.clear();
-        result.add("Helllo :D");
-        // TODO determine the description only :)
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+
+        PsiDocTag shouldDocTag = BddUtil.getPsiDocTagParent(nameSuggestionContext);
+
+        // create custom rename Dialog
+        if (shouldDocTag != null) {
+            //  KEEP THE DESCRIPTION AS THE ONLY ONE NAME SUGGESTION
+            result.clear();
+            result.add(BddUtil.getShouldTagDescription(shouldDocTag));
+        }
+        return null;
     }
 
 }

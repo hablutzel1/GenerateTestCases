@@ -1,15 +1,10 @@
 package com.intellij.generatetestcases.util;
 
-import com.intellij.generatetestcases.reference.ReferenceProvider;
-import com.intellij.patterns.ElementPattern;
-import com.intellij.patterns.ElementPatternCondition;
+import com.intellij.generatetestcases.reference.TestMethodReferenceProvider;
 import com.intellij.patterns.PlatformPatterns;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.util.ProcessingContext;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,6 +20,6 @@ public class ReferenceContributor extends PsiReferenceContributor{
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
 
         // TODO we add a provider tthat matches PsiDocTags
-        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class),new ReferenceProvider());
+        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class),new TestMethodReferenceProvider());
     }
 }

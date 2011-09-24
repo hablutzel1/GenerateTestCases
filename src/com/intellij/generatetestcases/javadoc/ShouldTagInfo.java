@@ -46,7 +46,7 @@ public class ShouldTagInfo implements JavadocTagInfo {
 
     public PsiReference getReference(PsiDocTagValue value) {
 
-        // it seems that this provide similar reference support to com.intellij.generatetestcases.reference.TestMethodReferenceProvider
+        // it seems that this provide similar reference support to com.intellij.generatetestcases.reference.ShouldReferenceProvider
         return null;
     }
 

@@ -99,7 +99,7 @@ public class ShouldReference implements PsiReference {
     @Override
     public String getCanonicalText() {
         // TODO return the fqdn of the test method
-        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -110,7 +110,8 @@ public class ShouldReference implements PsiReference {
         // look for implementation that make use of bindToElement method
 
 //          <renamePsiElementProcessor implementation="com.intellij.refactoring.rename.RenamePsiFileProcessor" order="last"/> if nothing else works
-        return null;
+//        return null;
+        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -5,21 +5,20 @@ import com.intellij.generatetestcases.impl.*;
 import com.intellij.generatetestcases.testframework.*;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.generatetestcases.util.Constants;
+import com.intellij.openapi.application.Result;
+import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.*;
+import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.refactoring.rename.RenameDialog;
-import com.intellij.refactoring.rename.RenameProcessor;
-import com.intellij.refactoring.rename.RenamePsiElementProcessor;
-import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.*;
 
 
@@ -45,7 +44,8 @@ public class ShouldTagRenameDialog extends RenameDialog {
 
     protected void doAction() {
 
-        // TODO check if test method actually exists
+
+        //  check if test method actually exists
         //  obtener clase actual
         PsiClass parentEligibleForTestingPsiClass = BddUtil.getParentEligibleForTestingPsiClass(shouldDocTag);
 
@@ -57,7 +57,7 @@ public class ShouldTagRenameDialog extends RenameDialog {
             logger.warn("Test Framework isn't configured");
         }
 
-        String newTestMethodName = null;
+         String newTestMethodName = null;
 
         //  renombrar metodo si existe si no solo renombrar descripcion
         if (testClass != null) {
@@ -75,22 +75,53 @@ public class ShouldTagRenameDialog extends RenameDialog {
                 }
             }
         }
-        // TODO rename description
 
-        if (newTestMethodName != null) {
-            performRename(newTestMethodName);
+        final Project project = shouldDocTag.getProject();
 
-            // TODO rename @verifies in test method
-            PsiDocTag[] tags = ((PsiMethodImpl) testMethod).getDocComment().getTags();
-            for (PsiDocTag tag : tags) {
-                if (tag.getName().equals(Constants.VERIFIES_DOC_TAG)) {
-                    int yoo = 3;
+
+        final String finalNewTestMethodName = newTestMethodName;
+        new WriteCommandAction(project, "Renaming Test Case @should tag") {
+
+            @Override
+            protected void run(Result result) throws Throwable {
+                //  rename description
+                changePsiDocTagContent(shouldDocTag, getNewName());
+
+                if (finalNewTestMethodName != null) {
+                    performRename(finalNewTestMethodName);
+
+                    //  rename @verifies in test method
+                    PsiDocComment docComment = ((PsiMethodImpl) testMethod).getDocComment();
+                    PsiDocTag[] tags = docComment.getTags(); // TODO manage nullity with tests
+                    for (PsiDocTag tag : tags) {
+                        if (tag.getName().equals(Constants.VERIFIES_DOC_TAG)) {
+                            String contents = getNewName();
+                            changePsiDocTagContent(tag, contents);
+                        }
+                    }
+
 
                 }
             }
+        }.execute();
+
+    }
 
 
-        }
+    /**
+     * It will change the contents of a PsiDocTag as this one
+     * (at)foo content here --> (at)foo new content
+     *
+     * TODO move to test util
+     *
+     * @param tag the tag its content is to be changed
+     * @param newContents new contents
+     */
+    private void changePsiDocTagContent(PsiDocTag tag, String newContents) {
+        PsiDocTag newVerifiesDocTag = JavaPsiFacade.getElementFactory(tag.getProject()).createDocTagFromText("@" + tag.getName() + " " + newContents);
+        PsiDocComment containingComment = tag.getContainingComment();
+        containingComment.deleteChildRange(tag, tag);
+        containingComment.add(newVerifiesDocTag);
     }
 
 

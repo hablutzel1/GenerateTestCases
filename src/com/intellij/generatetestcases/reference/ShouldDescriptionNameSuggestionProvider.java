@@ -3,6 +3,7 @@ package com.intellij.generatetestcases.reference;
 import com.intellij.generatetestcases.reference.rename.ShouldTagRenameDialog;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiWhiteSpace;
 import com.intellij.psi.codeStyle.SuggestedNameInfo;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.refactoring.rename.NameSuggestionProvider;
@@ -16,10 +17,31 @@ import java.util.Set;
  */
 public class ShouldDescriptionNameSuggestionProvider implements NameSuggestionProvider {
 
+
+    /**
+     * @param element
+     * @param nameSuggestionContext
+     * @param result
+     * @return
+     * @should be able to get the (at)should tag from the context selection as the ShouldTagsAwareRenameProccessor
+     */
     @Override
     public SuggestedNameInfo getSuggestedNames(PsiElement element, @Nullable PsiElement nameSuggestionContext, Set<String> result) {
 
+           // This should have the same logic that {@link ShouldTagsAwareRenameProccessor} for knowing it we are in the context of a @should tag
+
         PsiDocTag shouldDocTag = BddUtil.getPsiDocTagParent(nameSuggestionContext);
+
+        // fix for PsiWhiteSpace last resort, we could be at the right of a @should tag
+        if (shouldDocTag == null && nameSuggestionContext instanceof PsiWhiteSpace) {
+            PsiElement prevSibling = nameSuggestionContext.getPrevSibling();
+            if (prevSibling instanceof PsiDocTag) {
+                boolean validShouldTag = BddUtil.isValidShouldTag((PsiDocTag) prevSibling);
+                if (validShouldTag ) {
+                    shouldDocTag = (PsiDocTag) prevSibling;
+                }
+            }
+        }
 
         // create custom rename Dialog
         if (shouldDocTag != null) {

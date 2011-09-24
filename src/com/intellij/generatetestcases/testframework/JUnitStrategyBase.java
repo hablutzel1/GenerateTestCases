@@ -58,6 +58,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
      * @should manage appropiately any condition of the backing test class (imports, existing methods, modifiers, etc)
      * @should create test method even with broken references if test libraries aren't available
      */
+    @NotNull
     @Override
     public PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
 

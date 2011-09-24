@@ -1,6 +1,6 @@
 package com.intellij.generatetestcases.util;
 
-import com.intellij.generatetestcases.reference.TestMethodReferenceProvider;
+import com.intellij.generatetestcases.reference.ShouldReferenceProvider;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;
@@ -19,7 +19,7 @@ public class ReferenceContributor extends PsiReferenceContributor{
     @Override
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
 
-        // TODO we add a provider tthat matches PsiDocTags
-        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class),new TestMethodReferenceProvider());
+        //  we add a provider tthat matches PsiDocTags
+        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class),new ShouldReferenceProvider());
     }
 }

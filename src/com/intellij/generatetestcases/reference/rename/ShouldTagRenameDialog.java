@@ -10,6 +10,7 @@ import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.*;
 import com.intellij.psi.javadoc.PsiDocComment;
@@ -57,7 +58,7 @@ public class ShouldTagRenameDialog extends RenameDialog {
             logger.warn("Test Framework isn't configured");
         }
 
-         String newTestMethodName = null;
+        String newTestMethodName = null;
 
         //  renombrar metodo si existe si no solo renombrar descripcion
         if (testClass != null) {
@@ -101,6 +102,8 @@ public class ShouldTagRenameDialog extends RenameDialog {
                     }
 
 
+                } else { // we have only renamed the tag
+                    close(DialogWrapper.OK_EXIT_CODE);
                 }
             }
         }.execute();
@@ -111,17 +114,19 @@ public class ShouldTagRenameDialog extends RenameDialog {
     /**
      * It will change the contents of a PsiDocTag as this one
      * (at)foo content here --> (at)foo new content
-     *
+     * <p/>
      * TODO move to test util
      *
-     * @param tag the tag its content is to be changed
+     * @param tag         the tag its content is to be changed
      * @param newContents new contents
      */
     private void changePsiDocTagContent(PsiDocTag tag, String newContents) {
         PsiDocTag newVerifiesDocTag = JavaPsiFacade.getElementFactory(tag.getProject()).createDocTagFromText("@" + tag.getName() + " " + newContents);
         PsiDocComment containingComment = tag.getContainingComment();
+        // FIXME it is adding a new line when the PsiDocTag proccesed is in the end of javadoc
+        containingComment.addBefore(newVerifiesDocTag, tag);
         containingComment.deleteChildRange(tag, tag);
-        containingComment.add(newVerifiesDocTag);
+
     }
 
 

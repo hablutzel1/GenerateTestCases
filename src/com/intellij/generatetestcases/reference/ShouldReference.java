@@ -5,7 +5,9 @@ import com.intellij.generatetestcases.TestClass;
 import com.intellij.generatetestcases.TestFrameworkNotConfigured;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.reference.psi.NoExistentTestMethodLightReference;
 import com.intellij.generatetestcases.util.*;
+import com.intellij.lang.StdLanguages;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
@@ -27,9 +29,20 @@ public class ShouldReference implements PsiReference {
     private  final Logger logger = Logger.getInstance(getClass());
 
     private PsiDocTag psiDocTag;
+    private TestMethod testMethod;
 
-    public ShouldReference(PsiDocTag psiDocTag) {
+    /**
+     * Construct a ShouldReference with the (at)should tag and the TestMethod corresponding to our (at)should tag so we avoid the need to recreate the TestClass, TestMethod hieararchy every time the reference is queried.
+     *
+     * @param psiDocTag
+     * @param testMethod
+     */
+    public ShouldReference(PsiDocTag psiDocTag, TestMethod testMethod) {
+
+        // TODO assert psiDocTag is valid for us
+
         this.psiDocTag = psiDocTag;
+        this.testMethod = testMethod;
     }
 
     @Override
@@ -39,16 +52,20 @@ public class ShouldReference implements PsiReference {
 
 
     /**
-     *
-     *
      * It  supports multiline descriptions too, and for these the hyperlink continue over
-     * asterisks
+     * asterisks.
      *
+     * TODO IT will return an empty range for (at)should tags without a test method created * so any link is created for the user, but it disables the reference
+      *
      * @return
      * @should return only the range for the description without the javadoc tag
      */
     @Override
     public TextRange getRangeInElement() {
+
+//        if (!testMethod.reallyExists()){
+//            return TextRange.EMPTY_RANGE;
+//        }
 
         List<BddUtil.DocOffsetPair> elementPairsInDocTag = BddUtil.getElementPairsInDocTag(psiDocTag);
 
@@ -64,35 +81,22 @@ public class ShouldReference implements PsiReference {
         return new TextRange(fullStart-referenceStart, fullEnd - referenceStart);
     }
 
+
+    /**
+     * Will return a PsiMethod for the test method or a NoExistentTestMethodLightReference if the test method isn't created yet
+     *
+     * @return
+     */
     @Override
     public PsiElement resolve() {
-        //  find the target test method
-        PsiElement parentPsiClass = psiDocTag;
 
-        do {
-            parentPsiClass = parentPsiClass.getParent();
-        } while (!(parentPsiClass instanceof PsiClass));
 
-        TestClass testClass;
-        try {
-            testClass = BDDCore.createTestClass((PsiClass) parentPsiClass);
-        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
-            // TODO log it
-            logger.warn("Trying to resolve test methods but no framework is configured");
-            return null;
-        }
-        List<TestMethod> allMethods = testClass.getAllMethods();
-        for (TestMethod testMethod : allMethods) {
-//            if (allMethod.get)
-            PsiDocTag backingTag = ((TestMethodImpl) testMethod).getBackingTag();
-            if (backingTag.equals(psiDocTag)) {
-                if (testMethod.reallyExists()) {
-                    return testMethod.getBackingElement();
-                }
-            }
+        if (testMethod.reallyExists()) {
+            return testMethod.getBackingElement();
         }
 
-        return null;
+        //  return a dummy reference so we can rename  @should's without a method created
+        return new NoExistentTestMethodLightReference(psiDocTag.getManager(), StdLanguages.JAVA);
     }
 
     @NotNull

@@ -1,17 +1,11 @@
-package com.intellij.generatetestcases.reference;
+package com.intellij.generatetestcases.refactor;
 
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestFrameworkNotConfigured;
 import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.impl.TestMethodImpl;
-import com.intellij.generatetestcases.reference.psi.NoExistentTestMethodLightReference;
+import com.intellij.generatetestcases.refactor.psi.NoExistentTestMethodLightReference;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.lang.StdLanguages;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.TextRange;
-import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.javadoc.PsiDocTag;
@@ -32,7 +26,7 @@ public class ShouldReference implements PsiReference {
     private TestMethod testMethod;
 
     /**
-     * Construct a ShouldReference with the (at)should tag and the TestMethod corresponding to our (at)should tag so we avoid the need to recreate the TestClass, TestMethod hieararchy every time the reference is queried.
+     * Construct a ShouldReference with the (at)should tag and the TestMethod corresponding to our (at)should tag so we avoid the need to recreate the TestClass, TestMethod hieararchy every time the refactor is queried.
      *
      * @param psiDocTag
      * @param testMethod
@@ -55,7 +49,7 @@ public class ShouldReference implements PsiReference {
      * It  supports multiline descriptions too, and for these the hyperlink continue over
      * asterisks.
      *
-     * TODO IT will return an empty range for (at)should tags without a test method created * so any link is created for the user, but it disables the reference
+     * TODO IT will return an empty range for (at)should tags without a test method created * so any link is created for the user, but it disables the refactor
       *
      * @return
      * @should return only the range for the description without the javadoc tag
@@ -95,7 +89,7 @@ public class ShouldReference implements PsiReference {
             return testMethod.getBackingElement();
         }
 
-        //  return a dummy reference so we can rename  @should's without a method created
+        //  return a dummy refactor so we can rename  @should's without a method created
         return new NoExistentTestMethodLightReference(psiDocTag.getManager(), StdLanguages.JAVA);
     }
 

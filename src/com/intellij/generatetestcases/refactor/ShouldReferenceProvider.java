@@ -1,4 +1,4 @@
-package com.intellij.generatetestcases.reference;
+package com.intellij.generatetestcases.refactor;
 
 import com.intellij.generatetestcases.BDDCore;
 import com.intellij.generatetestcases.TestClass;
@@ -6,7 +6,6 @@ import com.intellij.generatetestcases.TestFrameworkNotConfigured;
 import com.intellij.generatetestcases.TestMethod;
 import com.intellij.generatetestcases.impl.TestMethodImpl;
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.generatetestcases.util.Constants;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.PsiDocTag;

@@ -61,12 +61,17 @@
         <!--*******************************************************-->
 
         <psi.referenceContributor implementation="com.intellij.generatetestcases.util.ReferenceContributor"/>
-        <!--<referenceProviderType key="Should references"-->
-                               <!--implementationClass="com.intellij.generatetestcases.reference.TestMethodReferenceProviderceProvider"/>-->
         <!-- dpending on a PsiElement type it suggest names (including the principal one) in the rename dialog-->
-        <nameSuggestionProvider implementation="com.intellij.generatetestcases.reference.ShouldDescriptionNameSuggestionProvider" />
-        <renamePsiElementProcessor implementation="com.intellij.generatetestcases.reference.ShouldTagsAwareRenameProccessor" order="first" />
+        <nameSuggestionProvider
+                implementation="com.intellij.generatetestcases.refactor.ShouldDescriptionNameSuggestionProvider"/>
+        <renamePsiElementProcessor
+                implementation="com.intellij.generatetestcases.refactor.ShouldTagsAwareRenameProccessor" order="first"/>
 
+        <!--********************************************        -->
+        <!--For listening to method renamings-->
+        <!--**************************************-->
+        <refactoring.elementListenerProvider
+                implementation="com.intellij.generatetestcases.refactor.listener.TestMethodRefactoringProvider"/>
 
     </extensions>
 

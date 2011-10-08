@@ -1,4 +1,4 @@
-package com.intellij.generatetestcases.reference;
+package com.intellij.generatetestcases.refactor;
 
 import com.intellij.generatetestcases.test.TestUtil;
 import com.intellij.openapi.util.TextRange;
@@ -6,11 +6,8 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiReference;
 import com.intellij.testFramework.ResolveTestCase;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import java.io.File;
 

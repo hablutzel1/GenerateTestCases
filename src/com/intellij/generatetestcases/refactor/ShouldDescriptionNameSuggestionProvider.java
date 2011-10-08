@@ -1,6 +1,5 @@
-package com.intellij.generatetestcases.reference;
+package com.intellij.generatetestcases.refactor;
 
-import com.intellij.generatetestcases.reference.rename.ShouldTagRenameDialog;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiWhiteSpace;

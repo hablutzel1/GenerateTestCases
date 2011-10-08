@@ -1,6 +1,6 @@
 package com.intellij.generatetestcases.util;
 
-import com.intellij.generatetestcases.reference.ShouldReferenceProvider;
+import com.intellij.generatetestcases.refactor.ShouldReferenceProvider;
 import com.intellij.patterns.PlatformPatterns;
 import com.intellij.psi.PsiReferenceContributor;
 import com.intellij.psi.PsiReferenceRegistrar;

@@ -43,7 +43,7 @@ public class TestClassImpl implements TestClass {
 
         this.frameworkStrategy = frameworkStrategy;
 
-        // init a reference to the current project
+        // init a refactor to the current project
 //        project = sutClass.getProject();
 
 

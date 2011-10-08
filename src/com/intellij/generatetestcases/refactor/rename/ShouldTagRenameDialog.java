@@ -1,4 +1,4 @@
-package com.intellij.generatetestcases.reference.rename;
+package com.intellij.generatetestcases.refactor.rename;
 
 import com.intellij.generatetestcases.*;
 import com.intellij.generatetestcases.impl.*;

@@ -5,6 +5,7 @@ import com.intellij.generatetestcases.*;
 import com.intellij.generatetestcases.impl.*;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.openapi.application.*;
+import com.intellij.openapi.editor.*;
 import com.intellij.openapi.project.*;
 import com.intellij.psi.*;
 import com.intellij.psi.javadoc.*;
@@ -86,9 +87,14 @@ public class GotoTestMethod implements GotoDeclarationHandler{
 
     }
 
+//    @Override
+//    public PsiElement[] getGotoDeclarationTargets(PsiElement sourceElement) {
+//
+//    }
+
     @Override
-    public PsiElement[] getGotoDeclarationTargets(PsiElement sourceElement) {
-        PsiElement gotoDeclarationTarget = getGotoDeclarationTarget(sourceElement);
+    public PsiElement[] getGotoDeclarationTargets(PsiElement psiElement, Editor editor) {
+        PsiElement gotoDeclarationTarget = getGotoDeclarationTarget(psiElement);
         if (gotoDeclarationTarget == null) {
             return null;
         }

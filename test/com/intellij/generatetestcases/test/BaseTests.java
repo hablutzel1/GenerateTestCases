@@ -183,7 +183,7 @@ public class BaseTests extends PsiTestCase {
 
                 String fileName = className + ".java";
 
-                JavaDirectoryService.getInstance().checkCreateInterface(inPackage, className);
+                JavaDirectoryService.getInstance().checkCreateClass(inPackage, className);
                 javaFile[0] = (PsiJavaFile) javaFile[0].setName(fileName);
                 javaFile[0] = (PsiJavaFile) inPackage.add(javaFile[0]);
 

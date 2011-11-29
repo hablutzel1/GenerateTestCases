@@ -17,6 +17,8 @@ import java.util.List;
 
 public class ShouldReferenceProvider extends PsiReferenceProvider {
 
+    private static final PsiReference[] NO_REFERENCES = new PsiReference[0];
+
     @Override
     public boolean acceptsTarget(@NotNull PsiElement target) {
         throw new UnsupportedOperationException();
@@ -51,7 +53,7 @@ public class ShouldReferenceProvider extends PsiReferenceProvider {
                 testClass = BDDCore.createTestClass((PsiClass) parentPsiClass);
             } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
                 logger.warn("Trying to resolve test methods but no framework is configured");
-                return null;
+                return NO_REFERENCES;
             }
             List<TestMethod> allMethods = testClass.getAllMethods();
 
@@ -65,7 +67,7 @@ public class ShouldReferenceProvider extends PsiReferenceProvider {
             ShouldReference shouldReference = new ShouldReference(psiDocTag, testMethod);
             return new PsiReference[]{shouldReference};
         } else {
-            return new PsiReference[0];
+            return NO_REFERENCES;
         }
     }
 }

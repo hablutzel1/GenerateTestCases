@@ -78,34 +78,15 @@ public class GenerateTestMethods extends AnAction {
 
             if (StringUtils.isEmpty(testFrameworkProperty)) { //  it haven't been defined yet
 
-//                ConfigurableGroup[] group = new ConfigurableGroup[]{
-//                        new ProjectConfigurablesGroup(project) {
-//
-//                            @Override
-//                            public Configurable[] getConfigurables() {
-//                                final ConfigurableEP[] extensions = project.getExtensions(Configurable.PROJECT_CONFIGURABLES);
                 ConfigurableEP[] extensions = project.getExtensions(ExtensionPointName.<ConfigurableEP>create("com.intellij.projectConfigurable"));
-
-                List<Configurable> list = new ArrayList<Configurable>();
+//                List<Configurable> list = new ArrayList<Configurable>();
                 for (ConfigurableEP component : extensions) {
                     Configurable configurable = component.createConfigurable();
                     if (configurable instanceof GenerateTestCasesConfigurable) {
-//                                        list.add(component);
                         ShowSettingsUtil.getInstance().editConfigurable(project, configurable);
-
-//                        ShowSettingsUtil.getInstance().showSettingsDialog(project, configurable);
                         break;
                     }
-
                 }
-//                                return list.toArray(new Configurable[0]);
-//                            }
-//                        },
-//
-//                };
-
-                //  allow to define it as default
-//                ShowSettingsUtil.getInstance().showSettingsDialog(project, group);
 
                 //  verify if something has been selected, if not just skip
                 //  overwrite s variable

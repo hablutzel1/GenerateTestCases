@@ -1,7 +1,7 @@
 package com.intellij.generatetestcases.refactor.rename;
 
 import com.intellij.generatetestcases.*;
-import com.intellij.generatetestcases.impl.*;
+import com.intellij.generatetestcases.model.*;
 import com.intellij.generatetestcases.testframework.*;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.generatetestcases.util.Constants;

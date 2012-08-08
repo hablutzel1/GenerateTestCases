@@ -1,6 +1,6 @@
 package com.intellij.generatetestcases.refactor;
 
-import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.refactor.psi.NoExistentTestMethodLightReference;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.lang.StdLanguages;

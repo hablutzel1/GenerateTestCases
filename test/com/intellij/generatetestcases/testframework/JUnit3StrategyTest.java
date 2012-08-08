@@ -1,8 +1,8 @@
 package com.intellij.generatetestcases.testframework;
 
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.PsiClass;
@@ -12,7 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.intellij.generatetestcases.TestMethodTest.findTestMethodInCollection;
+import static com.intellij.generatetestcases.model.TestMethodTest.findTestMethodInCollection;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -34,7 +34,7 @@ public class JUnit3StrategyTest extends BaseTests {
 
         //  create test method
         PsiClass aClass = createSutClass();
-        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit3Strategy(myProject));
+        TestClass testClass = BDDCore.createTestClass(aClass, new JUnit3Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass.getAllMethods();

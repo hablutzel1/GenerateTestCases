@@ -1,11 +1,11 @@
 package com.intellij.generatetestcases.actions;
 
 import com.intellij.codeInsight.generation.ClassMember;
-import com.intellij.generatetestcases.BDDCore;
+import com.intellij.generatetestcases.model.BDDCore;
 import com.intellij.generatetestcases.GenerateTestCasesBundle;
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
+import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.testframework.JUnitStrategyBase;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable;
@@ -114,7 +114,7 @@ public class GenerateTestMethods extends AnAction {
             // TODO replace it by strong typed way to determine the framework
             TestFrameworkStrategy tfs = BddUtil.getStrategyForFramework(project, testFrameworkProperty);
 
-            final TestClass testClass = BDDCore.createTestClass(project, psiClass, tfs);
+            final TestClass testClass = BDDCore.createTestClass(psiClass, tfs);
 
 
             if (!ApplicationManager.getApplication().isUnitTestMode()) {

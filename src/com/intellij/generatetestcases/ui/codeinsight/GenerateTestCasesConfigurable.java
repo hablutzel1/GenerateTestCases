@@ -1,15 +1,12 @@
 package com.intellij.generatetestcases.ui.codeinsight;
 
-import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
+import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.testframework.Frameworks;
-import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.options.BaseConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.IconLoader;
-import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 
 import javax.swing.*;

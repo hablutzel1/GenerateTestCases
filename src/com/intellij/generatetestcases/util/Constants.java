@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NonNls;
  */
 public class Constants {
     @NonNls
-    public static final String DEF_TEST_FRAMEWORK = "Junit3";
+    public static final String DEF_TEST_FRAMEWORK = "JUNIT3";
     public static final String BDD_TAG = "should";
     public static final String VERIFIES_DOC_TAG = "verifies";
 }

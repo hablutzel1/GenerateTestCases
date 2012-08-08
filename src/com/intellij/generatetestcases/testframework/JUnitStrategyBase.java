@@ -214,7 +214,7 @@ public abstract class JUnitStrategyBase implements TestFrameworkStrategy {
         String testClassName = getCandidateClassName(sutClass);
 
 
-        String fullyQualifiedTestClass = packageName == null ? testClassName : packageName + "." + testClassName;
+        String fullyQualifiedTestClass = packageName == null ? testClassName : (packageName + "." + testClassName);
         //  verify if the test class really exists in classpath for the current module/project
         return JavaPsiFacade.getInstance(project).findClass(fullyQualifiedTestClass, GlobalSearchScope.projectScope(project));
     }

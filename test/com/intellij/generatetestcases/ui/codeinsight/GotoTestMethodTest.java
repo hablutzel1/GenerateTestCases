@@ -67,7 +67,7 @@ public class GotoTestMethodTest extends BaseTests {
         //  call method and expect the test method
         PsiElement backingTestMethod = gotoTestMethod.getGotoDeclarationTarget(nameElement);
 
-        PsiMethod expectedBackingTestMethod = testClassForSut.findMethodsByName("getUserByUuid_shouldFetchUserWithGivenUuid", false)[0];
+        PsiMethod expectedBackingTestMethod = testClassForSut.findMethodsByName("testGetUserByUuid_shouldFetchUserWithGivenUuid", false)[0];
 
         assertThat((PsiMethod) backingTestMethod, is(expectedBackingTestMethod));
 

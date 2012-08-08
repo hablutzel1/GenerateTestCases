@@ -1,11 +1,18 @@
 <idea-plugin version="2">
     <name>GenerateTestCases</name>
     <description><![CDATA[<p>Plugin to generate unit test methods with meaningful names based in described behaviours with @should tags in interface methods javadoc</p>
-		 <p>To see how to use it: <a href="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/">http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/</a> or <a href="http://plugins.intellij.net/plugin/?idea&id=5847">http://plugins.intellij.net/plugin/?idea&id=5847</a></p>]]>
+		 <p>To see how to use it: <a href="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/">http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/</a> or <a href="http://plugins.intellij.net/plugin/?idea&id=5847">http://plugins.intellij.net/plugin/?idea&id=5847</a>
+		 or for a usage video <a href="http://www.youtube.com/watch?v=WYET6PECxuc">http://www.youtube.com/watch?v=WYET6PECxuc</a>
+		 </p>
+		 ]]>
     </description>
 
     <change-notes>
         <![CDATA[
+       <p>1.0.6</p>
+       <ul>
+          <li>Version number increased to update jar in Intellij plugins site</li>
+       </ul>
        <p>1.0.5</p>
        <ul>
           <li>Fixed bug when custom source root has been configured# but not created yet</li>
@@ -22,7 +29,7 @@
             logo="/images/junitopenmrs.gif">OpenMRS
     </vendor>
 
-    <version>1.0.5</version>
+    <version>1.0.7-snapshot</version>
 
     <idea-version since-build="107.105"/>
     <application-components>
@@ -31,7 +38,7 @@
 
     <project-components>
         <component>
-            <implementation-class>com.intellij.generatetestcases.impl.GenerateTestCasesSettings</implementation-class>
+            <implementation-class>com.intellij.generatetestcases.model.GenerateTestCasesSettings</implementation-class>
         </component>
     </project-components>
 

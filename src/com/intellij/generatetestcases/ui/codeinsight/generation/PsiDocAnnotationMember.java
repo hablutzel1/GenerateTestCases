@@ -4,8 +4,8 @@ import com.intellij.codeInsight.generation.ClassMemberWithElement;
 import com.intellij.codeInsight.generation.MemberChooserObject;
 import com.intellij.codeInsight.generation.PsiElementMemberChooserObject;
 import com.intellij.codeInsight.generation.PsiMethodMember;
-import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.model.TestMethod;
+import com.intellij.generatetestcases.model.TestMethodImpl;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
 

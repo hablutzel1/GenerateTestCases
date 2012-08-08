@@ -1,14 +1,11 @@
 package com.intellij.generatetestcases.quickfix;
 
 import com.intellij.generatetestcases.*;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.test.*;
-import com.intellij.ide.*;
-import com.intellij.openapi.actionSystem.*;
 import com.intellij.psi.*;
-import junit.framework.*;
-import junit.framework.Assert;
-
-import java.util.*;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -37,7 +34,13 @@ public class CreateTestMethodFixTest extends BaseTests {
     private CreateTestMethodFix buildCreateTestMethodFixIntention() {
         //  create a test method
         PsiClass sutClass = createSutClass();
-        TestClass testClass = BDDCore.createTestClass(myProject, sutClass);
+        TestClass result;
+        try {
+            result = BDDCore.createTestClass(sutClass);
+        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+            throw new RuntimeException(testFrameworkNotConfigured);
+        }
+        TestClass testClass = result;
         TestMethod testMethod = testClass.getAllMethods().get(0);
         assertThat(testMethod.reallyExists(), is(false));
 
@@ -55,7 +58,7 @@ public class CreateTestMethodFixTest extends BaseTests {
         CreateTestMethodFix createTestMethodFix = buildCreateTestMethodFixIntention();
 
         //  assert the name
-        assertThat(createTestMethodFix.getText(), is("Create test method 'FooTest.getUser_shouldFetchUserWithGivenUserId()'"));
+        assertThat(createTestMethodFix.getText(), is("Create test method 'FooTest.testGetUser_shouldFetchUserWithGivenUserId()'"));
 
     }
 

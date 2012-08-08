@@ -1,7 +1,7 @@
 package com.intellij.generatetestcases.actions;
 
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.testframework.JUnit3Strategy;
 import com.intellij.openapi.actionSystem.*;
@@ -12,11 +12,6 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiMethod;
-import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase;
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import org.hamcrest.Matcher;
 import org.jetbrains.annotations.Nullable;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -88,7 +83,7 @@ public class GenerateTestMethodsTest extends BaseTests {
 
 
         //  assert something has been created for the inmediately upside class
-        TestClass testClass = BDDCore.createTestClass(myProject, classWithAnonymousDeclaration, new JUnit3Strategy(myProject));
+        TestClass testClass = BDDCore.createTestClass(classWithAnonymousDeclaration, new JUnit3Strategy(myProject));
         assertThat(testClass.reallyExists(), is(true));
 
         //  release editor

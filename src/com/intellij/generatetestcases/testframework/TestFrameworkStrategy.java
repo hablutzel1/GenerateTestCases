@@ -1,14 +1,11 @@
 package com.intellij.generatetestcases.testframework;
 
-import com.intellij.generatetestcases.impl.TestClassImpl;
 import com.intellij.openapi.module.Module;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
-import com.intellij.testIntegration.TestFramework;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
 
 /**
  * It  encapsulates the strategy to generate backing test methods and test classes
@@ -19,7 +16,7 @@ public interface TestFrameworkStrategy {
 
 
     /**
-     * This strategy will generate a PsiMethod that will back up the {@link com.intellij.generatetestcases.TestMethod}
+     * This strategy will generate a PsiMethod that will back up the {@link com.intellij.generatetestcases.model.TestMethod}
      *
      * @param testClass
      * @param sutMethod

@@ -1,10 +1,10 @@
 package com.intellij.generatetestcases.refactor;
 
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
 import com.intellij.generatetestcases.TestFrameworkNotConfigured;
-import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.model.TestMethod;
+import com.intellij.generatetestcases.model.TestMethodImpl;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.*;

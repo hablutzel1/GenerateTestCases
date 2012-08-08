@@ -345,16 +345,15 @@ public class BddUtil {
     }
 
     /**
-     * It will return null if no package declaration is found
+     *
      *
      * @param sutClass
-     * @return
+     * @return It will return null if no package declaration is found or the package
      */
     public static String getPackageName(PsiClass sutClass) {
 
-//        if (sutClass instanceof PsiAnonymousClass){
-//            return null;
-//        }
+        // TODO look at com.intellij.psi.util.PsiFormatUtil.getPackageDisplayName() for an standard way to access the package
+
         //  get the package
         String qualifiedSutName = sutClass.getQualifiedName();
         int i = qualifiedSutName.lastIndexOf(".");

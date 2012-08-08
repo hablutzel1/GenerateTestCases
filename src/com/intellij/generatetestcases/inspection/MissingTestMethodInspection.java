@@ -1,29 +1,22 @@
 package com.intellij.generatetestcases.inspection;
 
 import com.intellij.codeInspection.*;
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestMethod;
-import com.intellij.generatetestcases.impl.GenerateTestCasesSettings;
-import com.intellij.generatetestcases.impl.TestMethodImpl;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
+import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
+import com.intellij.generatetestcases.model.TestMethodImpl;
 import com.intellij.generatetestcases.quickfix.*;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.generatetestcases.util.Constants;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiAnonymousClass;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiWhiteSpace;
-import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
 import com.intellij.psi.impl.source.jsp.jspJava.*;
 import com.intellij.psi.javadoc.PsiDocTag;
-import com.intellij.psi.javadoc.PsiDocTagValue;
-import com.intellij.psi.javadoc.PsiDocToken;
-import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.java.IJavaDocElementType;
 import com.intellij.util.*;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.Nls;
@@ -84,6 +77,13 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
             return null;
         }
 
+        if (aClass.getQualifiedName() == null) { // TODO research the API for the best way to make this check
+            // aClass.getQualifiedName() is returning null just after writting an anonymous class, it is somehow related to the inner stub
+            // see https://github.com/skarootz/GenerateTestCases/issues/27
+
+            return ProblemDescriptor.EMPTY_ARRAY;
+        }
+
         Project project = aClass.getProject();
 
         String testFramework;
@@ -97,7 +97,7 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
         }
 
         //  create TestClass for current class
-        TestClass testClass = BDDCore.createTestClass(project, aClass, BddUtil.getStrategyForFramework(project, testFramework));
+        TestClass testClass = BDDCore.createTestClass(aClass, BddUtil.getStrategyForFramework(project, testFramework));
 
 
         //  highlight warning should cover test class name

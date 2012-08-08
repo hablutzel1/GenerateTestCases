@@ -1,11 +1,13 @@
 package com.intellij.generatetestcases;
 
 
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.test.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.impl.source.jsp.jspJava.*;
-import junit.framework.Assert;
 import org.jmock.*;
 import org.junit.Test;
 
@@ -38,7 +40,13 @@ public class BDDCoreTest extends BaseTests {
         PsiClass psiClass = createSutClass();
 
         //  create class there
-        TestClass testClass = BDDCore.createTestClass(project, psiClass);
+        TestClass result;
+        try {
+            result = BDDCore.createTestClass(psiClass);
+        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+            throw new RuntimeException(testFrameworkNotConfigured);
+        }
+        TestClass testClass = result;
         //  verificar que el retorno sea valido
         assertThat(" test class returned ", testClass, notNullValue());
 
@@ -67,7 +75,7 @@ public class BDDCoreTest extends BaseTests {
 
     /**
      * @verifies return a test class that already exists for a sut class with some test methods initialized
-     * @see com.intellij.generatetestcases.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
+     * @see com.intellij.generatetestcases.model.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
      */
     @Test
     public void testCreateTestClass_shouldReturnATestClassThatAlreadyExistsForASutClassWithSomeTestMethodsInitialized()
@@ -79,7 +87,13 @@ public class BDDCoreTest extends BaseTests {
         //  create class there
         createTestClassForSut();
 
-        TestClass testClass = BDDCore.createTestClass(project, psiClass);
+        TestClass result;
+        try {
+            result = BDDCore.createTestClass(psiClass);
+        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+            throw new RuntimeException(testFrameworkNotConfigured);
+        }
+        TestClass testClass = result;
 
         //  esperar que la clase testClass really exists
         assertThat(testClass.reallyExists(), is(true));
@@ -91,13 +105,13 @@ public class BDDCoreTest extends BaseTests {
         //"\tpublic void getUser_shouldFetchUserWithGivenUserId()
         // "\tpublic void getUserByUuid_shouldFetchUserWithGivenUuid() throws Exception {\n" +
 
-        boolean exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "getUser_shouldFetchUserWithGivenUserId");
+        boolean exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "testGetUser_shouldFetchUserWithGivenUserId");
         assertThat(exists, is(true));
-        exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "getUserByUuid_shouldFetchUserWithGivenUuid");
+        exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "testGetUserByUuid_shouldFetchUserWithGivenUuid");
         assertThat(exists, is(true));
 
         //  test some unitialized method
-        exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "getUserByUuid_shouldFindObjectGivenValidUuid");
+        exists = existsReallyInitializedTestMethodInCollection(allTestMethods, "testGetUserByUuid_shouldFindObjectGivenValidUuid");
         assertThat(exists, is(false));
 
     }
@@ -105,7 +119,7 @@ public class BDDCoreTest extends BaseTests {
 
     /**
      * @verifies ignore should tags without a description when creating bdd test methods
-     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
+     * @see com.intellij.generatetestcases.model.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
      */
     public void testCreateTestClass_shouldIgnoreShouldTagsWithoutADescriptionWhenCreatingBddTestMethods() throws Exception {
 
@@ -132,7 +146,13 @@ public class BDDCoreTest extends BaseTests {
         Project project = getProject();
 
 
-        TestClass testClass = BDDCore.createTestClass(project, classFromTextInPackage);
+        TestClass result;
+        try {
+            result = BDDCore.createTestClass(classFromTextInPackage);
+        } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+            throw new RuntimeException(testFrameworkNotConfigured);
+        }
+        TestClass testClass = result;
 
         assertThat(testClass.getAllMethods().size(), is(0));
 
@@ -140,18 +160,21 @@ public class BDDCoreTest extends BaseTests {
 
     /**
      * @verifies throw exception if there is a try to create a test class with an unsupported PsiClass
-     * @see BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
+     * @see com.intellij.generatetestcases.model.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass)
      */
     public void testCreateTestClass_shouldThrowExceptionIfThereIsATryToCreateATestClassWithAnUnsupportedPsiClass() throws Exception {
 
-        // TODO try to create with a Jsp Psi Class
+        //  try to create with a Jsp Psi Class
         Mockery context = new Mockery(); // should be instance variable
         final JspClass mock = context.mock(JspClass.class);
+        //  train 'mock' to return something with getProject()
         context.checking(new Expectations() {
             {
-                // jmock without expectations
+                oneOf(mock).getProject();
+                will(returnValue(getProject()));
             }
         });
+
         ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate<IllegalArgumentException>() {
             @Override
             public Class<IllegalArgumentException> getExpectedException() {
@@ -160,7 +183,12 @@ public class BDDCoreTest extends BaseTests {
 
             @Override
             public void doInttemplate() {
-        BDDCore.createTestClass(myProject, mock);
+                try {
+                    BDDCore.createTestClass(mock);
+                    return;
+                } catch (TestFrameworkNotConfigured testFrameworkNotConfigured) {
+                    throw new RuntimeException(testFrameworkNotConfigured);
+                }
             }
         });
 

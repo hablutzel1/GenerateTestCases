@@ -2,7 +2,7 @@ package com.intellij.generatetestcases.quickfix;
 
 import com.intellij.codeInsight.intention.*;
 import com.intellij.generatetestcases.*;
-import com.intellij.generatetestcases.impl.*;
+import com.intellij.generatetestcases.model.*;
 import com.intellij.generatetestcases.testframework.*;
 import com.intellij.openapi.diagnostic.*;
 import com.intellij.openapi.editor.*;
@@ -57,7 +57,7 @@ public class CreateTestMethodFix implements IntentionAction {
     @Override
     public boolean isAvailable(@NotNull Project project, Editor editor, PsiFile file) {
         // TODO check better under what conditions it should be unavailable
-        // com.intellij.codeInsight.daemon.impl.quickfix.SimplifyBooleanExpressionFix.isAvailable()
+        // com.intellij.codeInsight.daemon.model.quickfix.SimplifyBooleanExpressionFix.isAvailable()
         return true;
     }
 

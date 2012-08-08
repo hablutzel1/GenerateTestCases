@@ -1,6 +1,9 @@
 package com.intellij.generatetestcases.refactor.listener;
 
 import com.intellij.generatetestcases.*;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.psi.*;
 import com.intellij.refactoring.listeners.*;

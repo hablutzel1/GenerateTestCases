@@ -1,8 +1,8 @@
 package com.intellij.generatetestcases.refactor.listener;
 
-import com.intellij.generatetestcases.*;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.testframework.*;
-import com.intellij.generatetestcases.util.*;
 import com.intellij.openapi.application.*;
 import com.intellij.psi.*;
 import com.intellij.refactoring.listeners.*;

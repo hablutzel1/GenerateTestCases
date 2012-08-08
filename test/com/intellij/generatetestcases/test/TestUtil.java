@@ -1,6 +1,6 @@
 package com.intellij.generatetestcases.test;
 
-import com.intellij.generatetestcases.BDDCore;
+import com.intellij.generatetestcases.model.BDDCore;
 import com.intellij.ide.util.DirectoryUtil;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.module.Module;
@@ -44,6 +44,11 @@ public class TestUtil {
         return DirectoryUtil.createSubdirectories(packageName, sourcePackageRoot, ".");
     }
 
+    /**
+     * Get plugin base path
+     *
+     * @return
+     */
     public static String getPluginHomePath() {
         final Class aClass = BDDCore.class;
         String rootPath = PathManager.getResourceRoot(aClass, "/" + aClass.getName().replace('.', '/') + ".class");
@@ -54,13 +59,11 @@ public class TestUtil {
             if (parent == null) continue;
             root = new File(parent).getAbsoluteFile(); // one step back to get folder
         }
-        while (root != null && !(new File(root, FileUtil.toSystemDependentName("bin/idea.properties")).exists() ||
-                new File(root, FileUtil.toSystemDependentName("community/bin/idea.properties")).exists()));
-        String s = root != null ? root.getAbsolutePath() : null;
-        String path = new File(s, "plugins/" + "GenerateTestCases").getPath();
-
+        while (root != null && !(new File(root, FileUtil.toSystemDependentName("META-INF/plugin.xml")).exists()));
+        //        String path = new File(s, "plugins/" + "GenerateTestCases").getPath();
+        return (root != null) ? root.getAbsolutePath() : null;
 //        LocalFileSystem.getInstance().refreshAndFindFileByPath(path.replace(File.separatorChar, '/'));
-        return path;
+//        return path;
     }
 
     public static PsiDirectory createSourceRoot(String sourceRootName, Module module, Collection<File> filesToDelete, PsiManagerImpl myPsiManager) throws IOException {

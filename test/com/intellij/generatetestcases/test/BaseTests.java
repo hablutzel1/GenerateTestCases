@@ -1,6 +1,6 @@
 package com.intellij.generatetestcases.test;
 
-import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.StdFileTypes;
@@ -147,7 +147,7 @@ public class BaseTests extends PsiTestCase {
                 "\t * @verifies fetch user with given userId\n" +
                 "\t */\n" +
                 "\t@Test\n" +
-                "\tpublic void getUser_shouldFetchUserWithGivenUserId() throws Exception {\n" +
+                "\tpublic void testGetUser_shouldFetchUserWithGivenUserId() throws Exception {\n" +
                 "\t\t//TODO auto-generated\n" +
                 "\t\tAssert.fail(\"Not yet implemented\");\n" +
                 "\t}\n" +
@@ -157,7 +157,7 @@ public class BaseTests extends PsiTestCase {
                 "\t * @verifies fetch user with given uuid\n" +
                 "\t */\n" +
                 "\t@Test\n" +
-                "\tpublic void getUserByUuid_shouldFetchUserWithGivenUuid() throws Exception {\n" +
+                "\tpublic void testGetUserByUuid_shouldFetchUserWithGivenUuid() throws Exception {\n" +
                 "\t\t//TODO auto-generated\n" +
                 "\t\tAssert.fail(\"Not yet implemented\");\n" +
                 "\t}\n" +

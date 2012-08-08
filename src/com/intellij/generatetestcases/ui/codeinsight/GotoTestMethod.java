@@ -1,8 +1,7 @@
 package com.intellij.generatetestcases.ui.codeinsight;
 
 import com.intellij.codeInsight.navigation.actions.*;
-import com.intellij.generatetestcases.*;
-import com.intellij.generatetestcases.impl.*;
+import com.intellij.generatetestcases.model.*;
 import com.intellij.generatetestcases.util.*;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.editor.*;
@@ -71,7 +70,7 @@ public class GotoTestMethod implements GotoDeclarationHandler{
         } while(!(parentPsiClass instanceof PsiClass)) ;
 
         //  create TestClass for current class
-        TestClass testClass = BDDCore.createTestClass(project, (PsiClass) parentPsiClass, BddUtil.getStrategyForFramework(project, testFramework));
+        TestClass testClass = BDDCore.createTestClass((PsiClass) parentPsiClass, BddUtil.getStrategyForFramework(project, testFramework));
 
         //  return the backing test method psiElement
         List<TestMethod> allMethods = testClass.getAllMethods();

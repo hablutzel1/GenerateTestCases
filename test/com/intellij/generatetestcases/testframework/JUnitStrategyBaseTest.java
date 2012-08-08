@@ -1,8 +1,8 @@
 package com.intellij.generatetestcases.testframework;
 
-import com.intellij.generatetestcases.BDDCore;
-import com.intellij.generatetestcases.TestClass;
-import com.intellij.generatetestcases.TestMethod;
+import com.intellij.generatetestcases.model.BDDCore;
+import com.intellij.generatetestcases.model.TestClass;
+import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.test.BaseTests;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.psi.*;
@@ -13,7 +13,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.intellij.generatetestcases.TestMethodTest.findTestMethodInCollection;
+import static com.intellij.generatetestcases.model.TestMethodTest.findTestMethodInCollection;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -44,12 +44,12 @@ public class JUnitStrategyBaseTest extends BaseTests {
         createClassFromTextInPackage(myProject, testClassText, "FooBarTest", comExamplePackage);
 
         //  create test class
-        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
+        TestClass testClass = BDDCore.createTestClass(aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass.getAllMethods();
         TestMethod testMethod = findTestMethodInCollection(allTestMethods, "do nothing", "zas");
-        assertThat(testMethod.reallyExists(), is(false));
+        assertThat(testMethod.reallyExists(), is(false)); // not created yet
 
         //  actually create
         testMethod.create();
@@ -265,7 +265,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
     private PsiClass triggerCreateTestClassAndMethod(PsiClass aClass) {
         //  create the test class and invoke a method to create
         //  create test class
-        TestClass testClass1 = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
+        TestClass testClass1 = BDDCore.createTestClass(aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass1.getAllMethods();
@@ -301,7 +301,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
 
 
               //  create test class
-        TestClass testClass = BDDCore.createTestClass(myProject, aClass, new JUnit4Strategy(myProject));
+        TestClass testClass = BDDCore.createTestClass(aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass.getAllMethods();

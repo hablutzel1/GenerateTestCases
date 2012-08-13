@@ -78,7 +78,6 @@ public class TestMethodTest extends BaseTests {
     }
 
 
-
     public static TestMethod findTestMethodInCollection(List<TestMethod> methods, String shouldDescription, String sutMethodName) {
         TestMethod tm = null;
         for (TestMethod method : methods) {

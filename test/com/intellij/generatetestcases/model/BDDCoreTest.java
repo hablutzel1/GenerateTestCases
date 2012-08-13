@@ -1,6 +1,7 @@
-package com.intellij.generatetestcases;
+package com.intellij.generatetestcases.model;
 
 
+import com.intellij.generatetestcases.TestFrameworkNotConfigured;
 import com.intellij.generatetestcases.model.BDDCore;
 import com.intellij.generatetestcases.model.TestClass;
 import com.intellij.generatetestcases.model.TestMethod;
@@ -17,15 +18,7 @@ import static org.hamcrest.core.Is.*;
 import static org.hamcrest.core.IsNull.*;
 import static org.junit.Assert.*;
 
-//@RunWith(JUnit4.class)
-
 public class BDDCoreTest extends BaseTests {
-
-
-    public <T> T zas(Class<T> foo) {
-
-        return null;
-    }
 
 
     /**

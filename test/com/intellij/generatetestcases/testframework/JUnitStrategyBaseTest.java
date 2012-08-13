@@ -164,9 +164,9 @@ public class JUnitStrategyBaseTest extends BaseTests {
      * <br />
      * <pre>
      * /  verify import for Assert before actually importing
-     * <p/>
+     *
      * //  verify if junit.framework.Assert exists, if it does do not import org.junit.Assert
-     * <p/>
+     *
      * //  if Assert exists and is different to both of previous, place fully qualified statement
      * </pre>
      *
@@ -296,11 +296,10 @@ public class JUnitStrategyBaseTest extends BaseTests {
         //  set up mock project without junit library
 
         //  create test for should annotation
-          PsiClass aClass = createFooBarSutClass();
+        PsiClass aClass = createFooBarSutClass();
 
 
-
-              //  create test class
+        //  create test class
         TestClass testClass = BDDCore.createTestClass(aClass, new JUnit4Strategy(myProject));
 
         //  get unitialized test method
@@ -312,7 +311,7 @@ public class JUnitStrategyBaseTest extends BaseTests {
         testMethod.create();
 
         PsiMethod backingMethod = testMethod.getBackingElement();
-           //  verify operation completed succesfully
+        //  verify operation completed succesfully
         verifyStructureForShouldAnnotation(backingMethod);
 
     }

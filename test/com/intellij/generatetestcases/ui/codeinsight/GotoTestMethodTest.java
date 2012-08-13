@@ -19,7 +19,7 @@ public class GotoTestMethodTest extends BaseTests {
     @NotNull
     protected GotoTestMethod gotoTestMethod;
 
-        @Override
+    @Override
     protected void setUp() throws Exception {
         super.setUp();    //To change body of overridden methods use File | Settings | File Templates.
         gotoTestMethod = new GotoTestMethod();
@@ -42,7 +42,7 @@ public class GotoTestMethodTest extends BaseTests {
 
         //  call method
         //  expect null
-        assertThat(gotoTestMethod.getGotoDeclarationTarget(valueElement), is (nullValue()));
+        assertThat(gotoTestMethod.getGotoDeclarationTarget(valueElement), is(nullValue()));
 
 
     }
@@ -58,7 +58,7 @@ public class GotoTestMethodTest extends BaseTests {
         PsiClass testClassForSut = createTestClassForSut();
 
         //  get a should PsiDocTag with a corresponding test method
-          //   get a element of the description
+        //   get a element of the description
         PsiMethod[] methods = psiClass.findMethodsByName("getUserByUuid", false);
 
         //  create or get a tag
@@ -70,7 +70,6 @@ public class GotoTestMethodTest extends BaseTests {
         PsiMethod expectedBackingTestMethod = testClassForSut.findMethodsByName("testGetUserByUuid_shouldFetchUserWithGivenUuid", false)[0];
 
         assertThat((PsiMethod) backingTestMethod, is(expectedBackingTestMethod));
-
 
 
     }
@@ -87,7 +86,7 @@ public class GotoTestMethodTest extends BaseTests {
         createTestClassForSut();
 
         //  get a should PsiDocTag with a corresponding test method
-          //   get a element of the description
+        //   get a element of the description
         PsiMethod[] methods = psiClass.findMethodsByName("getUserByUuid", false);
 
         //  create or get a tag

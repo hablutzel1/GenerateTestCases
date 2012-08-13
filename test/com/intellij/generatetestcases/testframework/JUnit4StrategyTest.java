@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 public class JUnit4StrategyTest extends BaseTests {
     /**
      * @verifies create the right test class
-     * @see TestFrameworkStrategy#createBackingTestClass(com.intellij.psi.PsiClass,com.intellij.psi.PsiDirectory)
+     * @see TestFrameworkStrategy#createBackingTestClass(com.intellij.psi.PsiClass, com.intellij.psi.PsiDirectory)
      */
     @Test
     public void testCreateBackingTestClass_shouldCreateTheRightTestClass() throws Exception {

@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- *
  * Utilities for doing some test unit tasks simpler
- * 
+ * <p/>
  * User: Jaime Hablutzel
  */
 public class TestUtil {
@@ -40,7 +39,7 @@ public class TestUtil {
         return psiDirectory;
     }
 
-   public static PsiDirectory createPackageInSourceRoot(String packageName, PsiDirectory sourcePackageRoot) {
+    public static PsiDirectory createPackageInSourceRoot(String packageName, PsiDirectory sourcePackageRoot) {
         return DirectoryUtil.createSubdirectories(packageName, sourcePackageRoot, ".");
     }
 

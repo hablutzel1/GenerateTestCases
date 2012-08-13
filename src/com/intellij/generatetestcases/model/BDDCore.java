@@ -25,7 +25,6 @@ public final class BDDCore {
      * @param sutClass
      * @param frameworkStrategy
      * @return
-     * @deprecated use com.intellij.generatetestcases.model.BDDCore#createTestClass(com.intellij.openapi.project.Project, com.intellij.psi.PsiClass) instead
      */
     public static TestClass createTestClass(PsiClass sutClass, TestFrameworkStrategy frameworkStrategy) {
 

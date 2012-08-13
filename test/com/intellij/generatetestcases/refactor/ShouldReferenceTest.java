@@ -35,7 +35,7 @@ public class ShouldReferenceTest extends ResolveTestCase {
 //        create
         PsiReference psiReference = configureByFile("testmethod/X.java");
         addFileToClasspath("testmethod/XTest.java");
-        assertThat(psiReference.getRangeInElement(), is (new TextRange(8, 11)));
+        assertThat(psiReference.getRangeInElement(), is(new TextRange(8, 11)));
 
     }
 

@@ -70,8 +70,7 @@ public class BaseTests extends PsiTestCase {
                             }
 
 
-                        }
-                        catch (Exception e) {
+                        } catch (Exception e) {
                             LOG.error(e);
                         }
 
@@ -93,8 +92,6 @@ public class BaseTests extends PsiTestCase {
         PsiTestUtil.addLibrary(myModule, "Junit", junitLibraryPath, jarName);
 
     }
-
-
 
 
     /**

@@ -9,6 +9,10 @@
 
     <change-notes>
         <![CDATA[
+       <p>1.0.7</p>
+       <ul>
+          <li>Fixed @should descriptions renaming support for IntelliJ IDEA 11</li>
+       </ul>
        <p>1.0.6</p>
        <ul>
           <li>Version number increased to update jar in Intellij plugins site</li>
@@ -29,9 +33,9 @@
             logo="/images/junitopenmrs.gif">OpenMRS
     </vendor>
 
-    <version>1.0.7-snapshot</version>
+    <version>1.0.7</version>
 
-    <idea-version since-build="107.105"/>
+    <idea-version since-build="111.24"/>
     <application-components>
 
     </application-components>
@@ -71,6 +75,8 @@
         <!-- dpending on a PsiElement type it suggest names (including the principal one) in the rename dialog-->
         <nameSuggestionProvider
                 implementation="com.intellij.generatetestcases.refactor.ShouldDescriptionNameSuggestionProvider"/>
+
+        <!-- rename element processor without support for inline renaming, TODO add support for inline renaming-->
         <renamePsiElementProcessor
                 implementation="com.intellij.generatetestcases.refactor.ShouldTagsAwareRenameProccessor" order="first"/>
 

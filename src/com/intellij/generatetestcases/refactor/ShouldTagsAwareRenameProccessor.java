@@ -28,7 +28,6 @@ public class ShouldTagsAwareRenameProccessor extends RenameJavaMethodProcessor {
      */
     @Override
     public RenameDialog createRenameDialog(Project project, PsiElement element, PsiElement nameSuggestionContext, Editor editor) {
-        // nameSuggestionContext isn't precise
 
         PsiReference shouldRef = TargetElementUtilBase.findReference(editor);
 
@@ -36,7 +35,9 @@ public class ShouldTagsAwareRenameProccessor extends RenameJavaMethodProcessor {
 
         // create custom rename Dialog
         if (shouldRef instanceof ShouldReference) { // we are coming from a javadoc
-            return new ShouldTagRenameDialog(project, element, nameSuggestionContext, editor, (PsiDocTag) shouldRef.getElement());
+
+            // nameSuggestionContext isn't precise so we enforce the PsiDocTag to be the suggestion context
+            return new ShouldTagRenameDialog(project, element, shouldRef.getElement(), editor, (PsiDocTag) shouldRef.getElement());
 
         } else {             //  else standard renaming
             return new RenameDialog(project, element, nameSuggestionContext, editor);
@@ -62,5 +63,10 @@ public class ShouldTagsAwareRenameProccessor extends RenameJavaMethodProcessor {
 
             return super.substituteElementToRename(element, editor);
         }
+    }
+
+    @Override
+    public boolean isInplaceRenameSupported() {
+        return false;
     }
 }

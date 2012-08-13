@@ -16,7 +16,7 @@ public class ExpectExceptionsExecutor {
     private ExpectExceptionsExecutor() {
     }
 
-    public static  void execute(ExpectExceptionsTemplate e) {
+    public static void execute(ExpectExceptionsTemplate e) {
         Class<? extends Throwable> aClass = e.getExpectedException();
 
         try {
@@ -47,8 +47,6 @@ public class ExpectExceptionsExecutor {
 
         fail("No exception has been thrown");
     }
-
-
 
 
 }

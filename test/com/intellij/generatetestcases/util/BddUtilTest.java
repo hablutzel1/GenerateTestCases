@@ -96,7 +96,7 @@ public class BddUtilTest extends IdeaTestCase {
                 , 1, new int[][]{{0, 2, 2}}, myProject);
 
 
-           // return only one pair for doo, ignore trailing space at the next line
+        // return only one pair for doo, ignore trailing space at the next line
         assertForOneShouldTag("/**\n" +
                 "     * @should doo  \n" +
                 "     * @should yoo\n" +

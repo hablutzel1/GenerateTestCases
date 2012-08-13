@@ -53,7 +53,7 @@ public class JUnit3StrategyTest extends BaseTests {
 
     /**
      * @verifies create a test class that extends TestCase
-     * @see TestFrameworkStrategy#createBackingTestClass(com.intellij.psi.PsiClass,com.intellij.psi.PsiDirectory)
+     * @see TestFrameworkStrategy#createBackingTestClass(com.intellij.psi.PsiClass, com.intellij.psi.PsiDirectory)
      */
     @Test
     public void testCreateBackingTestClass_shouldCreateATestClassThatExtendsTestCase() throws Exception {
@@ -62,7 +62,7 @@ public class JUnit3StrategyTest extends BaseTests {
         PsiClass psiClass = createSutClass();
         // create test class
         PsiClass backingTestClass = new JUnit3Strategy(myProject).createBackingTestClass(psiClass, null);
-        
+
         //  assert existence of extends clause
         PsiClassType[] referencedTypes = backingTestClass.getExtendsList().getReferencedTypes();
         assertThat("number of extends for test class", referencedTypes.length, is(1));

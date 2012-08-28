@@ -17,7 +17,7 @@ import org.apache.commons.lang.StringUtils;
 public final class BDDCore {
 
 
-    protected BDDCore() {
+    private BDDCore() {
     }
 
 

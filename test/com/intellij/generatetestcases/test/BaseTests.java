@@ -41,7 +41,8 @@ public class BaseTests extends PsiTestCase {
 //        File mockJdkCEPath = new File(getPluginHomePath(), "java/mockJDK");
 //        return createMockJdk(mockJdkCEPath.getPath(), "java 1.4",
 //                ApplicationManager.getApplication().getComponent(JavaSdk.class));
-        return JavaSdkImpl.getMockJdk14();
+        Sdk mockJdk14 = JavaSdkImpl.getMockJdk14();
+        return mockJdk14;
     }
 
 

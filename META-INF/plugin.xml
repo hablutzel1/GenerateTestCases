@@ -61,9 +61,6 @@
         <!--for inspections of missing test methods -->
         <inspectionToolProvider implementation="com.intellij.generatetestcases.inspection.BddInspectionsToolProvider"/>
 
-        <!--for ctrl + mouse hover over @should annotations, replaced by ShouldReference -->
-        <!--<gotoDeclarationHandler implementation="com.intellij.generatetestcases.ui.codeinsight.GotoTestMethod"/>-->
-
         <!--for adding support for @should tag-->
         <javadocTagInfo implementation="com.intellij.generatetestcases.javadoc.ShouldTagInfo"/>
 
@@ -84,7 +81,7 @@
         <!--For listening to method renamings-->
         <!--**************************************-->
         <refactoring.elementListenerProvider
-                implementation="com.intellij.generatetestcases.refactor.listener.TestMethodRefactoringProvider"/>
+                implementation="com.intellij.generatetestcases.refactor.listener.TestMethodRefactoringElementListenerProvider"/>
 
     </extensions>
 

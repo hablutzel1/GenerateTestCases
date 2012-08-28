@@ -27,7 +27,11 @@ public class ShouldDescriptionNameSuggestionProvider implements NameSuggestionPr
     @Override
     public SuggestedNameInfo getSuggestedNames(PsiElement element, @Nullable PsiElement nameSuggestionContext, Set<String> result) {
 
-           // This should have the same logic that {@link ShouldTagsAwareRenameProccessor} for knowing it we are in the context of a @should tag
+        if (nameSuggestionContext == null) {// I don't undertand nameSuggestionContext oddities sometimes it is coming a null value, for those cases just assume we won't find any @should tag
+            return null;
+        }
+
+        // This should have the same logic that {@link ShouldTagsAwareRenameProccessor} for knowing if we are in the context of a @should tag
 
         PsiDocTag shouldDocTag = BddUtil.getPsiDocTagParent(nameSuggestionContext);
 

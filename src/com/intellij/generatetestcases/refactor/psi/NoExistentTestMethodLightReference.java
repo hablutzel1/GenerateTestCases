@@ -6,13 +6,13 @@ import com.intellij.psi.impl.light.LightElement;
 
 /**
  * This light PsiElement will be used when referencing to non existent
- * test method, {@link com.intellij.generatetestcases.refactor.ShouldTagsAwareRenameProccessor} is still able to find a valid refactor and rename a (at)should tag that haven't yet a test method.
+ * test method.
+ * This way {@link com.intellij.generatetestcases.refactor.ShouldTagsAwareRenameProccessor} is still able to find a valid refactor and rename a (at)should tag that haven't yet a test method created.
  *
  * Created by jhe
  * Time: 14:14
  */
 public class NoExistentTestMethodLightReference extends LightElement{
-
 
 
     public NoExistentTestMethodLightReference(PsiManager manager, Language language) {
@@ -26,6 +26,6 @@ public class NoExistentTestMethodLightReference extends LightElement{
 
     @Override
     public boolean isWritable() {
-        return true;
+        return true; // true because we allow refactoring :D
     }
 }

@@ -104,6 +104,32 @@ public class BddUtilTest extends IdeaTestCase {
                 "     */"
                 , 0, new int[][]{{0, 2, 2}}, myProject);
 
+        // test when there are two @should's and the first contains two tokens
+        assertForOneShouldTag("/**\n" +
+                "     * @should foo bar\n" +
+                "     * @should doo\n" +
+                "     * \n" +
+                "     */"
+                , 0, new int[][]{{0, 2, 4}}, myProject);
+
+
+        // test when there are two @should's and the first contains a semicolon
+        assertForOneShouldTag("/**\n" +
+                "     * @should a;\n" +
+                "     * @should b\n" +
+                "     * \n" +
+                "     */"
+                , 0, new int[][]{{0, 2, 3}}, myProject);
+
+        // test when there are two @should's and the first contains a semicolon and more than one line
+        assertForOneShouldTag("/**\n" +
+                "     * @should a; b\n" +
+                "     * c d\n" +
+                "     * @should b\n" +
+                "     * \n" +
+                "     */"
+                , 0, new int[][]{{0, 2, 3}, {1, 6, 6}}, myProject);
+
 
     }
 

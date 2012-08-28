@@ -14,7 +14,7 @@ import java.util.*;
  * Creado por: jaime
  * 7/10/11
  */
-public class TestMethodRefactoringProvider implements RefactoringElementListenerProvider {
+public class TestMethodRefactoringElementListenerProvider implements RefactoringElementListenerProvider {
 
 
     @Override

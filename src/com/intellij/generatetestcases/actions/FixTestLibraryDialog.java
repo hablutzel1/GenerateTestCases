@@ -15,18 +15,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
- * Created by IntelliJ IDEA.
- * User: JHABLUTZEL
- * Date: Dec 20, 2010
- * Time: 9:33:34 AM
- * To change this template use File | Settings | File Templates.
+ * Dialog that asks the user to add test library jar to the project
  */
 public class FixTestLibraryDialog extends DialogWrapper {
 
     Project project;
     Module module;
     JLabel myAddLibraryLabel;
-//    JButton myAddLibraryButton;
     TestFramework myTestFramework;
 
     protected FixTestLibraryDialog(Project project, Module targetModule, TestFramework TestFramework) {
@@ -41,12 +36,6 @@ public class FixTestLibraryDialog extends DialogWrapper {
     }
 
     private void initControls() {
-//        myAddLibraryButton = new JButton(CodeInsightBundle.message("intention.create.test.dialog.fix.library"));
-//        myAddLibraryButton.addActionListener(new ActionListener() {
-//            public void actionPerformed(ActionEvent e) {
-//
-//            }
-//        });
 
         //  initialize the label
         // TODO include test library name
@@ -68,7 +57,6 @@ public class FixTestLibraryDialog extends DialogWrapper {
         JPanel panel = new JPanel();
         panel.setBorder(IdeBorderFactory.createBorder());
         panel.add(myAddLibraryLabel);
-//        panel.add(myAddLibraryButton);
         return panel;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

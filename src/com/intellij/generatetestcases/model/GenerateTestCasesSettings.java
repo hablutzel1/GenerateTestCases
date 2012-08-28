@@ -9,7 +9,7 @@ import com.intellij.util.xmlb.XmlSerializerUtil;
         storages = {
                 @Storage(id = "other", file = "$WORKSPACE_FILE$")}
 )
-public class GenerateTestCasesSettings implements PersistentStateComponent<GenerateTestCasesSettings> {
+public class GenerateTestCasesSettings implements PersistentStateComponent<GenerateTestCasesSettings> { // TODO research about idea ProjectComponent interface
 
 
     public GenerateTestCasesSettings() {
@@ -38,12 +38,11 @@ public class GenerateTestCasesSettings implements PersistentStateComponent<Gener
     String testFramework;
 
     public GenerateTestCasesSettings getState() {
-        return this;  //To change body of implemented methods use File | Settings | File Templates.
+        return this;
     }
 
     public void loadState(GenerateTestCasesSettings state) {
         XmlSerializerUtil.copyBean(state, this);
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
 

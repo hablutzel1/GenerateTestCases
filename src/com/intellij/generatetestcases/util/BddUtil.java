@@ -10,10 +10,12 @@ import com.intellij.psi.impl.source.PsiImportStatementImpl;
 import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
+import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.testIntegration.JavaTestFramework;
 import com.intellij.testIntegration.TestFramework;
 import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +23,14 @@ import java.util.List;
 /**
  * User: Jaime Hablutzel
  */
-public class BddUtil {
+public final class BddUtil {
 
+    private BddUtil() {
+    }
 
     /**
      * It will return the trimmed description associated to a PsiDocTag
+     *
      * @param shouldTag
      * @return
      * @should return the full description for a should tag backed by a PsiDocTag
@@ -60,10 +65,13 @@ public class BddUtil {
 
     /**
      * Given a PsiElement it will return a PsiDocTag if it exists up in its hierarchy
+     *
      * @param supposedPsiDocTagChild
-     * @return
+     * @return a parent @should PsiDocTag or null if no one found
      */
-    public static PsiDocTag getPsiDocTagParent(PsiElement supposedPsiDocTagChild) {
+    public static PsiDocTag getPsiDocTagParent(@Nullable PsiElement supposedPsiDocTagChild) {
+
+
         PsiElement startPsiElement = supposedPsiDocTagChild;
 
         PsiDocTag shouldDocTag = null;
@@ -182,41 +190,21 @@ public class BddUtil {
             returnPairs.add(offsetPair);
         } else {
 
-            boolean inOneLine = true;
+            boolean oneLineOrWeirdCharsShouldTag = true; // TODO simplify this logic using IDEA API
 
-//            int valueTokenPos = -1;
-//            int firstAsteriskPos = -1;
-////            int firstDataPos = -1;
             PsiElement[] children = psiDocTag.getChildren();
             for (int i = 0; i < children.length; i++) {
                 PsiElement child = children[i];
                 if (child instanceof PsiDocTagValue) {
-                    if (children.length > i + 2 && ((PsiDocTokenImpl) children[i + 2]).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
-                        inOneLine = false;
+                    PsiElement leadingAsterisks = children[i + 2];
+                    if (children.length > i + 2 &&  leadingAsterisks instanceof PsiDocToken && ((PsiDocToken) leadingAsterisks).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
+                        oneLineOrWeirdCharsShouldTag = false;
                     }
                 }
-                //else if (child instanceof PsiDocTokenImpl) {
-//                    if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
-//                        firstAsteriskPos = i;
-//                    } else if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_DATA")) {
-//                        if (valueTokenPos != -1 && firstAsteriskPos != -1 && valueTokenPos < firstAsteriskPos) { // there are asterisk after the first value token and before the data
-//                            inOneLine = false;
-//                        }
-//                    }
-//                }
-//
             }
-//            for (PsiElement child : children) {
-//                if (child instanceof PsiDocTokenImpl) {
-//                    if (((PsiDocTokenImpl) child).getTokenType().toString().equals("DOC_COMMENT_LEADING_ASTERISKS")) {
-//                        inOneLine = false;
-//                    }
-//                }
-//
-//            }
-//        }
 
-            if (inOneLine) {
+
+            if (oneLineOrWeirdCharsShouldTag) {  // one line @should tags or @should foo; bar (weird chars for keyword)
                 DocOffsetPair firstPair = new DocOffsetPair(dataElements[0], dataElements[1]);
                 returnPairs.add(firstPair);
             } else {
@@ -235,7 +223,7 @@ public class BddUtil {
 
                 PsiElement dataElement = dataElements[i];
 
-                if (dataElement.getText().trim().length() != 0) {
+                if (dataElement.getText().trim().length() != 0) { // excludes whitespace
                     DocOffsetPair furtherPairs = new DocOffsetPair(dataElement, dataElement);
                     returnPairs.add(furtherPairs);
                 }
@@ -345,8 +333,6 @@ public class BddUtil {
     }
 
     /**
-     *
-     *
      * @param sutClass
      * @return It will return null if no package declaration is found or the package
      */
@@ -368,7 +354,7 @@ public class BddUtil {
 
     /**
      * Should return a framework strategy based on a String
-     *
+     * <p/>
      * FIXME TODO search usages, and remove
      *
      * @param project

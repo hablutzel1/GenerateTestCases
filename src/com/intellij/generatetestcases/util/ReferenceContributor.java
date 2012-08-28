@@ -20,6 +20,6 @@ public class ReferenceContributor extends PsiReferenceContributor{
     public void registerReferenceProviders(PsiReferenceRegistrar registrar) {
 
         //  we add a provider tthat matches PsiDocTags
-        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class),new ShouldReferenceProvider());
+        registrar.registerReferenceProvider(PlatformPatterns.psiElement(PsiDocTag.class), ShouldReferenceProvider.getInstance());
     }
 }

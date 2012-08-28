@@ -19,6 +19,20 @@ public class ShouldReferenceProvider extends PsiReferenceProvider {
 
     private static final PsiReference[] NO_REFERENCES = new PsiReference[0];
 
+    public static final ShouldReferenceProvider INSTANCE = new ShouldReferenceProvider();
+
+    private ShouldReferenceProvider() {
+    }
+
+    /**
+     * Static factory that returns singleton effective java item 3
+     *
+     * @return
+     */
+    public static ShouldReferenceProvider getInstance() {
+        return INSTANCE;
+    }
+
     @Override
     public boolean acceptsTarget(@NotNull PsiElement target) {
         throw new UnsupportedOperationException();

@@ -4,11 +4,17 @@
 		 <p>To see how to use it: <a href="http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/">http://elespaciodejaime.wordpress.com/2011/05/29/generate-test-cases-intellij-plugin/</a> or <a href="http://plugins.intellij.net/plugin/?idea&id=5847">http://plugins.intellij.net/plugin/?idea&id=5847</a>
 		 or for a usage video <a href="http://www.youtube.com/watch?v=WYET6PECxuc">http://www.youtube.com/watch?v=WYET6PECxuc</a>
 		 </p>
+		 <p>Credits for the @should style testing should go to <a href="https://wiki.openmrs.org/display/docs/Generate+Test+Case+Plugin">OpenMRS</a> team
+		 </p>
 		 ]]>
     </description>
 
     <change-notes>
         <![CDATA[
+       <p>1.0.8</p>
+       <ul>
+          <li>Added support for TestNG testing framework</li>
+       </ul>
        <p>1.0.7</p>
        <ul>
           <li>Fixed @should descriptions renaming support for IntelliJ IDEA 11</li>
@@ -33,7 +39,7 @@
             logo="/images/junitopenmrs.gif">OpenMRS
     </vendor>
 
-    <version>1.0.7</version>
+    <version>1.0.8</version>
 
     <idea-version since-build="111.24"/>
     <application-components>

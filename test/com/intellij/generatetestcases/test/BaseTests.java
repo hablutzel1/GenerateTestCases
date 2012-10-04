@@ -10,6 +10,7 @@ import com.intellij.openapi.projectRoots.impl.JavaSdkImpl;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.testFramework.PsiTestCase;
 import com.intellij.testFramework.PsiTestUtil;
 import org.junit.Ignore;
@@ -25,6 +26,25 @@ public class BaseTests extends PsiTestCase {
 
     protected PsiDirectory comExamplePackage;
     protected PsiDirectory defaultSourcePackageRoot;
+
+    /**
+     * Find the first doctag for the docTagName, return null if nothing found
+     *
+     * @param backingMethod
+     * @param docTagName
+     * @return
+     */
+    protected static PsiDocTag findDocTagByName(PsiMethod backingMethod, String docTagName) {
+        PsiDocTag[] docTags2 = backingMethod.getDocComment().getTags();
+        PsiDocTag tag = null;
+        for (PsiDocTag docTag : docTags2) {
+            if (docTag.getName().equals(docTagName)) {
+                tag = docTag;
+                break;
+            }
+        }
+        return tag;
+    }
 
     protected boolean isAddJunit4Library() {
         return true;
@@ -42,6 +62,9 @@ public class BaseTests extends PsiTestCase {
 //        return createMockJdk(mockJdkCEPath.getPath(), "java 1.4",
 //                ApplicationManager.getApplication().getComponent(JavaSdk.class));
         Sdk mockJdk14 = JavaSdkImpl.getMockJdk14();
+        if (mockJdk14 == null) {
+            throw new IllegalStateException("Mock JDK 1.4 is not available, you need to copy ideaIC-source\\java\\mockJDK-1.4 to $user.home\\.IntelliJIdea11\\system\\plugins-sandbox\\test\\community\\java\\mockJDK-1.4");
+        }
         return mockJdk14;
     }
 
@@ -234,5 +257,25 @@ public class BaseTests extends PsiTestCase {
 
         }
         return returnContentSourceRoot;
+    }
+
+    protected PsiClass createSutClass2() {
+        String text = "package com.example;\n" +
+                "\n" +
+                "public interface FooBar {\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tvoid zas();\n" +
+                "\t\n" +
+                "\t\n" +
+                "\t/**\n" +
+                "\t * @should do nothing\n" +
+                "\t */\n" +
+                "\tpublic <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type);\n" +
+                "}\n" +
+                "";
+        PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
+        return aClass;
     }
 }

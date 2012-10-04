@@ -1,19 +1,20 @@
 package com.intellij.generatetestcases.util;
 
-import com.intellij.generatetestcases.testframework.JUnit3Strategy;
-import com.intellij.generatetestcases.testframework.JUnit4Strategy;
+import com.intellij.generatetestcases.testframework.SupportedFrameworks;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.openapi.extensions.Extensions;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.StdFileTypes;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiImportStatementImpl;
-import com.intellij.psi.impl.source.javadoc.PsiDocTokenImpl;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.psi.javadoc.PsiDocTagValue;
 import com.intellij.psi.javadoc.PsiDocToken;
 import com.intellij.testIntegration.JavaTestFramework;
 import com.intellij.testIntegration.TestFramework;
 import org.apache.commons.lang.StringUtils;
+import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -108,6 +109,18 @@ public final class BddUtil {
             element = element.getParent();
         }
         return parentPsiClass;
+    }
+
+    public static void addImportToClass(Project project1, PsiClass testClass, String packageToBeAdded) {
+
+        String packageToBeAdded1 = "import " + packageToBeAdded + ";";
+        String ext = StdFileTypes.JAVA.getDefaultExtension();
+        @NonNls String fileName = "_Dummy_." + ext;
+        FileType type = StdFileTypes.JAVA;
+        PsiJavaFile javaFile = (PsiJavaFile) PsiFileFactory.getInstance(project1).createFileFromText(type, fileName, packageToBeAdded1, 0, packageToBeAdded1.length());
+        PsiImportStatement statement = javaFile.getImportList().getImportStatements()[0];
+        PsiImportList list = ((PsiJavaFile) testClass.getContainingFile()).getImportList();
+        list.add(statement);
     }
 
     public static class DocOffsetPair {
@@ -233,53 +246,6 @@ public final class BddUtil {
         return returnPairs;
     }
 
-    /**
-     * TODO the plugin should have support for generating junit 3 test methods (this is: with test as prefix for the name
-     * and without annotations).
-     *
-     * @param originMethodName
-     * @param shouldDescription
-     * @return
-     * @should create a appropiate name for the test method
-     * @should fail if wrong args
-     */
-    public static String generateTestMethodNameForJUNIT4(@NotNull String originMethodName, @NotNull String shouldDescription) {
-
-        if (StringUtils.isBlank(originMethodName) || StringUtils.isBlank(shouldDescription)) {
-            throw new IllegalArgumentException();
-        }
-
-        StringBuilder builder = new StringBuilder(originMethodName
-                + "_should");
-        @NotNull
-        String[] tokens = shouldDescription.split("\\s+");
-        for (String token : tokens) {
-            char[] allChars = token.toCharArray();
-            StringBuilder validChars = new StringBuilder();
-            for (char validChar : allChars) {
-                if (Character.isJavaIdentifierPart(validChar)) {
-                    validChars.append(validChar);
-                }
-            }
-            builder.append(toCamelCase(validChars.toString()));
-        }
-        return builder.toString();
-    }
-
-    private static String toCamelCase(String input) {
-        assert input != null;
-        if (input.length() == 0) {
-            return ""; // is it ok?
-        }
-        return input.substring(0, 1).toUpperCase() + input.substring(1);
-    }
-
-
-    public static String generateJUNIT3MethodName(String sutMethodName, String description) {
-        String s = generateTestMethodNameForJUNIT4(sutMethodName, description);
-        return "test" + StringUtils.capitalize(s);
-    }
-
 
     public static List<PsiImportStatementBase> findImportsInClass(PsiClass testBackingClass, String importName) {
 
@@ -351,24 +317,4 @@ public final class BddUtil {
         }
     }
 
-
-    /**
-     * Should return a framework strategy based on a String
-     * <p/>
-     * FIXME TODO search usages, and remove
-     *
-     * @param project
-     * @param s
-     * @return
-     */
-    public static TestFrameworkStrategy getStrategyForFramework(Project project, String s) {
-        TestFrameworkStrategy tfs;
-        if (s.equals("JUNIT3")) {
-            tfs = new JUnit3Strategy(project);
-        } else {
-            tfs = new JUnit4Strategy(project);
-        }
-
-        return tfs;
-    }
 }

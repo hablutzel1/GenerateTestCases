@@ -25,12 +25,11 @@ import static org.junit.Assert.assertThat;
  */
 public class JUnit3StrategyTest extends BaseTests {
     /**
-     * @verifies create a method and imports with the right junit 3 structure
+     * @verifies add junit 3 specific imports
      * @see JUnit3Strategy#createBackingTestMethod(com.intellij.psi.PsiClass, com.intellij.psi.PsiMethod, String)
      */
     @Test
-    public void testCreateBackingTestMethod_shouldCreateAMethodAndImportsWithTheRightJunit3Structure() throws Exception {
-
+    public void testCreateBackingTestMethod_shouldAddJunit3SpecificImports() throws Exception {
 
         //  create test method
         PsiClass aClass = createSutClass();
@@ -39,7 +38,6 @@ public class JUnit3StrategyTest extends BaseTests {
         //  get unitialized test method
         List<TestMethod> allTestMethods = testClass.getAllMethods();
         TestMethod testMethod = findTestMethodInCollection(allTestMethods, "fetch user with given userId", "getUser");
-//        assertThat(testMethod.reallyExists(), is(false));
 
         //  actually create
         testMethod.create();
@@ -47,7 +45,6 @@ public class JUnit3StrategyTest extends BaseTests {
         //  assert the right imports exist
         PsiClass psiClass = testMethod.getBackingElement().getContainingClass();
         assertThat(BddUtil.findImportsInClass(psiClass, "junit.framework.Assert").size(), is(1));
-
 
     }
 

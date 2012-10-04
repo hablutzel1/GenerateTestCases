@@ -207,22 +207,7 @@ public class TestMethodTest extends BaseTests {
     }
 
     private PsiClass createFooBarSutClass() {
-        String text = "package com.example;\n" +
-                "\n" +
-                "public interface FooBar {\n" +
-                "\t/**\n" +
-                "\t * @should do nothing\n" +
-                "\t */\n" +
-                "\tvoid zas();\n" +
-                "\t\n" +
-                "\t\n" +
-                "\t/**\n" +
-                "\t * @should do nothing\n" +
-                "\t */\n" +
-                "\tpublic <H, T> List<H> getHandlersForType(Class<H> handlerType, Class<T> type);\n" +
-                "}\n" +
-                "";
-        PsiClass aClass = createClassFromTextInPackage(myProject, text, "FooBar", comExamplePackage);
+        PsiClass aClass = createSutClass2();
         return aClass;
     }
 

@@ -69,7 +69,7 @@ public class ShouldTagRenameDialog extends RenameDialog {
                     if (allMethod.reallyExists()) {
                         TestFrameworkStrategy testFrameworkStrategy = testClass.getTestFrameworkStrategy();
 
-                        newTestMethodName = ((JUnitStrategyBase) testFrameworkStrategy).getExpectedNameForThisTestMethod(allMethod.getSutMethod().getName(), getNewName());
+                        newTestMethodName = testFrameworkStrategy.getExpectedNameForThisTestMethod(allMethod.getSutMethod().getName(), getNewName());
 
                         break;
                     }

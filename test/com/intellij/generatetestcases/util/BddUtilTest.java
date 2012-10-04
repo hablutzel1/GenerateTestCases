@@ -3,14 +3,13 @@ package com.intellij.generatetestcases.util;
 
 import com.intellij.generatetestcases.test.ExpectExceptionsExecutor;
 import com.intellij.generatetestcases.test.ExpectExceptionsTemplate;
+import com.intellij.generatetestcases.testframework.JUnit4Strategy;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.JavaPsiFacade;
 import com.intellij.psi.PsiElementFactory;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.javadoc.PsiDocTag;
 import com.intellij.testFramework.IdeaTestCase;
-import junit.framework.Assert;
-import org.junit.Test;
 
 import java.util.List;
 
@@ -179,45 +178,5 @@ public class BddUtilTest extends IdeaTestCase {
         assertThat(BddUtil.getElementPairsInDocTag(docCommentFromText2.getTags()[0]).size(), is(1));
     }
 
-    /**
-     * @verifies create a appropiate name for the test method
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
-     */
-    public void testGenerateTestMethodNameForJUNIT4_shouldCreateAAppropiateNameForTheTestMethod() throws Exception {
 
-        String methodName = "generateTestMethodName";
-        String description = "create a appropiate name for the test method";
-        String testMethodName = BddUtil.generateTestMethodNameForJUNIT4(methodName, description);
-        assertEquals("generateTestMethodName_shouldCreateAAppropiateNameForTheTestMethod", testMethodName);
-
-    }
-
-    /**
-     * @verifies fail if wrong args
-     * @see BddUtil#generateTestMethodNameForJUNIT4(String, String)
-     */
-    public void testGenerateTestMethodNameForJUNIT4_shouldFailIfWrongArgs() throws Exception {
-
-        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
-            public Class getExpectedException() {
-                return IllegalArgumentException.class;
-            }
-
-            public void doInttemplate() {
-                BddUtil.generateTestMethodNameForJUNIT4("", "");
-            }
-        });
-
-        ExpectExceptionsExecutor.execute(new ExpectExceptionsTemplate() {
-            public Class getExpectedException() {
-                return IllegalArgumentException.class;
-            }
-
-            public void doInttemplate() {
-                BddUtil.generateTestMethodNameForJUNIT4(null, null);
-            }
-        });
-
-
-    }
 }

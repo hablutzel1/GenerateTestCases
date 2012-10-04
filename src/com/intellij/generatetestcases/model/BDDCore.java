@@ -1,8 +1,8 @@
 package com.intellij.generatetestcases.model;
 
 import com.intellij.generatetestcases.TestFrameworkNotConfigured;
+import com.intellij.generatetestcases.testframework.SupportedFrameworks;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
-import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
@@ -68,7 +68,7 @@ public final class BDDCore {
 
         }
         //  create TestClass for current class
-        return TestClassImpl.newInstance(sutClass, BddUtil.getStrategyForFramework(project, testFramework));
+        return TestClassImpl.newInstance(sutClass, SupportedFrameworks.getStrategyForFramework(project, testFramework));
     }
 
 }

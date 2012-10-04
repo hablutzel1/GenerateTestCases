@@ -2,10 +2,8 @@ package com.intellij.generatetestcases.testframework;
 
 import com.intellij.codeInsight.intention.AddAnnotationFix;
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiMethod;
 import com.intellij.testIntegration.TestFramework;
 import org.jetbrains.annotations.NotNull;
@@ -24,53 +22,34 @@ public class JUnit4Strategy extends JUnitStrategyBase {
     }
 
 
-    /**
-     * It returns the expected name for this method, it could make use
-     * of an strategy for naming, investigate it further
-     *
-     * @return
-     */
-    @Override
-    @NotNull
-    public String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
-        return BddUtil.generateTestMethodNameForJUNIT4(sutMethodName, description);
-    }
-
-
     @Override
     public TestFramework getTestFramework() {
         return  BddUtil.findTestFrameworkByName("JUnit4");
     }
 
-    /**
-     *
-     * @param sutClass
-     * @param sourceRoot
-     * @return
-     * @should create the right test class
-     */
-    @Override
-    public PsiClass createBackingTestClass(PsiClass sutClass, PsiDirectory sourceRoot) {
-        return super.createBackingTestClass(sutClass, sourceRoot);  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
-    @Override
-    public boolean isTestFrameworkLibraryAvailable(Module module) {
-        return getTestFramework().isLibraryAttached(module);
-    }
 
+
+//    @Override // add junit 4 Test annotation
+//    protected void afterCreatingJunitMethod(Project project, PsiMethod realTestMethod) {
+//
+//    }
+
+    @NotNull
     @Override
-    protected void afterCreatingMethod(Project project, PsiMethod realTestMethod) {
+    public PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
+        PsiMethod backingTestMethod = super.createBackingTestMethod(testClass, sutMethod, testDescription);
+
         //  add the annotation to the method
-        AddAnnotationFix fix = new AddAnnotationFix("org.junit.Test", realTestMethod);
-        if (fix.isAvailable(project, null, realTestMethod.getContainingFile())) {
-            fix.invoke(project, null, realTestMethod.getContainingFile());
+        AddAnnotationFix fix = new AddAnnotationFix("org.junit.Test", backingTestMethod);
+        if (fix.isAvailable(sutMethod.getProject(), null, backingTestMethod.getContainingFile())) {
+            fix.invoke(sutMethod.getProject(), null, backingTestMethod.getContainingFile());
         }
+        return backingTestMethod;
     }
 
     @Override
     protected String getFrameworkBasePackage() {
-               String s = "org.junit";
-        return s;
+        return "org.junit";
     }
 }

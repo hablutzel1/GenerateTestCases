@@ -6,7 +6,9 @@ import com.intellij.generatetestcases.GenerateTestCasesBundle;
 import com.intellij.generatetestcases.model.TestClass;
 import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
+import com.intellij.generatetestcases.testframework.AbstractTestFrameworkStrategy;
 import com.intellij.generatetestcases.testframework.JUnitStrategyBase;
+import com.intellij.generatetestcases.testframework.SupportedFrameworks;
 import com.intellij.generatetestcases.testframework.TestFrameworkStrategy;
 import com.intellij.generatetestcases.ui.codeinsight.GenerateTestCasesConfigurable;
 import com.intellij.generatetestcases.ui.codeinsight.generation.PsiDocAnnotationMember;
@@ -69,7 +71,7 @@ public class GenerateTestMethods extends AnAction {
         //  prompt to choose the strategy if it haven't been choosen before
         String testFrameworkProperty;
         if (ApplicationManager.getApplication().isUnitTestMode()) {
-            testFrameworkProperty = "Junit3";
+            testFrameworkProperty = "JUNIT3";
         } else {
 
 
@@ -112,7 +114,7 @@ public class GenerateTestMethods extends AnAction {
 
 
             // TODO replace it by strong typed way to determine the framework
-            TestFrameworkStrategy tfs = BddUtil.getStrategyForFramework(project, testFrameworkProperty);
+            TestFrameworkStrategy tfs = SupportedFrameworks.getStrategyForFramework(project, testFrameworkProperty);
 
             final TestClass testClass = BDDCore.createTestClass(psiClass, tfs);
 
@@ -131,7 +133,7 @@ public class GenerateTestMethods extends AnAction {
                 if (!isAvailable) {
                     //  display alert, look for something similiar, not obstrusive :D
                     // TODO improve TestFrameworkStrategy interface to include the descriptor
-                    final FixTestLibraryDialog d = new FixTestLibraryDialog(project, module, ((JUnitStrategyBase) tfs).getTestFramework());
+                    final FixTestLibraryDialog d = new FixTestLibraryDialog(project, module, ((AbstractTestFrameworkStrategy) tfs).getTestFramework());
                     d.show();
                     if (!d.isOK()) return;
                 }

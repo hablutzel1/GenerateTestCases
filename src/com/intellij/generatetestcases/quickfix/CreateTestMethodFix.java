@@ -40,10 +40,10 @@ public class CreateTestMethodFix implements IntentionAction {
     public String getText() {
 
         TestMethodImpl tMethod = (TestMethodImpl) testMethod;
-        JUnitStrategyBase testFrameworkStrategy = (JUnitStrategyBase) tMethod.getTestFrameworkStrategy();
+        TestFrameworkStrategy testFrameworkStrategy = tMethod.getTestFrameworkStrategy();
         String testMethodName = testFrameworkStrategy.getExpectedNameForThisTestMethod(testMethod.getSutMethod().getName(), testMethod.getDescription());
         TestClass parent = tMethod.getParent();
-        String candidateClassName = testFrameworkStrategy.getCandidateClassName(parent.getClassUnderTest());
+        String candidateClassName = testFrameworkStrategy.getCandidateTestClassName(parent.getClassUnderTest());
         return GenerateTestCasesBundle.message("plugin.GenerateTestCases.createtestmethod",
                 candidateClassName + "." + testMethodName +"()");
     }

@@ -7,6 +7,7 @@ import com.intellij.generatetestcases.model.TestMethod;
 import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
 import com.intellij.generatetestcases.model.TestMethodImpl;
 import com.intellij.generatetestcases.quickfix.*;
+import com.intellij.generatetestcases.testframework.SupportedFrameworks;
 import com.intellij.generatetestcases.util.BddUtil;
 import com.intellij.generatetestcases.util.Constants;
 import com.intellij.openapi.application.ApplicationManager;
@@ -97,7 +98,7 @@ public class MissingTestMethodInspection extends BaseJavaLocalInspectionTool {
         }
 
         //  create TestClass for current class
-        TestClass testClass = BDDCore.createTestClass(aClass, BddUtil.getStrategyForFramework(project, testFramework));
+        TestClass testClass = BDDCore.createTestClass(aClass, SupportedFrameworks.getStrategyForFramework(project, testFramework));
 
 
         //  highlight warning should cover test class name

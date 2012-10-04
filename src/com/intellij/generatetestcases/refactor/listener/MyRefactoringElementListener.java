@@ -46,7 +46,7 @@ class MyRefactoringElementListener implements RefactoringElementListener {
         for (final TestMethod testMethod : methodsToRefactor) {
 
             //  update method name
-            final JUnitStrategyBase testFrameworkStrategy = (JUnitStrategyBase) testClass.getTestFrameworkStrategy();
+            final TestFrameworkStrategy testFrameworkStrategy = testClass.getTestFrameworkStrategy();
 
             // get method with name expectedNameForThisTestMethod and rename it directly
             PsiClass psiTestClass = testClass.getBackingElement();

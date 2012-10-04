@@ -1,7 +1,7 @@
 package com.intellij.generatetestcases.ui.codeinsight;
 
 import com.intellij.generatetestcases.model.GenerateTestCasesSettings;
-import com.intellij.generatetestcases.testframework.Frameworks;
+import com.intellij.generatetestcases.testframework.SupportedFrameworks;
 import com.intellij.openapi.options.BaseConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SearchableConfigurable;
@@ -63,8 +63,8 @@ public class GenerateTestCasesConfigurable extends BaseConfigurable implements S
 
         List<String> strings = new ArrayList<String>();
         strings.add("-");
-        Frameworks[] frameworkses = Frameworks.values();
-        for (Frameworks frameworkse : frameworkses) {
+        SupportedFrameworks[] frameworkses = SupportedFrameworks.values();
+        for (SupportedFrameworks frameworkse : frameworkses) {
             strings.add(frameworkse.toString());
         }
 

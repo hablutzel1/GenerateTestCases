@@ -15,6 +15,8 @@ import org.jetbrains.annotations.Nullable;
 public interface TestFrameworkStrategy {
 
 
+    String TEST_CLASS_SUFFIX = "Test";
+
     /**
      * This strategy will generate a PsiMethod that will back up the {@link com.intellij.generatetestcases.model.TestMethod}
      *
@@ -57,4 +59,15 @@ public interface TestFrameworkStrategy {
      * @should ignore anonymous classes 
      */
     PsiClass findBackingPsiClass(PsiClass sutClass);
+
+    @NotNull
+    String getExpectedNameForThisTestMethod(@NotNull String sutMethodName, @NotNull String description);
+
+    /**
+     * Returns the class name that the test class would have if it would be generated.
+     *
+     * @param sutClass
+     * @return
+     */
+    String getCandidateTestClassName(PsiClass sutClass);
 }

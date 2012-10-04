@@ -1,12 +1,11 @@
 package com.intellij.generatetestcases.testframework;
 
 import com.intellij.generatetestcases.util.BddUtil;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.testIntegration.TestFramework;
-import org.eclipse.jdt.internal.core.search.JavaSearchScope;
+import org.apache.commons.lang.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,7 +25,8 @@ public class JUnit3Strategy extends JUnitStrategyBase {
     @NotNull
     @Override
     public String getExpectedNameForThisTestMethod(String sutMethodName, String description) {
-        return BddUtil.generateJUNIT3MethodName(sutMethodName, description);
+        String s = super.getExpectedNameForThisTestMethod(sutMethodName, description);
+        return "test" + StringUtils.capitalize(s);
     }
 
     @Override
@@ -35,9 +35,9 @@ public class JUnit3Strategy extends JUnitStrategyBase {
     }
 
 
-    public boolean isTestFrameworkLibraryAvailable(Module module) {
-        return getTestFramework().isLibraryAttached(module);
-    }
+//    public boolean isTestFrameworkLibraryAvailable(Module module) {
+//        return getTestFramework().isLibraryAttached(module);
+//    }
 
 //    @Override
 //    protected void afterCreatingMethod(Project project, PsiMethod realTestMethod) {
@@ -53,17 +53,17 @@ public class JUnit3Strategy extends JUnitStrategyBase {
 
 
     /**
-     * WARNING: This method has been overrided just to test implementation details for a specific framework
      *
      * @param testClass
      * @param sutMethod
      * @param testDescription @return
      * @return
-     * @should create a method and imports with the right junit 3 structure
+     * @should add junit 3 specific imports
+     *
      */
-    @Override
+    @Override // just created to test implementation details for this specific framework
     public PsiMethod createBackingTestMethod(PsiClass testClass, PsiMethod sutMethod, String testDescription) {
-        return super.createBackingTestMethod(testClass, sutMethod, testDescription);    //To change body of overridden methods use File | Settings | File Templates.
+        return super.createBackingTestMethod(testClass, sutMethod, testDescription);
     }
 
 
@@ -73,7 +73,7 @@ public class JUnit3Strategy extends JUnitStrategyBase {
      * @return
      * @should create a test class that extends TestCase
      */
-    @Override
+    @Override  // overridden to write test method only
     public PsiClass createBackingTestClass(PsiClass sutClass, PsiDirectory sourceRoot) {
         return super.createBackingTestClass(sutClass, sourceRoot);
     }

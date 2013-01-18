@@ -27,6 +27,7 @@ import java.util.List;
 public final class BddUtil {
 
     private BddUtil() {
+        throw new AssertionError();
     }
 
     /**

@@ -18,6 +18,7 @@ public final class BDDCore {
 
 
     private BDDCore() {
+        throw new AssertionError(); //effective java item 4
     }
 
 

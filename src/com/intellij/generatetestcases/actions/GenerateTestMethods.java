@@ -83,7 +83,7 @@ public class GenerateTestMethods extends AnAction {
                 ConfigurableEP[] extensions = project.getExtensions(ExtensionPointName.<ConfigurableEP>create("com.intellij.projectConfigurable"));
 //                List<Configurable> list = new ArrayList<Configurable>();
                 for (ConfigurableEP component : extensions) {
-                    Configurable configurable = component.createConfigurable();
+                    Configurable configurable = (Configurable) component.createConfigurable();
                     if (configurable instanceof GenerateTestCasesConfigurable) {
                         ShowSettingsUtil.getInstance().editConfigurable(project, configurable);
                         break;

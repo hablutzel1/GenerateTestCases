@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NonNls;
 public final  class Constants {
 
     private Constants() {
+        throw new AssertionError();
     }
 
     @NonNls

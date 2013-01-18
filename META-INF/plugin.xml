@@ -11,6 +11,10 @@
 
     <change-notes>
         <![CDATA[
+       <p>1.0.9</p>
+       <ul>
+          <li>Fixed to work with IntelliJ IDEA 12 (thanks to nribeka)</li>
+       </ul>
        <p>1.0.8</p>
        <ul>
           <li>Added support for TestNG testing framework</li>
@@ -39,9 +43,9 @@
             logo="/images/junitopenmrs.gif">OpenMRS
     </vendor>
 
-    <version>1.0.8</version>
+    <version>1.0.9</version>
 
-    <idea-version since-build="111.24"/>
+    <idea-version since-build="123.72"/>
     <application-components>
 
     </application-components>

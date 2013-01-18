@@ -46,11 +46,11 @@ public class GenerateTestCasesConfigurable extends BaseConfigurable implements S
         return "Generate Test Cases";
     }
 
-    @Override
-    public Icon getIcon() {
-        return IconLoader.getIcon("/images/junitopenmrs.gif");
-
-    }
+//    @Override
+//    public Icon getIcon() {
+//        return IconLoader.getIcon("/images/junitopenmrs.gif");
+//
+//    }
 
     @Override
     public String getHelpTopic() {
